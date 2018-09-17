@@ -6,7 +6,8 @@ import re
 from Users import Users
 from discord.ext import commands
 
-# token_file = open("/usr/local/config.txt","r") # hidden file with our discord bot token
+# hidden file with our discord bot token
+# token_file = open("/usr/local/config.txt","r") # unix version
 token_file = open("config.txt","r") # windows version
 TOKEN = token_file.read()
 token_file.close()
