@@ -25,7 +25,7 @@ class Account:
             user = Users(context.message.author.id)
             await self.client.say(context.message.author.mention + user.delete_user())
         else:
-            await self.client.say(context.message.author.mention + 'Cancelled deletion of account')
+            await self.client.say(context.message.author.mention + ' Cancelled deletion of account')
 
     @commands.command(name='money', aliases=['m'], pass_context=True)
     async def money(self, context, *args):
