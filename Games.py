@@ -148,7 +148,6 @@ class Games:
             print("No bet specified")
 
     '''HANGMAN main function'''
-
     @commands.command(name='hangman', description='Guess the word in order to survive.',
                       brief='can use "%hangman", type "stop" or "cancel" to end game',
                       aliases=['hm', 'hang', 'HM', 'HANGMAN'], pass_context=True)
