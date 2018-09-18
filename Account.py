@@ -27,7 +27,7 @@ class Account:
         else:
             await self.client.say(context.message.author.mention + ' Cancelled deletion of account')
 
-    @commands.command(name='money', aliases=['m'], pass_context=True)
+    @commands.command(name='money', aliases=['m', 'MONEY'], pass_context=True)
     async def money(self, context, *args):
         # this 'try' will process if they want to check another person's bank account
         # it will only process if they passed that user as an argument
@@ -37,13 +37,13 @@ class Account:
             # create user instance with their discord ID, check database for their money field
             user = Users(re.findall("\d+", args[0])[0])
             await self.client.say(context.message.author.mention +
-                                  " That user's account balance: " + user.get_user_money())
+                                  " That user's :moneybag: balance: " + user.get_user_money())
         # if they passed no parameters, get their own money
         except:
             # create user instance with their discord ID, check database for their money field
             user = Users(context.message.author.id)
             await self.client.say(context.message.author.mention +
-                                  " Your account balance: " + user.get_user_money())
+                                  " :moneybag: balance: " + user.get_user_money())
 
     @commands.command(name='level', aliases=['LEVEL', 'lvl', 'LVL'], pass_context=True)
     async def level(self, context):
