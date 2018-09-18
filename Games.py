@@ -4,7 +4,7 @@ from discord.ext import commands
 from Users import Users
 
 # open with file read for hangman at the top.
-# this way, we won't have to re-open the file every hangman, and we can just call pick_word.
+# this way, we won't have to re-open the file every hangman, and we can just call pick_word()
 # make sure there is no carriage return after last word in text file
 # words_file = open("/usr/local/words.txt","r") # unix dedicated server version
 words_file = open("words.txt", "r")  # windows version
