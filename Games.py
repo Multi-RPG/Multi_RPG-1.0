@@ -86,7 +86,6 @@ class Games:
                               '' + str(prize) + '** from **' + str(user_to_rob) + '**')
 
     '''FLIP COIN FUNCTION'''
-
     @commands.command(name='flip', description='Flip a coin to earn social status.',
                       brief='can use "%flip" or "%flip X", with X being heads or tails',
                       aliases=['f', 'flpi', 'FLIP', 'F'], pass_context=True)
@@ -107,6 +106,7 @@ class Games:
             pass
 
         # check if they specified a guess of heads or tails
+        # process if they won or not
         try:
             if args[0] == 'heads':
                 if result == 1:
@@ -121,6 +121,7 @@ class Games:
                     msg = '<:heads:486705184370589718> Result is **Tails**! You win! <a:worryHype:487059927731273739>'
                     win = 1
         except:
+            #no arguments provided at all. so just give a result
             print("No argument specified for betting on the coin side.")
             if result == 1:
                 msg = '<:heads:486705167643967508> Result is **Heads**!'
@@ -129,6 +130,7 @@ class Games:
         await self.client.say(msg + ' ' + context.message.author.mention)
 
         # if they specified a "guess" and "bet" that was valid, check if they won
+        # note this will only pass through if "bet" was assigned through the earlier try/catch
         try:
             if win == 1:
                 # triple user's bet if they win, add to account
