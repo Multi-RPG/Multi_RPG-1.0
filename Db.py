@@ -13,9 +13,7 @@ class Db:
    ...> level int,
    ...> money int
    ...> );
-    '''
 
-    '''
     # BATTLES TABLE
     sqlite> CREATE TABLE Battles(
    ...> fighter_id varchar(255) NOT NULL PRIMARY KEY,
