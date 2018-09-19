@@ -53,7 +53,8 @@ class Games:
         # while the user to rob is yourself, re-roll the target
         # while the user to rob does not have an account in the database, re-roll the target
         while user_to_rob == context.message.author or victim.find_user() == 0:
-            # only try 30 different members... don't want an infinite while loop
+            # only try 30 members in the user's server
+            # otherwise if the user was the only player with an account in the discord server, infinite while loop
             # this part is inefficient, but only way I can think of right now with discord's functionality
             if counter == 30:
                 await self.client.say('No users found to rob...')
