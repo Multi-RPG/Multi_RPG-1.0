@@ -73,7 +73,7 @@ class Users:
         hm_db.connect()
 
         try:
-            # if we want integer form of money
+            # if we want integer form of level
             if string == 0:
                 return hm_db.get_level()
             # if we want the full bold discord-formatted string sequence of money
