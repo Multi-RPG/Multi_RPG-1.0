@@ -60,7 +60,7 @@ async def helper(context):
           'Account:\n  %create         use "%create" to make a bank account\n' \
           '  %delete         use "%delete" to delete your bank account\n' \
           '  %money          use "%money" or "%money @user" to print bank balance\n' \
-          '  %donate         use "%donate X @user" -- X being amount to donate\n' \
+          '  %give           use "%give X @user" -- X being money to give a user\n' \
           '  %stats          use "%stats" or "%stats @user" for battle statistics\n' \
           'Games For Money:\n' \
           '  %rob            use "%rob" for a 6/10 chance to mug a fellow player\n\n' \

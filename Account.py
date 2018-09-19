@@ -51,8 +51,8 @@ class Account:
         user = Users(context.message.author.id)
         await self.client.say(context.message.author.mention + ' Level: ' + user.get_user_level())
 
-    @commands.command(name='donate', aliases=['DONATE', 'GIVE', 'give'], pass_context=True)
-    async def donate(self, context, amnt=None, receiver_string=None):
+    @commands.command(name='give', aliases=['DONATE', 'GIVE', 'pay', 'donate', 'PAY'], pass_context=True)
+    async def give(self, context, amnt=None, receiver_string=None):
         # will automatically go to exception if all arguments weren't supplied correctly
         try:
             # not using *args[] array here, since there's only one correct syntax for using this command
