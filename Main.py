@@ -63,7 +63,7 @@ async def helper(context):
           '  %donate         use "%donate X @user" -- X being amount to donate\n' \
           '  %stats          use "%stats" or "%stats @user" for battle statistics\n' \
           'Games For Money:\n' \
-          '  %rob            use "%rob" for a 7/10 chance to mug a fellow player\n\n' \
+          '  %rob            use "%rob" for a 6/10 chance to mug a fellow player\n\n' \
           '  %flip           use "%flip" or "%flip X" or "%flip X Y" \n' \
           '                  -- X being heads or tails guess\n' \
           '                  -- Y being amount to bet\n\n' \
