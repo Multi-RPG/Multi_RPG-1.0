@@ -30,6 +30,7 @@ class Db:
 
     def connect(self):
         try:
+            # self.connection = sqlite3.connect('/usr/local/hangman.db')
             self.connection = sqlite3.connect('hangman.db')
             # Next part required to enable foreign keys on sqlite. It must execute every connection.
             self.connection.execute("PRAGMA foreign_keys = ON")
