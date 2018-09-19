@@ -34,11 +34,11 @@ class Account:
         try:
             # use regex to extract only numbers to get their discord ID,
             # ex: <@348195501025394688> to 348195501025394688
-            # create user instance with their discord ID, check database for their money field
+            # create user instance with their target's discord ID, check database for their money field
             user = Users(re.findall("\d+", args[0])[0])
             await self.client.say(context.message.author.mention +
                                   " That user's :moneybag: balance: " + user.get_user_money())
-        # if they passed no parameters, get their own money
+        # if they passed no parameter, get their own money
         except:
             # create user instance with their discord ID, check database for their money field
             user = Users(context.message.author.id)
@@ -81,6 +81,25 @@ class Account:
             await self.client.say(msg)
         except:
             await self.client.say('Use %donate like so: **%donate X @user**    -- X being amount to donate')
+
+    @commands.command(name='stats', aliases=['battles', 'BRECORDS', 'STATS'], pass_context=True)
+    async def battlerecords(self, context, *args):
+        # this 'try' will process if they want to check another person's battle records
+        # it will only process if they passed that user as an argument
+        try:
+            # use regex to extract only numbers to get their discord ID,
+            # ex: <@348195501025394688> to 348195501025394688
+            # create user instance with their target's discord ID, check database for their money field
+            user = Users(re.findall("\d+", args[0])[0])
+            await self.client.say(context.message.author.mention + " _Target's battle stats..._"
+                                                                 + user.get_user_battle_records())
+
+        # if they passed no parameter, get their own records
+        except:
+            # create user instance with their discord ID, check database for their level field
+            user = Users(context.message.author.id)
+            await self.client.say(context.message.author.mention + " _Your battle stats..._"
+                                                                 + user.get_user_battle_records())
 
 def setup(client):
     client.add_cog(Account(client))
