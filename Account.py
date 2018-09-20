@@ -53,10 +53,11 @@ class Account:
         await self.client.say(context.message.author.mention + ' Level: ' + user.get_user_level())
 
     @commands.command(name='give', aliases=['DONATE', 'GIVE', 'pay', 'donate', 'PAY'], pass_context=True)
-    async def give(self, context, amnt=None, receiver_string=None):
+    async def give(self, context, *args):
         # will automatically go to exception if all arguments weren't supplied correctly
         try:
-            # not using *args[] array here, since there's only one correct syntax for using this command
+            amnt = args[0]
+            receiver_string = args[1]
             # create user instance with their discord ID, check database for their level field
             donator = Users(context.message.author.id)
             # use regex to extract only numbers from "receiver_string" to get their discord ID,

@@ -122,3 +122,10 @@ class Users:
         except:
             return "\nYou have no bank account! <a:rotatethink:490228030556340259>\n" \
                    "Use **%create** to start one. "
+
+    def update_user_records(self, battles_lost, battles_won, total_winnings):
+        hm_db = Db(self.id)
+        hm_db.connect()
+
+        return " Your new battle records: **" \
+               + str(hm_db.update_battle_records(battles_lost, battles_won, total_winnings)) + "**"

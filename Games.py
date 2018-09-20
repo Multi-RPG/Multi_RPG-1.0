@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import random
+import re
 from discord.ext import commands
 from Users import Users
 
@@ -86,6 +87,40 @@ class Games:
         await self.client.say('**Success!** <:poggers:490322361891946496>\n'
                               'You robbed **$'
                               '' + str(prize) + '** from **' + str(user_to_rob) + '**')
+
+
+    '''BATTLE FUNCTION'''
+    @commands.command(name='fight', description='Battle another user in your server',
+                      brief='can use "fight @user X --X being amount to bet"',
+                      aliases=['battle', 'BATTLE', 'FIGHT'], pass_context=True)
+    async def battle_user(self, context, *args):
+        fighter1 = Users(context.message.author.id)
+        # use regex to extract only the user-id from the user targetted
+        fighter2 = Users(re.findall("\d+", args[0])[0])
+
+        # check if they specified a bet
+        try:
+            bet = int(args[1])
+        # if none specified, default $100
+        except:
+            bet = 100
+
+        # check if both users have accounts
+        if fighter1.find_user() == 0 or fighter2.find_user() == 0:
+            await self.client.say(context.message.author.mention +
+                                  " Either you or the target doesn't have an account."
+                                  "\nUse **%create** to make one.")
+            return
+
+        # check if both users have accounts
+        if fighter1.get_user_money(0) < bet or fighter2.get_user_money(0) < bet:
+            await self.client.say(context.message.author.mention +
+                                  " Either you or the target doesn't have enough money."
+                                  "\nUse **%create** to make one.")
+            return
+
+        await self.client.say('You challenged ' + args[0] + ' for $' + str(bet))
+
 
     '''FLIP COIN FUNCTION'''
     @commands.command(name='flip', description='Flip a coin to earn social status.',
