@@ -127,3 +127,17 @@ class Db:
 
         self.connection.commit()
         return self.get_money()
+
+    def update_level(self):
+        cur = self.connection.cursor()
+
+        sql = "UPDATE Users SET level = level + 1 WHERE user_id = ?"
+        cur.execute(sql, (self.id,))
+        cur.execute("select * from Users")
+        rows = cur.fetchall()
+        print("\nUsers table after level update: \n")
+        for row in rows:
+            print(row)
+
+        self.connection.commit()
+        return self.get_level()

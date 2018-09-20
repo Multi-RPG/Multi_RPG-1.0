@@ -123,7 +123,7 @@ class Games:
                     msg = '<:heads:486705184370589718> Result is **Tails**! You win! <a:worryHype:487059927731273739>'
                     win = 1
         except:
-            #no arguments provided at all. so just give a result
+            # no arguments provided at all. so just give a result
             print("No argument specified for betting on the coin side.")
             if result == 1:
                 msg = '<:heads:486705167643967508> Result is **Heads**!'

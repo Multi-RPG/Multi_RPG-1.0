@@ -16,16 +16,6 @@ class Users:
         except:
             return " You already have an account!!\nYour :moneybag: balance: " + self.get_user_money()
 
-    def update_user_money(self, amount):
-        hm_db = Db(self.id)
-        hm_db.connect()
-        try:
-            return "Your new account balance: **$" + hm_db.update_money(amount) + "**"
-
-        # caught error in the SQL statement, so that means no account was found
-        except:
-            return "\nYou have no bank account! <a:rotatethink:490228030556340259>\n" \
-                   "Use **%create** to start one. "
         
     def find_user(self):
         hm_db = Db(self.id)
@@ -104,11 +94,31 @@ class Users:
                 total_winnings = '**$' + str(total_winnings) + '**'
 
                 return ('\n** **\n'
-                ':crossed_swords:  lost: ' + battles_lost +
-                '\n:crossed_swords:  won: ' + battles_won +
-                '\nTotal winnings: ' + total_winnings)
+                        ':crossed_swords:  lost: ' + battles_lost +
+                        '\n:crossed_swords:  won: ' + battles_won +
+                        '\nTotal winnings: ' + total_winnings)
 
         # caught error in the SQL statement, so that means no account was found
         except:
             return "\nNo bank account! <a:rotatethink:490228030556340259>\n" \
+                   "Use **%create** to start one. "
+
+    def update_user_money(self, amount):
+        hm_db = Db(self.id)
+        hm_db.connect()
+        try:
+            return "Your new account balance: **$" + str(hm_db.update_money(amount)) + "**"
+
+        # caught error in the SQL statement, so that means no account was found
+        except:
+            return "\nYou have no bank account! <a:rotatethink:490228030556340259>\n" \
+                   "Use **%create** to start one. "
+
+    def update_user_level(self):
+        hm_db = Db(self.id)
+        hm_db.connect()
+        try:
+            return " Your new level: **" + str(hm_db.update_level()) + "**"
+        except:
+            return "\nYou have no bank account! <a:rotatethink:490228030556340259>\n" \
                    "Use **%create** to start one. "

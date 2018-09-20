@@ -20,7 +20,8 @@ class Account:
     async def delete(self, context):
         # create user instance with their discord ID, delete user from database based off their discord ID
         await self.client.say('Do you really want to delete your account? Type **"confirm"** to confirm.')
-        guess = await self.client.wait_for_message(author=context.message.author, timeout=60) # wait for user's input
+        # wait for user's input
+        guess = await self.client.wait_for_message(author=context.message.author, timeout=60)
         if guess.clean_content.upper() == 'CONFIRM':
             user = Users(context.message.author.id)
             await self.client.say(context.message.author.mention + user.delete_user())
@@ -100,6 +101,48 @@ class Account:
             user = Users(context.message.author.id)
             await self.client.say(context.message.author.mention + " _Your battle stats..._"
                                                                  + user.get_user_battle_records())
+
+    @commands.command(name='levelup', aliases=['lup', 'LEVELUP'], pass_context=True)
+    async def levelup(self, context):
+        # create instance of user who wants to level-up
+        user = Users(context.message.author.id)
+        # get the user's current level
+        # calculate the cost of their next level-up
+        user_level = user.get_user_level(0) # get int version of level, SEE USERS.PY
+        level_up_cost = user_level * 1000
+
+        # check if they are max level
+        if user_level == 10:
+            await self.client.say(context.message.author.mention + 'You are level **10**, the max level!')
+            return
+
+        # check if they have enough money for a level-up
+        if user.get_user_money(0) < level_up_cost:
+            await self.client.say(context.message.author.mention + ' Not enough money for level-up...'
+                                                                 + ' <a:pepehands:485869482602922021>\n'
+                                                                 + '** **\nAccount balance: '
+                                                                 + user.get_user_money() + '\nLevel **'
+                                                                 + str(user_level + 1) + '** requires: **$'
+                                                                 + str(level_up_cost) + '**')
+            return
+
+        # passed conditional, so they have enough money to level up
+        # confirm if they really want to level-up
+        await self.client.say(context.message.author.mention + '\nAccount balance: ' + user.get_user_money()
+                                                             + '\nLevel **' + str(user_level + 1)
+                                                             + '** requires: **$' + str(level_up_cost)
+                                                             + '**\n** **\nDo you want to level-up?'
+                                                             + ' Type **"confirm"** to confirm.')
+
+        # wait for user's input
+        guess = await self.client.wait_for_message(author=context.message.author, timeout=60)
+        if guess.clean_content.upper() == 'CONFIRM':
+            # deduct the level-up cost from their account
+            user.update_user_money(level_up_cost*-1)
+            # increase level by 1 and print new level
+            await self.client.say(context.message.author.mention + user.update_user_level())
+        else:
+            await self.client.say(context.message.author.mention + ' Cancelled level-up.')
 
 def setup(client):
     client.add_cog(Account(client))
