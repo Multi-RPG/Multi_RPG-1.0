@@ -57,8 +57,10 @@ async def helper(context):
           '  %clear          use "%clear" or "%clear X", -- X being #  messages \n' \
           '  %code           use "%code" to view this bot\'s source code\n' \
           '  %invite         use "%invite" to view the bot\'s invitation link\n' \
-          'Account:\n  %create         use "%create" to make a bank account\n' \
-          '  %delete         use "%delete" to delete your bank account\n' \
+          'Account:\n' \
+          '  %create         use "%create" to make a account\n' \
+          '  %delete         use "%delete" to delete your account\n' \
+          '  %levelup        use "%levelup" to level up your account\n' \
           '  %money          use "%money" or "%money @user" to print bank balance\n' \
           '  %give           use "%give X @user" -- X being money to give a user\n' \
           '  %stats          use "%stats" or "%stats @user" for battle statistics\n' \
