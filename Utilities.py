@@ -26,6 +26,10 @@ class Utilities:
             await self.client.say('Cleared 1 message... '
                                   'Use **%clear X** to clear a higher, specified amount.')
 
+    @commands.command(name='id', aliases=['myid', 'ID'], pass_context=True)
+    async def discordID(self, context):
+        await self.client.say(context.message.author.mention + ' Your discord ID: **' + context.message.author.id + '**')
+
     @commands.cooldown(1, 5, commands.BucketType.user)
     @commands.command(name='code', description='Give link to code', brief='can use "%code',
                       aliases=['CODE'], pass_context=True)

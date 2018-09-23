@@ -1,9 +1,11 @@
 #!/usr/bin/env python3
 import random
+from random import choices
 import re
 from discord.ext import commands
 from Users import Users
-
+import asyncio
+from multiprocessing import Process
 # open with file read for hangman at the top.
 # this way, we won't have to re-open the file every hangman, and we can just call pick_word()
 # make sure there is no carriage return after last word in text file
@@ -94,32 +96,86 @@ class Games:
                       brief='can use "fight @user X --X being amount to bet"',
                       aliases=['battle', 'BATTLE', 'FIGHT'], pass_context=True)
     async def battle_user(self, context, *args):
-        fighter1 = Users(context.message.author.id)
-        # use regex to extract only the user-id from the user targetted
-        fighter2 = Users(re.findall("\d+", args[0])[0])
-
-        # check if they specified a bet
         try:
+            # retrieve battle target
+            target = args[0]
+            # retrieve how much the fighter is betting on the battle
             bet = int(args[1])
-        # if none specified, default $100
+
+            fighter1 = Users(context.message.author.id)
+            # use regex to extract only the user-id from the user targetted
+            fighter2_id = int(re.findall("\d+", target)[0])
+            fighter2 = Users(fighter2_id)
+
+
+            # check if both users have accounts
+            if fighter1.find_user() == 0 or fighter2.find_user() == 0:
+                await self.client.say(context.message.author.mention +
+                                      " Either you or the target doesn't have an account."
+                                      "\nUse **%create** to make one.")
+                return
+
+            # check if both users have accounts
+            if fighter1.get_user_money(0) < bet or fighter2.get_user_money(0) < bet:
+                await self.client.say(context.message.author.mention +
+                                      " Either you or the target doesn't have enough money...")
+                return
+
+            # made this check function with the help of discord API documentation
+            # it will be called below to check if the confirmation response to fight is from fighter2
+            def fighter2check(msg):
+                return int(msg.author.id) == fighter2_id
+
+            # wait for fighter2 to accept the fight, make sure the response is from fighter2
+            await self.client.say(target + ', you were challenged for **$' + str(bet) +
+                                  '**\n:crossed_swords: Type **yes** to accept this battle. :crossed_swords: ')
+            confirm = await self.client.wait_for_message(timeout=60, check=fighter2check)
+            if confirm.clean_content.upper() == 'YES':
+                # have to use 2 messages to enlarge the emojis
+                await self.client.say('**Commencing battle!** Fight will conclude in 10 seconds...')
+                await self.client.say('<a:worryfight1:493220414206509056> <a:worryfight2:493220431738699786>')
+                await asyncio.sleep(10)
+                # get the difference in player level between each player
+                difference = fighter1.get_user_level(0) - fighter2.get_user_level(0)
+
+                # if fighter1 is higher level or same level
+                if difference >= 0:
+                    # decide winner, with fighter 1 having better odds (unless same level)
+                    winner = battle_decider(1, 2, difference)
+
+                # if fighter2 is higher level
+                elif difference < 0:
+                    # make level difference positive before calling our function
+                    difference *= -1
+                    # decide winner, with fighter 2 having better odds
+                    winner = battle_decider(2, 1, difference)
+
+                # check if they tried to exploit the code by spending all their money during the battle
+                if fighter1.get_user_money(0) < bet or fighter2.get_user_money(0) < bet:
+                    await self.client.say(context.message.author.mention + " One of you spent money while battling...")
+                    return
+
+                # check who the winner was returned as
+                # update account balances respectively
+                if winner == 1:
+                    await self.client.say(context.message.author.mention + ' won **$' + str(bet)
+                                          + '** by defeating ' + target)
+                    fighter1.update_user_money(bet)
+                    # update winner's battle records... battles_won + 1 and total_winnings + X
+                    fighter1.update_user_records(0, 1, bet)
+                    fighter2.update_user_money(bet*-1)
+                else:
+                    await self.client.say(target + ' won **$' + str(bet) +
+                                          '** by defeating ' + context.message.author.mention)
+                    fighter1.update_user_money(bet*-1)
+                    fighter2.update_user_money(bet)
+                    # update winner's battle records... battles_won + 1 and total_winnings + X
+                    fighter2.update_user_records(0, 1, bet)
+            else:
+                await self.client.say('You rejected the battle! ' + target)
+
         except:
-            bet = 100
-
-        # check if both users have accounts
-        if fighter1.find_user() == 0 or fighter2.find_user() == 0:
-            await self.client.say(context.message.author.mention +
-                                  " Either you or the target doesn't have an account."
-                                  "\nUse **%create** to make one.")
-            return
-
-        # check if both users have accounts
-        if fighter1.get_user_money(0) < bet or fighter2.get_user_money(0) < bet:
-            await self.client.say(context.message.author.mention +
-                                  " Either you or the target doesn't have enough money."
-                                  "\nUse **%create** to make one.")
-            return
-
-        await self.client.say('You challenged ' + args[0] + ' for $' + str(bet))
+            await self.client.say('Use %fight like so: **%fight @user X**        -- X being amount to bet')
 
 
     '''FLIP COIN FUNCTION'''
@@ -307,6 +363,32 @@ class Games:
 def setup(client):
     client.add_cog(Games(client))
 
+def battle_decider(higher_odds, lower_odds, difference):
+    # the maximum player level difference is 9
+    # choices function maps a selection to a probability, and selects one choice based off probability
+    if difference == 1:
+        winner = choices([higher_odds, lower_odds], [.52, .48])
+    elif difference == 2:
+        winner = choices([higher_odds, lower_odds], [.54, .46])
+    elif difference == 3:
+        winner = choices([higher_odds, lower_odds], [.56, .44])
+    elif difference == 4:
+        winner = choices([higher_odds, lower_odds], [.58, .42])
+    elif difference == 5:
+        winner = choices([higher_odds, lower_odds], [.60, .40])
+    elif difference == 6:
+        winner = choices([higher_odds, lower_odds], [.62, .38])
+    elif difference == 7:
+        winner = choices([higher_odds, lower_odds], [.64, .36])
+    elif difference == 8:
+        winner = choices([higher_odds, lower_odds], [.66, .34])
+    elif difference == 9:
+        winner = choices([higher_odds, lower_odds], [.68, .32])
+    else:
+        winner = choices([higher_odds, lower_odds], [.50, .50])
+
+    # choices function returning [1] or [2] so use regex to pull the integers out
+    return int(re.findall("\d+", str(winner))[0])
 
 def pick_word(cat):
     if cat == 1:

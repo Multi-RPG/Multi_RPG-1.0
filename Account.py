@@ -19,7 +19,7 @@ class Account:
                       brief='delete your user account', aliases=['del'], pass_context=True)
     async def delete(self, context):
         # create user instance with their discord ID, delete user from database based off their discord ID
-        await self.client.say('Do you really want to delete your account? Type **"confirm"** to confirm.')
+        await self.client.say('Do you really want to delete your account? Type **confirm** to confirm.')
         # wait for user's input
         guess = await self.client.wait_for_message(author=context.message.author, timeout=60)
         if guess.clean_content.upper() == 'CONFIRM':
@@ -56,8 +56,10 @@ class Account:
     async def give(self, context, *args):
         # will automatically go to exception if all arguments weren't supplied correctly
         try:
-            amnt = args[0]
-            receiver_string = args[1]
+            receiver_string = args[0]
+            amnt = int(args[1])
+
+
             # create user instance with their discord ID, check database for their level field
             donator = Users(context.message.author.id)
             # use regex to extract only numbers from "receiver_string" to get their discord ID,
@@ -82,7 +84,7 @@ class Account:
             msg = donator.donate_money(int(amnt), receiver, receiver_string)
             await self.client.say(msg)
         except:
-            await self.client.say('Use %donate like so: **%donate X @user**    -- X being amount to donate')
+            await self.client.say('Use %donate like so: **%donate @user X**    -- X being amount to donate')
 
     @commands.command(name='stats', aliases=['battles', 'BRECORDS', 'STATS'], pass_context=True)
     async def battlerecords(self, context, *args):
@@ -136,8 +138,8 @@ class Account:
                                                              + ' Type **"confirm"** to confirm.')
 
         # wait for user's input
-        guess = await self.client.wait_for_message(author=context.message.author, timeout=60)
-        if guess.clean_content.upper() == 'CONFIRM':
+        confirm = await self.client.wait_for_message(author=context.message.author, timeout=60)
+        if confirm.clean_content.upper() == 'CONFIRM':
             # deduct the level-up cost from their account
             user.update_user_money(level_up_cost*-1)
             # increase level by 1 and print new level

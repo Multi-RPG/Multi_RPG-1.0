@@ -145,7 +145,8 @@ class Db:
     def update_battle_records(self, battles_lost, battles_won, total_winnings):
         cur = self.connection.cursor()
 
-        sql = "UPDATE Battles SET battles_lost = ?, battles_won = ?, total_winnings = ? WHERE fighter_id = ?"
+        sql = "UPDATE Battles SET battles_lost = battles_lost + ?, battles_won = battles_won + ?," \
+              " total_winnings = total_winnings + ? WHERE fighter_id = ?"
         cur.execute(sql, (battles_lost, battles_won, total_winnings, self.id))
         cur.execute("select * from Battles")
         rows = cur.fetchall()

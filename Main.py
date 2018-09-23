@@ -21,7 +21,7 @@ startup_extensions = ["Games", "Utilities", "Memes", "Account"]
 @client.event
 async def on_ready():
     print('Logged in as\n'
-          + client.user.name +'\n'
+          + client.user.name + '\n'
           + client.user.id + '\n'
           + '---------')
     await client.change_presence(game=discord.Game(name='%help for commands'))
@@ -61,11 +61,13 @@ async def helper(context):
           '  %create         use "%create" to make a account\n' \
           '  %delete         use "%delete" to delete your account\n' \
           '  %levelup        use "%levelup" to level up your account\n' \
-          '  %money          use "%money" or "%money @user" to print bank balance\n' \
-          '  %give           use "%give X @user" -- X being money to give a user\n' \
+          '                  (this gives 2% increased battle win probability)\n\n' \
           '  %stats          use "%stats" or "%stats @user" for battle statistics\n' \
+          '  %money          use "%money" or "%money @user" to print bank balance\n' \
+          '  %give           use "%give @user X" -- X being money to give a user\n' \
           'Games For Money:\n' \
-          '  %rob            use "%rob" for a 6/10 chance to mug a fellow player\n\n' \
+          '  %rob            use "%rob" for a 6/10 chance to mug a fellow player\n' \
+          '  %fight          use "%fight @user X" -- X being money to bet\n' \
           '  %flip           use "%flip" or "%flip X" or "%flip X Y" \n' \
           '                  -- X being heads or tails guess\n' \
           '                  -- Y being amount to bet\n\n' \
