@@ -34,7 +34,7 @@ class Games:
         self.client = client
 
     '''ROB FUNCTION'''
-    @commands.command(name='rob', description='Steal money from others', brief='can use %steal',
+    @commands.command(name='rob', description='Steal money from others', brief='can use =steal',
                       aliases=['thief', 'thieve', 'ROB', 'steal', 'mug'], pass_context=True)
     async def rob(self, context):
         # create instance of the user starting the robbery
@@ -43,7 +43,7 @@ class Games:
         # make sure the robber has an account
         if robber.find_user() == 0:
             await self.client.say(context.message.author.mention + " You don't have an account.\n"
-                                                                   "Use **%create** to make one.")
+                                                                   "Use **=create** to make one.")
             return
 
         # pick a random user in the server to rob
@@ -96,11 +96,16 @@ class Games:
                       brief='can use "fight @user X --X being amount to bet"',
                       aliases=['battle', 'BATTLE', 'FIGHT'], pass_context=True)
     async def battle_user(self, context, *args):
+        # retrieve how much the fighter is betting on the battle
+        try:
+            bet = int(args[1])
+        except:
+            await self.client.say('No bet specified, defaulting to **$10**\n ** **')
+            bet = 10
+
         try:
             # retrieve battle target
             target = args[0]
-            # retrieve how much the fighter is betting on the battle
-            bet = int(args[1])
 
             fighter1 = Users(context.message.author.id)
             # use regex to extract only the user-id from the user targetted
@@ -112,7 +117,7 @@ class Games:
             if fighter1.find_user() == 0 or fighter2.find_user() == 0:
                 await self.client.say(context.message.author.mention +
                                       " Either you or the target doesn't have an account."
-                                      "\nUse **%create** to make one.")
+                                      "\nUse **=create** to make one.")
                 return
 
             # check if both users have accounts
@@ -129,58 +134,69 @@ class Games:
             # wait for fighter2 to accept the fight, make sure the response is from fighter2
             await self.client.say(target + ', you were challenged for **$' + str(bet) +
                                   '**\n:crossed_swords: Type **yes** to accept this battle. :crossed_swords: ')
-            confirm = await self.client.wait_for_message(timeout=60, check=fighter2check)
-            if confirm.clean_content.upper() == 'YES':
-                # have to use 2 messages to enlarge the emojis
-                await self.client.say('**Commencing battle!** Fight will conclude in 10 seconds...')
-                await self.client.say('<a:worryfight1:493220414206509056> <a:worryfight2:493220431738699786>')
-                await asyncio.sleep(10)
-                # get the difference in player level between each player
-                difference = fighter1.get_user_level(0) - fighter2.get_user_level(0)
 
-                # if fighter1 is higher level or same level
-                if difference >= 0:
-                    # decide winner, with fighter 1 having better odds (unless same level)
-                    winner = battle_decider(1, 2, difference)
+            # try to get an battle acceptance from other user
+            try:
+                confirm = await self.client.wait_for_message(timeout=60, check=fighter2check)
+                if confirm.clean_content.upper() == 'YES':
+                    # have to use 2 messages to enlarge the emojis
+                    await self.client.say('**Commencing battle!** Fight will conclude in 10 seconds...')
+                    await self.client.say('<a:worryfight1:493220414206509056> <a:worryfight2:493220431738699786>')
+                    await asyncio.sleep(10)
+                    # get the difference in player level between each player
+                    difference = fighter1.get_user_level(0) - fighter2.get_user_level(0)
 
-                # if fighter2 is higher level
-                elif difference < 0:
-                    # make level difference positive before calling our function
-                    difference *= -1
-                    # decide winner, with fighter 2 having better odds
-                    winner = battle_decider(2, 1, difference)
+                    # if fighter1 is higher level or same level
+                    if difference >= 0:
+                        # decide winner, with fighter 1 having better odds (unless same level)
+                        winner = battle_decider(1, 2, difference)
 
-                # check if they tried to exploit the code by spending all their money during the battle
-                if fighter1.get_user_money(0) < bet or fighter2.get_user_money(0) < bet:
-                    await self.client.say(context.message.author.mention + " One of you spent money while battling...")
-                    return
+                    # if fighter2 is higher level
+                    elif difference < 0:
+                        # make level difference positive before calling our function
+                        difference *= -1
+                        # decide winner, with fighter 2 having better odds
+                        winner = battle_decider(2, 1, difference)
 
-                # check who the winner was returned as
-                # update account balances respectively
-                if winner == 1:
-                    await self.client.say(context.message.author.mention + ' won **$' + str(bet)
-                                          + '** by defeating ' + target)
-                    fighter1.update_user_money(bet)
-                    # update winner's battle records... battles_won + 1 and total_winnings + X
-                    fighter1.update_user_records(0, 1, bet)
-                    fighter2.update_user_money(bet*-1)
+                    # check if they tried to exploit the code by spending all their money during the battle
+                    if fighter1.get_user_money(0) < bet or fighter2.get_user_money(0) < bet:
+                        await self.client.say(context.message.author.mention + " One of you spent money while battling...")
+                        return
+
+                    # check who the winner was returned as
+                    # update account balances respectively
+                    if winner == 1:
+                        await self.client.say(context.message.author.mention + ' won **$' + str(bet)
+                                              + '** by defeating ' + target)
+                        fighter1.update_user_money(bet)
+                        # update winner's battle records... battles_won + 1 and total_winnings + X
+                        fighter1.update_user_records(0, 1, bet)
+                        fighter2.update_user_money(bet*-1)
+                    else:
+                        await self.client.say(target + ' won **$' + str(bet) +
+                                              '** by defeating ' + context.message.author.mention)
+                        fighter1.update_user_money(bet*-1)
+                        fighter2.update_user_money(bet)
+                        # update winner's battle records... battles_won + 1 and total_winnings + X
+                        fighter2.update_user_records(0, 1, bet)
                 else:
-                    await self.client.say(target + ' won **$' + str(bet) +
-                                          '** by defeating ' + context.message.author.mention)
-                    fighter1.update_user_money(bet*-1)
-                    fighter2.update_user_money(bet)
-                    # update winner's battle records... battles_won + 1 and total_winnings + X
-                    fighter2.update_user_records(0, 1, bet)
-            else:
-                await self.client.say('You rejected the battle! ' + target)
+                    await self.client.say('You rejected the battle! ' + target)
 
+            # if the target never responded
+            except:
+                await self.client.say('**Battle request ignored...** <a:pepehands:485869482602922021>')
+
+
+
+        # if they used syntax incorrectly
         except:
-            await self.client.say('Use %fight like so: **%fight @user X**        -- X being amount to bet')
+            await self.client.say(context.message.author.mention +
+                                  '```ml\nuse =fight like so: **=fight @user X**      -- X being amount to bet```')
 
 
     '''FLIP COIN FUNCTION'''
     @commands.command(name='flip', description='Flip a coin to earn social status.',
-                      brief='can use "%flip" or "%flip X", with X being heads or tails',
+                      brief='can use "=flip" or "=flip X", with X being heads or tails',
                       aliases=['f', 'flpi', 'FLIP', 'F'], pass_context=True)
     async def flip_coin(self, context, *args):
         result = random.randint(0, 1)  # flipping in "binary"
@@ -242,7 +258,7 @@ class Games:
 
     '''HANGMAN main function'''
     @commands.command(name='hangman', description='Guess the word in order to survive.',
-                      brief='can use "%hangman", type "stop" or "cancel" to end game',
+                      brief='can use "=hangman", type "stop" or "cancel" to end game',
                       aliases=['hm', 'hang', 'HM', 'HANGMAN'], pass_context=True)
     async def hangman(self, context, *args):
         wrong_guesses = 0  # global running count of incorrect guesses

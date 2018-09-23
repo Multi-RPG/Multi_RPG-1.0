@@ -5,7 +5,7 @@ from discord.ext import commands
 class Memes:
     def __init__(self, client):
         self.client = client
-    @commands.command(name='trumporder', description='executive order from trump', brief='can use %trumporder "order"',
+    @commands.command(name='trumporder', description='executive order from trump', brief='can use =trumporder "order"',
                       aliases=['trump', 'order', 'executiveorder' 'TRUMP', 'EXECUTIVE', 'executive', 'ORDER'], pass_context=True)
     async def trump_order(self, context, *args):
         # using IMGFLIP public API: https://api.imgflip.com/
@@ -20,7 +20,7 @@ class Memes:
             print('trump order meme arguments: ' + order)  
         except:
             await self.client.say(context.message.author.mention +
-                                  '```ml\nuse %trumporder like so: %trumporder "order"```')
+                                  '```ml\nuse =trumporder like so: =trumporder "order"```')
             return
         
         DATA = {'template_id':template_id,
@@ -40,7 +40,7 @@ class Memes:
         text = r.json()
         await self.client.say(text['data']['url'])
         
-    @commands.command(name='2buttons', description='2 buttons meme', brief='can use %2buttons "option1" "option2"',
+    @commands.command(name='2buttons', description='2 buttons meme', brief='can use =2buttons "option1" "option2"',
                       aliases=['buttons', '2 buttons', 'twobuttons'], pass_context=True)
     async def two_buttons(self, context, *args):
         # using IMGFLIP public API: https://api.imgflip.com/
@@ -50,7 +50,7 @@ class Memes:
         password = 'nicememes'
         
         # try-catch block, because of *args array.
-        # if no argument given in discord after "%pidgeon", it will go to the exception
+        # if no argument given in discord after "=pidgeon", it will go to the exception
         try:
             button1 = str(args[0]) # the argument is passed as string, gotta cast
             button2 = str(args[1]) 
@@ -58,7 +58,7 @@ class Memes:
             
         except:
             await self.client.say(context.message.author.mention +
-                                  '```ml\nuse %twobuttons like so: %twobuttons "option1" "option2"```')
+                                  '```ml\nuse =twobuttons like so: =twobuttons "option1" "option2"```')
             return
         
         DATA = {'template_id':template_id,
@@ -73,7 +73,7 @@ class Memes:
         text = r.json()
         await self.client.say(text['data']['url'])    
         
-    @commands.command(name='reasonstolive', description='book of reasons to live', brief='can use %reasonstolive "reasons"',
+    @commands.command(name='reasonstolive', description='book of reasons to live', brief='can use =reasonstolive "reasons"',
                       aliases=['pepelive', 'reasons', 'hope', 'pepebook'], pass_context=True)
     async def reasons_to_live(self, context, *args):
         # using IMGFLIP public API: https://api.imgflip.com/
@@ -84,14 +84,14 @@ class Memes:
         font = 'arial'
         
         # try-catch block, because of *args array.
-        # if no argument given in discord after "%pidgeon", it will go to the exception
+        # if no argument given in discord after "=pidgeon", it will go to the exception
         try:
             reasons = str(args[0]) # the argument is passed as string, gotta cast
             print('reasons to live meme arguments: ' + reasons)
             
         except:
             await self.client.say(context.message.author.mention +
-                                  '```ml\nuse %reasonstolive like so: %reasonstolive "reasons"```')
+                                  '```ml\nuse =reasonstolive like so: =reasonstolive "reasons"```')
             return
         
         DATA = {'template_id':template_id,
@@ -111,7 +111,7 @@ class Memes:
         text = r.json()
         await self.client.say(text['data']['url'])
         
-    @commands.command(name='bookfacts', description='book of facts meme', brief='can use %bookfacts "facts"',
+    @commands.command(name='bookfacts', description='book of facts meme', brief='can use =bookfacts "facts"',
                       aliases=['book', 'facts', 'BOOK', 'FACTS', 'bookoffacts', 'BOOKOFFACTS', 'factsbook', 'FACTSBOOK'],
                       pass_context=True)
     async def book_of_facts(self, context, *args):
@@ -123,14 +123,14 @@ class Memes:
         font = 'arial'
         
         # try-catch block, because of *args array.
-        # if no argument given in discord after "%pidgeon", it will go to the exception
+        # if no argument given in discord after "=pidgeon", it will go to the exception
         try:
             facts = str(args[0]) # the argument is passed as string, gotta cast
             print('book of facts meme arguments: ' + facts)
             
         except:
             await self.client.say(context.message.author.mention +
-                                  '```ml\nuse %bookfacts like so: %bookfacts "facts"```')
+                                  '```ml\nuse =bookfacts like so: =bookfacts "facts"```')
             return
         
         DATA = {'template_id':template_id,
@@ -158,7 +158,7 @@ class Memes:
     '''start using key value pairs instead of dictionaries for (DATA) when order matters
     (' ',' ') vs (' ':' ')
     '''
-    @commands.command(name='slapbutton', description='blue button karate chop meme', brief='can use %slapbutton "cause" "reaction"',
+    @commands.command(name='slapbutton', description='blue button karate chop meme', brief='can use =slapbutton "cause" "reaction"',
                       aliases=['chopbutton', 'bluebutton', 'SLAPBUTTON' ,'buttonslam', 'smashbutton'], pass_context=True)
     async def slap_button(self, context, *args):
         # using IMGFLIP public API: https://api.imgflip.com/
@@ -168,7 +168,7 @@ class Memes:
         password = 'nicememes'
         font = 'arial'
         
-        # try-catch block, because of *args array. if no argument given in discord after "%pidgeon", it will go to the exception
+        # try-catch block, because of *args array. if no argument given in discord after "=pidgeon", it will go to the exception
         try:
             cause = str(args[0]) # the argument is passed as string, gotta cast
             reaction = str(args[1]) 
@@ -176,7 +176,7 @@ class Memes:
             
         except:
             await self.client.say(context.message.author.mention +
-                                  '```ml\nuse %slapbutton like so: %slapbutton "cause" "reaction"```')
+                                  '```ml\nuse =slapbutton like so: =slapbutton "cause" "reaction"```')
             return
         
         DATA = (
@@ -193,7 +193,7 @@ class Memes:
         text = r.json()
         await self.client.say(text['data']['url'])
         
-    @commands.command(name='brain', description='expanding brain meme', brief='can use %brain "stage1" "stage2" "stage3" "stage4"',
+    @commands.command(name='brain', description='expanding brain meme', brief='can use =brain "stage1" "stage2" "stage3" "stage4"',
                       aliases=['expand', 'brainexpand', 'expandbrain', 'IQ', '200IQ'], pass_context=True)
     async def expanding_brain(self, context, *args):
         # using IMGFLIP public API: https://api.imgflip.com/
@@ -204,7 +204,7 @@ class Memes:
         font = 'arial'
         
         # try-catch block, because of *args array.
-        # if no argument given in discord after "%pidgeon", it will go to the exception
+        # if no argument given in discord after "=pidgeon", it will go to the exception
         try:
             stage1 = str(args[0]) # the argument is passed as string, gotta cast
             stage2 = str(args[1]) # the argument is passed as string, gotta cast
@@ -214,7 +214,7 @@ class Memes:
             
         except:
             await self.client.say(context.message.author.mention +
-                                  '```ml\nuse %brain like so: %brain "stage1" "stage2" "stage3" "stage4"```')
+                                  '```ml\nuse =brain like so: =brain "stage1" "stage2" "stage3" "stage4"```')
             return
         
         data1 = (
@@ -250,7 +250,7 @@ class Memes:
         text = r.json()
         await self.client.say(text['data']['url'])    
     
-    @commands.command(name='pigeon', description='Pigeon meme', brief='can use %pigeon "boy" "butterfly" "is this a pidgeon?"',
+    @commands.command(name='pigeon', description='Pigeon meme', brief='can use =pigeon "boy" "butterfly" "is this a pidgeon?"',
                       aliases=['PIDGEON', 'pidgeon', 'PIGEON'], pass_context=True)
     async def pigeon(self, context, *args):
         # using IMGFLIP public API: https://api.imgflip.com/
@@ -259,7 +259,7 @@ class Memes:
         username = 'hangman39'
         password = 'nicememes'
         
-        # try-catch block, because of *args array. if no argument given in discord after "%pidgeon",
+        # try-catch block, because of *args array. if no argument given in discord after "=pidgeon",
         # it will go to the exception
         try:
             whom = str(args[0]) # the argument is passed as string, gotta cast
@@ -274,7 +274,7 @@ class Memes:
             
         except:
             await self.client.say(context.message.author.mention +
-                                  '```ml\nuse %pigeon like so: %pigeon "boy" "butterfly" "is this a pidgeon?"```')
+                                  '```ml\nuse =pigeon like so: =pigeon "boy" "butterfly" "is this a pidgeon?"```')
             return
         
         DATA = (
@@ -292,7 +292,7 @@ class Memes:
         text = r.json()
         await self.client.say(text['data']['url'])
         
-    @commands.command(name='leftexit', description='Swerve left exit meme', brief='can use %leftexit "left" "right" "car"',
+    @commands.command(name='leftexit', description='Swerve left exit meme', brief='can use =leftexit "left" "right" "car"',
                       aliases=['carswerve', 'LEFTEXIT', 'swerve'], pass_context=True)
     async def left_exit(self, context, *args):
         # using IMGFLIP public API: https://api.imgflip.com/
@@ -302,7 +302,7 @@ class Memes:
         password = 'nicememes'
         
         # try-catch block, because of *args array.
-        # if no argument given in discord after "%pidgeon", it will go to the exception
+        # if no argument given in discord after "=pidgeon", it will go to the exception
         try:
             left = str(args[0]) # the argument is passed as string, gotta cast
             right = str(args[1])
@@ -312,7 +312,7 @@ class Memes:
             
         except:
             await self.client.say(context.message.author.mention +
-                                  '```ml\nuse %leftexit like so: %leftexit "left" "right" "car"```')
+                                  '```ml\nuse =leftexit like so: =leftexit "left" "right" "car"```')
             return
         
         DATA = (
@@ -332,7 +332,7 @@ class Memes:
     
 
     @commands.command(name='boyfriend', description='boyfriend checking out girl meme',
-                      brief='can use %boyfriend "new girl" "distracted boyfriend" "girlfriend"',
+                      brief='can use =boyfriend "new girl" "distracted boyfriend" "girlfriend"',
                       aliases=['BOYFRIEND', 'bf', 'BF', 'checkout', 'CHECKOUT'], pass_context=True)
     async def boyfriend(self, context, *args):
         # using IMGFLIP public API: https://api.imgflip.com/
@@ -342,7 +342,7 @@ class Memes:
         password = 'nicememes'
         
         # try-catch block, because of *args array.
-        # if no argument given in discord after "%pidgeon" it will go to the exception
+        # if no argument given in discord after "=pidgeon" it will go to the exception
         try:
             new_girl = str(args[0]) # the argument is passed as string, gotta cast
             distracted_boyfriend = str(args[1])
@@ -352,7 +352,7 @@ class Memes:
             
         except:
             await self.client.say(context.message.author.mention +
-                                  '```ml\nuse %boyfriend like so: "new girl" "distracted boyfriend" "girlfriend"```')
+                                  '```ml\nuse =boyfriend like so: "new girl" "distracted boyfriend" "girlfriend"```')
             return
         
         DATA = (

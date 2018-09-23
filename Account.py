@@ -70,7 +70,7 @@ class Account:
             if receiver.find_user() == 0 or donator.find_user() == 0:
                 await self.client.say(context.message.author.mention +
                                       " Either you or the target doesn't have an account."
-                                      "\nUse **%create** to make one.")
+                                      "\nUse **=create** to make one.")
                 return
             # check if they have enough money for the donation
             # pass 0 to return integer version of money, see USERS.PY function
@@ -84,7 +84,8 @@ class Account:
             msg = donator.donate_money(int(amnt), receiver, receiver_string)
             await self.client.say(msg)
         except:
-            await self.client.say('Use %donate like so: **%donate @user X**    -- X being amount to donate')
+            await self.client.say(context.message.author.mention +
+                                  '```ml\nuse =donate like so: **=donate @user X**    -- X being amount to donate```')
 
     @commands.command(name='stats', aliases=['battles', 'BRECORDS', 'STATS'], pass_context=True)
     async def battlerecords(self, context, *args):

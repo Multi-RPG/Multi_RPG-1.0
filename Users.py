@@ -55,7 +55,7 @@ class Users:
         # caught error in the SQL statement, so that means no account was found
         except:
             return "**$0**. \n\nNo bank account! <a:rotatethink:490228030556340259>\n" \
-                   "Use **%create** to start one. "
+                   "Use **=create** to start one. "
 
     # pass 0 to 'string' to return integer version of user's level EX: 3, default is string, EX: "**3**"
     def get_user_level(self, string=1):
@@ -73,7 +73,7 @@ class Users:
         # caught error in the SQL statement, so that means no account was found
         except:
             return "**0**. \n\nNo bank account! <a:rotatethink:490228030556340259>\n" \
-                   "Use **%create** to start one. "
+                   "Use **=create** to start one. "
 
     # pass 0 to 'string' to return integer version of user's battles records EX: 3, default is string, EX: "**3**"
     def get_user_battle_records(self, string=1):
@@ -101,7 +101,7 @@ class Users:
         # caught error in the SQL statement, so that means no account was found
         except:
             return "\nNo bank account! <a:rotatethink:490228030556340259>\n" \
-                   "Use **%create** to start one. "
+                   "Use **=create** to start one. "
 
     def update_user_money(self, amount):
         hm_db = Db(self.id)
@@ -112,7 +112,7 @@ class Users:
         # caught error in the SQL statement, so that means no account was found
         except:
             return "\nYou have no bank account! <a:rotatethink:490228030556340259>\n" \
-                   "Use **%create** to start one. "
+                   "Use **=create** to start one. "
 
     def update_user_level(self):
         hm_db = Db(self.id)
@@ -121,7 +121,7 @@ class Users:
             return " Your new level: **" + str(hm_db.update_level()) + "**"
         except:
             return "\nYou have no bank account! <a:rotatethink:490228030556340259>\n" \
-                   "Use **%create** to start one. "
+                   "Use **=create** to start one. "
 
     def update_user_records(self, battles_lost, battles_won, total_winnings):
         hm_db = Db(self.id)
