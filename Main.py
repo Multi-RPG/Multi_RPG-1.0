@@ -29,8 +29,8 @@ async def on_ready():
 @client.event
 async def on_message(message):
     # when we don't want the bot to reply to itself
-    # if message.author == client.user:
-    #     return
+    if message.author == client.user:
+        return
     if message.content.upper().startswith('ZEROTWO'):
         msg = '<a:bass:491371257544179724> <a:monk:486357534203183105> <a:bass:491371257544179724>' \
               ' <a:monk:486357534203183105> <a:bass:491371257544179724> <a:monk:486357534203183105>'.format(message)
