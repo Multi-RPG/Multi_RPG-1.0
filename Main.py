@@ -7,7 +7,7 @@ from Users import Users
 from discord.ext import commands
 
 # hidden file with our discord bot token
-# token_file = open("/usr/local/config.txt","r") # unix version
+# token_file = open("/usr/DiscordBot/config.txt","r") # unix version
 token_file = open("config.txt","r") # windows version
 TOKEN = token_file.read()
 token_file.close()
@@ -35,7 +35,7 @@ async def on_message(message):
         msg = '<a:bass:491371257544179724> <a:monk:486357534203183105> <a:bass:491371257544179724>' \
               ' <a:monk:486357534203183105> <a:bass:491371257544179724> <a:monk:486357534203183105>'.format(message)
         await client.send_message(message.channel, msg)
-        await client.send_file(message.channel, "/usr/local/z2.png")
+       # await client.send_file(message.channel, "/usr/DiscordBot.png")
     elif message.content.upper().startswith('IM'):
         msg = message.content.format(message)
         msg = 'Yes, you are ' + msg[3:] + ', have a nice day. Your lucky number is ' + str(random.randint(0, 10))\
