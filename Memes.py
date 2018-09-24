@@ -1,7 +1,17 @@
 #!/usr/bin/env python3
 import requests
 from discord.ext import commands
- 
+
+# prepare data for IMGFLIP public API: https://api.imgflip.com/
+username = 'hangman39'
+# read our IMGFLIP account password from text file
+# pass_file = open("/usr/DiscordBot/config2.txt","r") # unix version
+pass_file = open("config2.txt","r") # windows version
+password = pass_file.read()
+pass_file.close()
+# set URL that we will direct our requests to
+URL = "https://api.imgflip.com/caption_image"
+
 class Memes:
     def __init__(self, client):
         self.client = client
@@ -9,10 +19,7 @@ class Memes:
                       aliases=['trump', 'order', 'executiveorder' 'TRUMP', 'EXECUTIVE', 'executive', 'ORDER'], pass_context=True)
     async def trump_order(self, context, *args):
         # using IMGFLIP public API: https://api.imgflip.com/
-        URL = "https://api.imgflip.com/caption_image"
         template_id = 91545132
-        username = 'hangman39'
-        password = 'nicememes'
         font = 'arial'
         
         try:
@@ -44,11 +51,9 @@ class Memes:
                       aliases=['buttons', '2 buttons', 'twobuttons'], pass_context=True)
     async def two_buttons(self, context, *args):
         # using IMGFLIP public API: https://api.imgflip.com/
-        URL = "https://api.imgflip.com/caption_image"
         template_id = 87743020
-        username = 'hangman39'
-        password = 'nicememes'
         
+                
         # try-catch block, because of *args array.
         # if no argument given in discord after "=pidgeon", it will go to the exception
         try:
@@ -77,10 +82,7 @@ class Memes:
                       aliases=['pepelive', 'reasons', 'hope', 'pepebook'], pass_context=True)
     async def reasons_to_live(self, context, *args):
         # using IMGFLIP public API: https://api.imgflip.com/
-        URL = "https://api.imgflip.com/caption_image"
         template_id = 49740399
-        username = 'hangman39'
-        password = 'nicememes'
         font = 'arial'
         
         # try-catch block, because of *args array.
@@ -116,10 +118,7 @@ class Memes:
                       pass_context=True)
     async def book_of_facts(self, context, *args):
         # using IMGFLIP public API: https://api.imgflip.com/
-        URL = "https://api.imgflip.com/caption_image"
         template_id = 117573930
-        username = 'hangman39'
-        password = 'nicememes'
         font = 'arial'
         
         # try-catch block, because of *args array.
@@ -162,10 +161,7 @@ class Memes:
                       aliases=['chopbutton', 'bluebutton', 'SLAPBUTTON' ,'buttonslam', 'smashbutton'], pass_context=True)
     async def slap_button(self, context, *args):
         # using IMGFLIP public API: https://api.imgflip.com/
-        URL = "https://api.imgflip.com/caption_image"
         template_id = 119139145
-        username = 'hangman39'
-        password = 'nicememes'
         font = 'arial'
         
         # try-catch block, because of *args array. if no argument given in discord after "=pidgeon", it will go to the exception
@@ -197,10 +193,7 @@ class Memes:
                       aliases=['expand', 'brainexpand', 'expandbrain', 'IQ', '200IQ'], pass_context=True)
     async def expanding_brain(self, context, *args):
         # using IMGFLIP public API: https://api.imgflip.com/
-        URL = "https://api.imgflip.com/caption_image"
         template_id = 93895088
-        username = 'hangman39'
-        password = 'nicememes'
         font = 'arial'
         
         # try-catch block, because of *args array.
@@ -254,11 +247,8 @@ class Memes:
                       aliases=['PIDGEON', 'pidgeon', 'PIGEON'], pass_context=True)
     async def pigeon(self, context, *args):
         # using IMGFLIP public API: https://api.imgflip.com/
-        URL = "https://api.imgflip.com/caption_image"
         template_id = 100777631
-        username = 'hangman39'
-        password = 'nicememes'
-        
+                        
         # try-catch block, because of *args array. if no argument given in discord after "=pidgeon",
         # it will go to the exception
         try:
@@ -296,11 +286,8 @@ class Memes:
                       aliases=['carswerve', 'LEFTEXIT', 'swerve'], pass_context=True)
     async def left_exit(self, context, *args):
         # using IMGFLIP public API: https://api.imgflip.com/
-        URL = "https://api.imgflip.com/caption_image"
         template_id = 124822590
-        username = 'hangman39'
-        password = 'nicememes'
-        
+                        
         # try-catch block, because of *args array.
         # if no argument given in discord after "=pidgeon", it will go to the exception
         try:
@@ -336,11 +323,8 @@ class Memes:
                       aliases=['BOYFRIEND', 'bf', 'BF', 'checkout', 'CHECKOUT'], pass_context=True)
     async def boyfriend(self, context, *args):
         # using IMGFLIP public API: https://api.imgflip.com/
-        URL = "https://api.imgflip.com/caption_image"
         template_id = 112126428
-        username = 'hangman39'
-        password = 'nicememes'
-        
+                        
         # try-catch block, because of *args array.
         # if no argument given in discord after "=pidgeon" it will go to the exception
         try:

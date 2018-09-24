@@ -127,7 +127,6 @@ class Games:
                                       " Either you or the target doesn't have enough money...")
                 return
 
-
             # give target the prompt to ask if they will accept the challenge
             await self.client.say(target + ', you were challenged for **$' + str(bet) +
                                   '**\n:crossed_swords: Type **yes** to accept this battle. :crossed_swords: ')
