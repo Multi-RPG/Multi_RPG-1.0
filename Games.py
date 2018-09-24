@@ -127,16 +127,17 @@ class Games:
                                       " Either you or the target doesn't have enough money...")
                 return
 
+
+            # give target the prompt to ask if they will accept the challenge
+            await self.client.say(target + ', you were challenged for **$' + str(bet) +
+                                  '**\n:crossed_swords: Type **yes** to accept this battle. :crossed_swords: ')
+
             # made this check function with the help of discord API documentation
             # it will be called below to check if the confirmation response to fight is from fighter2
             def fighter2check(msg):
                 return int(msg.author.id) == fighter2_id
 
-            # wait for fighter2 to accept the fight, make sure the response is from fighter2
-            await self.client.say(target + ', you were challenged for **$' + str(bet) +
-                                  '**\n:crossed_swords: Type **yes** to accept this battle. :crossed_swords: ')
-
-            # try to get an battle acceptance from other user
+            # (try to) wait for a battle acceptance from other user
             try:
                 confirm = await self.client.wait_for_message(timeout=60, check=fighter2check)
                 if confirm.clean_content.upper() == 'YES':
