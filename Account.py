@@ -148,7 +148,7 @@ class Account:
                                                              + '\nLevel **' + str(user_level + 1)
                                                              + '** requires: **$' + str(level_up_cost)
                                                              + '**\n** **\nDo you want to level-up?'
-                                                             + ' Type **"confirm"** to confirm.')
+                                                             + ' Type **confirm** to confirm.')
 
         # wait for user's input
         confirm = await self.client.wait_for_message(author=context.message.author, timeout=60)
