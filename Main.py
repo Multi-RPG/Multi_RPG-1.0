@@ -36,7 +36,7 @@ async def on_message(message):
         msg = message.content.format(message)
         msg = '<:wthumbs:493806177894006786> Greetings ' + msg[3:]\
               + ', my name is Worry Jr. the 3rd.\nToday, your lucky number is ' + str(random.randint(0, 10))\
-              + '.'.format(message)
+              + '. {0.author.mention}'.format(message)
         await client.send_message(message.channel, msg)
 
     await client.process_commands(message)
