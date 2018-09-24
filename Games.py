@@ -172,13 +172,17 @@ class Games:
                         fighter1.update_user_money(bet)
                         # update winner's battle records... battles_won + 1 and total_winnings + X
                         fighter1.update_user_records(0, 1, bet)
+
                         fighter2.update_user_money(bet*-1)
+                        # update loser's battle records... battles_lost + 1
                         fighter2.update_user_records(1, 0, 0)
                     else:
                         await self.client.say(target + ' won **$' + str(bet) +
                                               '** by defeating ' + context.message.author.mention)
                         fighter1.update_user_money(bet*-1)
+                        # update loser's battle records... battles_lost + 1
                         fighter1.update_user_records(1, 0, 0)
+
                         fighter2.update_user_money(bet)
                         # update winner's battle records... battles_won + 1 and total_winnings + X
                         fighter2.update_user_records(0, 1, bet)

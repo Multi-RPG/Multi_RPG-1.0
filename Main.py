@@ -54,6 +54,7 @@ async def helper(context):
           '  =clear          use "=clear" or "=clear X", -- X being #  messages \n' \
           '  =code           use "=code" to view this bot\'s source code\n' \
           '  =invite         use "=invite" to view the bot\'s invitation link\n' \
+          '  =id             use "=id" to view your personal discord ID\n' \
           'Account:\n' \
           '  =create         use "=create" to make a account\n' \
           '  =delete         use "=delete" to delete your account\n' \
