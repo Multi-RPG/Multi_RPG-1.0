@@ -38,7 +38,6 @@ async def on_message(message):
               + '. {0.author.mention}'.format(message)
         await client.send_message(message.channel, msg)
 
-
     await client.process_commands(message)
 
 @client.command(name='help', description='command information', brief='show this message', aliases=['h'], pass_context = True)
@@ -81,7 +80,6 @@ async def helper(context):
     await client.send_message(context.message.channel, msg)
 
 # '''ERROR HANDLING'''
-
 @client.event
 async def on_command_error(error, context):
     if isinstance(error, commands.CommandOnCooldown):
