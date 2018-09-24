@@ -97,7 +97,7 @@ class Account:
             await self.client.say(msg)
         except:
             await self.client.say(context.message.author.mention +
-                                  '```ml\nuse =donate like so: **=donate @user X**    -- X being amount to donate```')
+                                  '```ml\nuse =give like so: **=give @user X**    -- X being amnt of money to give```')
 
     @commands.command(name='stats', aliases=['battles', 'BRECORDS', 'STATS'], pass_context=True)
     async def battlerecords(self, context, *args):
