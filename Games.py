@@ -250,7 +250,7 @@ class Games:
         try:
             if win == 1:
                 # triple user's bet if they win, add to account
-                msg = user.update_user_money(bet * 2)
+                msg = user.update_user_money(bet)
             else:
                 # remove user's bet from their account if they lose
                 msg = user.update_user_money(bet * -1)
