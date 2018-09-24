@@ -79,7 +79,7 @@ async def helper(context):
           '  =bookfacts      =bookfacts "facts"```'
     await client.send_message(context.message.channel, msg)
 
-# '''ERROR HANDLING'''
+# '''Command cooldown error handling'''
 @client.event
 async def on_command_error(error, context):
     if isinstance(error, commands.CommandOnCooldown):
