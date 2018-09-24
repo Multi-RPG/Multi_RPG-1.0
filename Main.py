@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 import discord
 import random
-import time
+import datetime
+import asyncio
 import re
 from Users import Users
 from discord.ext import commands
@@ -41,12 +42,8 @@ async def on_message(message):
         msg = 'Yes, you are ' + msg[3:] + ', have a nice day. Your lucky number is ' + str(random.randint(0, 10))\
               + '. {0.author.mention}'.format(message)
         await client.send_message(message.channel, msg)
-    # when we use clear function, delete the bot's "cleared" message after 5 seconds
-    elif message.content.startswith('Cleared '):
-        time.sleep(5)
-        await client.delete_message(message)
-    elif message.content.startswith('endend'):
-        await client.close()
+
+
     await client.process_commands(message)
 
 @client.command(name='help', description='command information', brief='show this message', aliases=['h'], pass_context = True)
@@ -61,8 +58,9 @@ async def helper(context):
           '  =create         use "=create" to make a account\n' \
           '  =delete         use "=delete" to delete your account\n' \
           '  =levelup        use "=levelup" to level up your account\n' \
-          '                  (this gives 2= increased battle win probability)\n\n' \
-          '  =stats          use "=stats" or "=stats @user" for battle statistics\n' \
+          '                  (this gives 2% increased battle win probability)\n\n' \
+          '  =level          use "=level" or "=level @user" to print account level\n' \
+          '  =stats          use "=stats" or "=stats @user" to print battle stats\n' \
           '  =money          use "=money" or "=money @user" to print bank balance\n' \
           '  =give           use "=give @user X" -- X being money to give a user\n' \
           'Games For Money:\n' \
@@ -87,7 +85,7 @@ async def helper(context):
     await client.send_message(context.message.channel, msg)
 
 # '''ERROR HANDLING'''
-'''
+
 @client.event
 async def on_command_error(error, context):
     if isinstance(error, commands.CommandOnCooldown):
@@ -95,7 +93,7 @@ async def on_command_error(error, context):
         # now convert to proper HH:MM:SS format and print the cooldown
         time = str(datetime.timedelta(seconds=int(error.retry_after)))
         await client.send_message(context.message.channel, content=' You are on cooldown: ' + time)
-'''    
+
     
 if __name__ == "__main__":
     for extension in startup_extensions:

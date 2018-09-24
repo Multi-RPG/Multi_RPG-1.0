@@ -47,10 +47,22 @@ class Account:
                                   " :moneybag: balance: " + user.get_user_money())
 
     @commands.command(name='level', aliases=['LEVEL', 'lvl', 'LVL'], pass_context=True)
-    async def level(self, context):
-        # create user instance with their discord ID, check database for their level field
-        user = Users(context.message.author.id)
-        await self.client.say(context.message.author.mention + ' Level: ' + user.get_user_level())
+    async def level(self, context, *args):
+        # this 'try' will process if they want to check another player's level
+        # it will only process if they passed that user as an argument
+        try:
+            # use regex to extract only numbers to get their discord ID,
+            # ex: <@348195501025394688> to 348195501025394688
+            # create user instance with their target's discord ID, check database for their level field
+            user = Users(re.findall("\d+", args[0])[0])
+            await self.client.say(context.message.author.mention +
+                                  " That user's level: " + user.get_user_level())
+        # if they passed no parameter, get their own level
+        except:
+            # create user instance with their discord ID, check database for their level field
+            user = Users(context.message.author.id)
+            await self.client.say(context.message.author.mention +
+                                  " Your level: " + user.get_user_level())
 
     @commands.command(name='give', aliases=['DONATE', 'GIVE', 'pay', 'donate', 'PAY'], pass_context=True)
     async def give(self, context, *args):

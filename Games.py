@@ -34,6 +34,7 @@ class Games:
         self.client = client
 
     '''ROB FUNCTION'''
+    @commands.cooldown(1, 3600, commands.BucketType.user)
     @commands.command(name='rob', description='Steal money from others', brief='can use =steal',
                       aliases=['thief', 'thieve', 'ROB', 'steal', 'mug'], pass_context=True)
     async def rob(self, context):
