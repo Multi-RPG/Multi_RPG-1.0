@@ -34,7 +34,8 @@ async def on_message(message):
         return
     elif message.content.upper().startswith('IM'):
         msg = message.content.format(message)
-        msg = 'Yes, nice to meet you ' + msg[3:] + ', have a nice day. Your lucky number is ' + str(random.randint(0, 10))\
+        msg = '<:wthumbs:493806177894006786> Greetings ' + msg[3:]\
+              + ', my name is Worry Jr the 3rd.\nToday, your lucky number is ' + str(random.randint(0, 10))\
               + '. {0.author.mention}'.format(message)
         await client.send_message(message.channel, msg)
 
