@@ -32,14 +32,9 @@ async def on_message(message):
     # when we don't want the bot to reply to itself
     if message.author == client.user:
         return
-    if message.content.upper().startswith('ZEROTWO'):
-        msg = '<a:bass:491371257544179724> <a:monk:486357534203183105> <a:bass:491371257544179724>' \
-              ' <a:monk:486357534203183105> <a:bass:491371257544179724> <a:monk:486357534203183105>'.format(message)
-        await client.send_message(message.channel, msg)
-       # await client.send_file(message.channel, "/usr/DiscordBot.png")
     elif message.content.upper().startswith('IM'):
         msg = message.content.format(message)
-        msg = 'Yes, you are ' + msg[3:] + ', have a nice day. Your lucky number is ' + str(random.randint(0, 10))\
+        msg = 'Yes, nice to meet you ' + msg[3:] + ', have a nice day. Your lucky number is ' + str(random.randint(0, 10))\
               + '. {0.author.mention}'.format(message)
         await client.send_message(message.channel, msg)
 
