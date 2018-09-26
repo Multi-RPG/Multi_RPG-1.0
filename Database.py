@@ -10,14 +10,16 @@ class Database:
     ''' 
     SQLITE STATEMENTS USED FOR CREATING THE 2 TABLES
     
-    # USERS TABLE
+    USERS TABLE
+    -----------
     sqlite> CREATE TABLE Users(
    ...> user_id varchar(255) NOT NULL PRIMARY KEY,
    ...> level int,
    ...> money int
    ...> );
 
-    # BATTLES TABLE
+    BATTLES TABLE
+    -------------
     sqlite> CREATE TABLE Battles(
    ...> fighter_id varchar(255) NOT NULL PRIMARY KEY,
    ...> battles_lost int,
