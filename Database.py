@@ -2,11 +2,14 @@
 import sqlite3
 from sqlite3 import Error
  
-class Db:
+class Database:
     def __init__(self, id):
         self.id = id
 
-    '''
+
+    ''' 
+    SQLITE STATEMENTS USED FOR CREATING THE 2 TABLES
+    
     # USERS TABLE
     sqlite> CREATE TABLE Users(
    ...> user_id varchar(255) NOT NULL PRIMARY KEY,

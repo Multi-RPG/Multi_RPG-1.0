@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
 import re
-from Db import Db
+from Database import Database
  
 class Users:
     def __init__(self, id):
         self.id = id
 
     def add_user(self):
-        hm_db = Db(self.id)
+        hm_db = Database(self.id)
         hm_db.connect()
         try:
             return " Made account!\nYour starting :moneybag: balance: **$" + str(hm_db.insert_acct()) + "**"
@@ -18,12 +18,12 @@ class Users:
 
         
     def find_user(self):
-        hm_db = Db(self.id)
+        hm_db = Database(self.id)
         hm_db.connect()
         return hm_db.find_acct()
 
     def delete_user(self):
-        hm_db = Db(self.id)
+        hm_db = Database(self.id)
         hm_db.connect()
 
         # first check if that user has an account
@@ -41,7 +41,7 @@ class Users:
 
     # pass 0 to 'string' to return integer version of user's money EX: 100, default is string, EX: "**$100**"
     def get_user_money(self, string=1):
-        hm_db = Db(self.id)
+        hm_db = Database(self.id)
         hm_db.connect()
 
         try:
@@ -59,7 +59,7 @@ class Users:
 
     # pass 0 to 'string' to return integer version of user's level EX: 3, default is string, EX: "**3**"
     def get_user_level(self, string=1):
-        hm_db = Db(self.id)
+        hm_db = Database(self.id)
         hm_db.connect()
 
         try:
@@ -77,7 +77,7 @@ class Users:
 
     # pass 0 to 'string' to return integer version of user's battles records EX: 3, default is string, EX: "**3**"
     def get_user_battle_records(self, string=1):
-        hm_db = Db(self.id)
+        hm_db = Database(self.id)
         hm_db.connect()
 
         try:
@@ -104,7 +104,7 @@ class Users:
                    "Use **=create** to start one. "
 
     def update_user_money(self, amount):
-        hm_db = Db(self.id)
+        hm_db = Database(self.id)
         hm_db.connect()
         try:
             return "Your new account balance: **$" + str(hm_db.update_money(amount)) + "**"
@@ -115,7 +115,7 @@ class Users:
                    "Use **=create** to start one. "
 
     def update_user_level(self):
-        hm_db = Db(self.id)
+        hm_db = Database(self.id)
         hm_db.connect()
         try:
             return " Your new level: **" + str(hm_db.update_level()) + "**"
@@ -124,7 +124,7 @@ class Users:
                    "Use **=create** to start one. "
 
     def update_user_records(self, battles_lost, battles_won, total_winnings):
-        hm_db = Db(self.id)
+        hm_db = Database(self.id)
         hm_db.connect()
 
         return " Your new battle records: **" \
