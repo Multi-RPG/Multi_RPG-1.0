@@ -81,16 +81,16 @@ async def helper(context):
           '  =bookfacts      =bookfacts "facts"```'
     await client.send_message(context.message.channel, msg)
 
-# # Command cooldown error handling
-# @client.event
-# async def on_command_error(error, context):
-#     if isinstance(error, commands.CommandOnCooldown):
-#         # error.retry_after returns float, need to cast to integer without decimals
-#         # now convert to proper HH:MM:SS format and print the cooldown
-#         time = str(datetime.timedelta(seconds=int(error.retry_after)))
-#         await client.send_message(context.message.channel, content=' You are on cooldown: ' + time)
-#
-#
+# Command cooldown error handling
+@client.event
+async def on_command_error(error, context):
+    if isinstance(error, commands.CommandOnCooldown):
+        # error.retry_after returns float, need to cast to integer without decimals
+        # now convert to proper HH:MM:SS format and print the cooldown
+        time = str(datetime.timedelta(seconds=int(error.retry_after)))
+        await client.send_message(context.message.channel, content=' You are on cooldown: ' + time)
+
+
 if __name__ == "__main__":
     for extension in startup_extensions:
         try:
