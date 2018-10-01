@@ -28,6 +28,7 @@ class Memes:
         self.client = client
 
     # Not using IMGFLIP API for custom memes. Instead, using Python Imaging Library for image processing
+    @commands.cooldown(1, 15, commands.BucketType.user)
     @commands.command(name='custom', description='generate your own twitter style meme', brief='can use =memegen',
                       aliases=['memegen', 'CUSTOM', 'meme'], pass_context=True)
     async def custom_meme(self, context, *args):
