@@ -116,8 +116,6 @@ class Games:
 
             # retrieve battle target
             target = args[0]
-
-            fighter1 = Users(context.message.author.id)
             # use regex to extract only the user-id from the user targeted
             fighter2_id = int(re.findall("\d+", target)[0])
             fighter2 = Users(fighter2_id)
