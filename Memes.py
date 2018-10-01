@@ -29,7 +29,7 @@ class Memes:
 
     # Not using IMGFLIP API for custom memes. Instead, using Python Imaging Library for image processing
     @commands.command(name='custom', description='generate your own twitter style meme', brief='can use =memegen',
-                      aliases=['memegen', 'CUSTOM'], pass_context=True)
+                      aliases=['memegen', 'CUSTOM', 'meme'], pass_context=True)
     async def custom_meme(self, context, *args):
         # made this check function with the help of discord API documentation
         # it will be called below when purging, to only purge messages from itself and user who called this command
@@ -53,6 +53,7 @@ class Memes:
             # the bot failed to retrieve image at that URL
             await self.client.say(context.message.author.mention + ' The link you provided seems to be faulty...'
                                                                        ' <a:pepehands:485869482602922021>')
+            return
 
         # SETUP WHITE BACKGROUND CANVAS
         background = Image.open('custom_memes\memebackground.png')
@@ -88,7 +89,9 @@ class Memes:
         try:
             img = Image.open("custom_memes\\UserImage.png", "r").convert("RGB")
         except:
+            # if we can't read the image downloaded, it's in the wrong format...
             await self.client.say('PNG/JPG/WebP links only please! <a:pepehands:485869482602922021>')
+            return
         # resize image to fit background
         # using ANTIALIAS as good practice for using PIL library
         img = img.resize((468, 277), Image.ANTIALIAS)
