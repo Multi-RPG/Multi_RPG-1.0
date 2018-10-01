@@ -9,7 +9,7 @@ from discord.ext import commands
 
 # hidden file with our discord bot token
 # token_file = open("/usr/DiscordBot/config.txt","r") # unix version
-token_file = open("config.txt","r") # windows version
+token_file = open("tokens\config.txt","r") # windows version
 TOKEN = token_file.read()
 token_file.close()
 
@@ -69,6 +69,7 @@ async def helper(context):
           '                  use "=hm cats" for category numbers\n' \
           '                  use "stop" or "cancel" to stop game\n' \
           'Meme Maker:  \n' \
+          '  =custom         =custom to create a personalized twitter-styled meme \n' \
           '  =pigeon         =pigeon "boy" "butterfly" "is this a pidgeon?" \n' \
           '  =boyfriend      =boyfriend "new girl" "distracted boyfriend" "girlfriend"\n' \
           '  =brain          =brain "stage1" "stage2" "stage3" "stage4"\n' \
@@ -80,16 +81,16 @@ async def helper(context):
           '  =bookfacts      =bookfacts "facts"```'
     await client.send_message(context.message.channel, msg)
 
-# Command cooldown error handling
-@client.event
-async def on_command_error(error, context):
-    if isinstance(error, commands.CommandOnCooldown):
-        # error.retry_after returns float, need to cast to integer without decimals
-        # now convert to proper HH:MM:SS format and print the cooldown
-        time = str(datetime.timedelta(seconds=int(error.retry_after)))
-        await client.send_message(context.message.channel, content=' You are on cooldown: ' + time)
-
-    
+# # Command cooldown error handling
+# @client.event
+# async def on_command_error(error, context):
+#     if isinstance(error, commands.CommandOnCooldown):
+#         # error.retry_after returns float, need to cast to integer without decimals
+#         # now convert to proper HH:MM:SS format and print the cooldown
+#         time = str(datetime.timedelta(seconds=int(error.retry_after)))
+#         await client.send_message(context.message.channel, content=' You are on cooldown: ' + time)
+#
+#
 if __name__ == "__main__":
     for extension in startup_extensions:
         try:

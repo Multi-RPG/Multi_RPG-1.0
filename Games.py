@@ -10,7 +10,7 @@ from multiprocessing import Process
 # this way, we won't have to re-open the file every hangman, and we can just call pick_word()
 # make sure there is no carriage return after last word in text file
 # words_file = open("/usr/DiscordBot/words.txt","r") # unix dedicated server version
-words_file = open("words.txt", "r")  # windows version
+words_file = open("db_and_words\words.txt", "r")  # windows version
 all_words = words_file.readlines()
 words_file.close()
 
