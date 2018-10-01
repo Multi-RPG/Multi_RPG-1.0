@@ -17,14 +17,19 @@ pass_file.close()
 # set URL that we will direct our non-custom memes requests to
 URL = "https://api.imgflip.com/caption_image"
 
+# set header uger-agent as Mozilla Firefox so our image requests (for custom memes) won't be denied
+opener = urllib.request.build_opener()
+opener.addheaders = [('User-agent', 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko)'
+                                    ' Chrome/36.0.1941.0 Safari/537.36')]
+urllib.request.install_opener(opener)
 
 class Memes:
     def __init__(self, client):
         self.client = client
 
     # Not using IMGFLIP API for custom memes. Instead, using Python Imaging Library for image processing
-    @commands.command(name='memegen', description='generate your own twitter style meme', brief='can use =memegen',
-                      aliases=['mgen'], pass_context=True)
+    @commands.command(name='custom', description='generate your own twitter style meme', brief='can use =memegen',
+                      aliases=['memegen', 'CUSTOM'], pass_context=True)
     async def custom_meme(self, context, *args):
         # made this check function with the help of discord API documentation
         # it will be called below when purging, to only purge messages from itself and user who called this command
@@ -40,34 +45,28 @@ class Memes:
         user_image = await self.client.wait_for_message(author=context.message.author, timeout=60)
         await self.client.purge_from(context.message.channel, limit=5, check=purge_check)
 
-        # try to retrieve the URL to image they provided
+        # try to start the request to get the image specified by user
         try:
             # download the image as "UserImage.png"
             urllib.request.urlretrieve(user_image.clean_content, "custom_memes\\UserImage.png")
         except:
             # the bot failed to retrieve image at that URL
             await self.client.say(context.message.author.mention + ' The link you provided seems to be faulty...'
-                                                                   ' <a:pepehands:485869482602922021>')
-            return
+                                                                       ' <a:pepehands:485869482602922021>')
 
-        # prepare white background png for custom memes
+        # SETUP WHITE BACKGROUND CANVAS
         background = Image.open('custom_memes\memebackground.png')
         draw = ImageDraw.Draw(background)
         font = ImageFont.truetype("custom_memes\helv.ttf", 25)
         smallfont = ImageFont.truetype("custom_memes\helv.ttf", 21)
 
-        # set header uger-agent as Mozilla Firefox so our image request won't be denied to pull avatar
-        opener = urllib.request.build_opener()
-        opener.addheaders = [('User-agent', 'Mozilla/5.0')]
-        urllib.request.install_opener(opener)
 
+        # PASTE USER'S PROFILE PICTURE AND USERNAME ON TOP OF BACKGROUND CANVAS
         # retrieve the URL for this user's avatar to embed above the text
-        print(context.message.author.avatar_url)
         urllib.request.urlretrieve(context.message.author.avatar_url, "custom_memes\\UserAvatar.webp")
-
-        # read the user's discord avatar image that we downloaded
+        # read the avatar image that we downloaded, convert to RGB so we can process it
         img = Image.open("custom_memes\\UserAvatar.webp", "r").convert("RGB")
-        # resize image to to be thumbnail size
+        # resize avatar to to be thumbnail size
         # using ANTIALIAS as good practice for using PIL library
         img = img.resize((45, 45), Image.ANTIALIAS)
         # paste the image onto background at the top
@@ -75,15 +74,21 @@ class Memes:
         # draw the user's username next to their profile picture
         draw.text((63, 1), ("@" + str(context.message.author)), (65, 65, 65), font=smallfont)
 
+
+        # PASTE THE MEME TEXT IN MIDDLE OF BACKGROUND CANVAS
         # draw their specified text on the white background, with word wrapping
-        margin = 10
         offset = 60
         for line in textwrap.wrap(user_text.clean_content, width=40):
-            draw.text((margin, offset), line, (1, 1, 1), font=font)
+            draw.text((10, offset), line, (1, 1, 1), font=font)
             offset += font.getsize(line)[1]
 
-        # read the new image that we downloaded
-        img = Image.open("custom_memes\\UserImage.png", "r")
+
+        # PASTE THE MEME PICTURE ON BOTTOM OF BACKGROUND CANVAS
+        # read the image that we downloaded earlier
+        try:
+            img = Image.open("custom_memes\\UserImage.png", "r").convert("RGB")
+        except:
+            await self.client.say('PNG/JPG/WebP links only please! <a:pepehands:485869482602922021>')
         # resize image to fit background
         # using ANTIALIAS as good practice for using PIL library
         img = img.resize((468, 277), Image.ANTIALIAS)
