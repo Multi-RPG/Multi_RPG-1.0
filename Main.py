@@ -69,7 +69,7 @@ async def helper(context):
           '                  use "=hm cats" for category numbers\n' \
           '                  use "stop" or "cancel" to stop game\n' \
           'Meme Maker:  \n' \
-          '  =meme           =meme to create a custom Twitter style meme \n' \
+          '  =meme           =meme to create a custom Twitter-style meme \n' \
           '  =pigeon         =pigeon "boy" "butterfly" "is this a pidgeon?" \n' \
           '  =boyfriend      =boyfriend "new girl" "distracted boyfriend" "girlfriend"\n' \
           '  =brain          =brain "stage1" "stage2" "stage3" "stage4"\n' \
