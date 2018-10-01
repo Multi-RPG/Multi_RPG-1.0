@@ -81,7 +81,7 @@ async def helper(context):
           '  =bookfacts      =bookfacts "facts"```'
     await client.send_message(context.message.channel, msg)
 
-# Command cooldown error handling
+# Commands error handling
 @client.event
 async def on_command_error(error, context):
     if isinstance(error, commands.CommandOnCooldown):
@@ -90,6 +90,8 @@ async def on_command_error(error, context):
         time = str(datetime.timedelta(seconds=int(error.retry_after)))
         await client.send_message(context.message.channel, content=' You are on cooldown: ' + time)
 
+    if isinstance(error, commands.CommandNotFound):
+        return
 
 if __name__ == "__main__":
     for extension in startup_extensions:
