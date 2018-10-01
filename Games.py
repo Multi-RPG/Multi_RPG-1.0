@@ -105,23 +105,31 @@ class Games:
             bet = 10
 
         try:
+            # make instance of user for user initiating fight
+            fighter1 = Users(context.message.author.id)
+            # quick check to make sure user who initiated fight has an account
+            if fighter1.find_user() == 0:
+                await self.client.say(context.message.author.mention +
+                                      " You don't have an account."
+                                      "\nUse **=create** to make one.")
+                return
+
             # retrieve battle target
             target = args[0]
 
             fighter1 = Users(context.message.author.id)
-            # use regex to extract only the user-id from the user targetted
+            # use regex to extract only the user-id from the user targeted
             fighter2_id = int(re.findall("\d+", target)[0])
             fighter2 = Users(fighter2_id)
 
-
-            # check if both users have accounts
-            if fighter1.find_user() == 0 or fighter2.find_user() == 0:
+            # check if targeted user has account
+            if fighter2.find_user() == 0:
                 await self.client.say(context.message.author.mention +
-                                      " Either you or the target doesn't have an account."
-                                      "\nUse **=create** to make one.")
+                                      " Your fighting target doesn't have an account."
+                                      "\nTell them to use **=create** to make one.")
                 return
 
-            # check if both users have accounts
+            # check if both users have enough money
             if fighter1.get_user_money(0) < bet or fighter2.get_user_money(0) < bet:
                 await self.client.say(context.message.author.mention +
                                       " Either you or the target doesn't have enough money...")
