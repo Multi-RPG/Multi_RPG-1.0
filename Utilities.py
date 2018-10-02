@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-import asyncio
 from discord.ext import commands
  
 class Utilities:
@@ -11,7 +10,8 @@ class Utilities:
                       brief='can use "=clear" or "=clear X", with X being #  messages to delete',
                       aliases=['c', 'clr', 'CLEAR', 'C', 'CLR', 'clean', 'CLEAN'], pass_context=True)
     async def clear(self, context, *args):
-        # try-catch block, because of *args array. if no argument given in discord after "=clear", it will go to the exception
+        # try-catch block, because of *args array.
+        # if no argument given in discord after "=clear", it will go to the exception
         try:
             deleted = await self.client.purge_from(context.message.channel, limit=int(args[0]))
             await self.client.say("Deleted %s message(s)" % str(len(deleted)))
@@ -21,6 +21,7 @@ class Utilities:
             await self.client.say('Cleared 1 message... '
                                   'Use **=clear X** to clear a higher, specified amount.')
 
+    @commands.cooldown(1, 5, commands.BucketType.user)
     @commands.command(name='id', aliases=['myid', 'ID'], pass_context=True)
     async def discordID(self, context):
         await self.client.say(context.message.author.mention + ' Your discord ID: **' + context.message.author.id + '**')

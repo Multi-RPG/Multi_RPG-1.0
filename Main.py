@@ -2,9 +2,6 @@
 import discord
 import random
 import datetime
-import asyncio
-import re
-from Users import Users
 from discord.ext import commands
 
 # hidden file with our discord bot token

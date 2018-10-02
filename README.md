@@ -7,3 +7,38 @@ Run requirements:
 3. Tokens for the discord bot login (config.txt) and IMGFLIP account password (config2.txt) must be in folder named 'tokens' in main directory. These should be 1 line text files.
 
 Note: Paths are currently setup to run in a windows environment. Adjustment will need to be made for running on Unix.
+
+SQL statements used for creating the database tables:
+-
+
+sqlite> CREATE TABLE Users(
+
+...> user_id varchar(255) NOT NULL PRIMARY KEY,
+
+...> level int,
+
+...> money int
+
+...> );
+
+sqlite> CREATE TABLE Battles(
+
+...> fighter_id varchar(255) NOT NULL PRIMARY KEY,
+
+...> battles_lost int,
+
+...> battles_won int,
+
+...> total_winnings int,
+
+...> CONSTRAINT fk_users
+
+...>     FOREIGN KEY (fighter_id)
+
+...>     REFERENCES Users(user_id)
+
+...>     ON UPDATE CASCADE
+
+...>     ON DELETE CASCADE
+
+...> );

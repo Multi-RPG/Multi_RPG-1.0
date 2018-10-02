@@ -1,33 +1,34 @@
 #!/usr/bin/env python3
 import random
-from random import choices
+import asyncio
 import re
 from discord.ext import commands
 from Users import Users
-import asyncio
-from multiprocessing import Process
-# open with file read for hangman at the top.
-# this way, we won't have to re-open the file every hangman, and we can just call pick_word()
-# make sure there is no carriage return after last word in text file
+from random import choices
+
+# open with file containing word bank
+# only read once so we won't have to re-open the file every game call
 # words_file = open("/usr/DiscordBot/words.txt","r") # unix dedicated server version
 words_file = open("db_and_words\words.txt", "r")  # windows version
 all_words = words_file.readlines()
 words_file.close()
 
-hangmen = [
-    ' -----------    \n|          |    \n|             \n|          \n|          \n|              \n|              \n',
-    ' -----------    \n|          |    \n|         O    \n|         \n|          \n|              \n|              \n',
-    ' -----------    \n|          |    \n|         O    \n|          |  \n|          \n|              \n|              \n',
-    ' -----------    \n|          |    \n|         O    \n|        /|  \n|          \n|              \n|              \n',
-    ' -----------    \n|          |    \n|         O    \n|        /|\\  \n|          \n|              \n|              \n',
-    ' -----------    \n|          |    \n|         O    \n|        /|\\  \n|        /   \n|              \n|              \n',
-    ' -----------    \n|          |    \n|         O    \n|        /|\\  \n|        / \\  \n|              \n|              \n']
+# prepare array of hangman art
+# only read once so we won't have to re-open the file every game call
+hangmen = []
+with open("db_and_words\hangmen.txt") as my_file:
+    for line in my_file:
+        hangmen.append(line)
 
-hm_categories_help = '```fix\n1. Country name\n2. Farm\n3. Camping\n4. Household items/devices\n' \
-                     '5. Beach\n6. Holidays\n7. US States\n8. Sports & Hobbies```'
-
-cancel_strings = ['STOP', 'CANCEL']
-
+# convert respective list index-ranges to string with ''.join
+# the resulting hangmen[0-6] will represent each stage of hangman
+hangmen[0] = ''.join(hangmen[0:6])
+hangmen[1] = ''.join(hangmen[7:13])
+hangmen[2] = ''.join(hangmen[14:20])
+hangmen[3] = ''.join(hangmen[21:27])
+hangmen[4] = ''.join(hangmen[28:34])
+hangmen[5] = ''.join(hangmen[35:41])
+hangmen[6] = ''.join(hangmen[42:49])
 
 class Games:
     def __init__(self, client):
@@ -274,6 +275,9 @@ class Games:
                       brief='can use "=hangman", type "stop" or "cancel" to end game',
                       aliases=['hm', 'hang', 'HM', 'HANGMAN'], pass_context=True)
     async def hangman(self, context, *args):
+        # initialize message to be printed if user wants category list
+        hm_help = '```fix\n1. Country name\n2. Farm\n3. Camping\n4. Household items/devices\n' \
+                             '5. Beach\n6. Holidays\n7. US States\n8. Sports & Hobbies```'
         wrong_guesses = 0  # global running count of incorrect guesses
         guessed_letters = ['']  # string of letters
 
@@ -281,7 +285,12 @@ class Games:
         # check if they want to list the categories
         try:
             if args[0] in ('help', 'HELP', 'categories', 'cats', 'h'):
-                await self.client.say(context.message.author.mention + ' Categories:\n' + hm_categories_help)
+                await self.client.say(context.message.author.mention + ' Categories:\n' + '```fix\n1. Country name\n'
+                                                                                          '2. Farm\n3. Camping\n'
+                                                                                          '4. Household items/devices\n'
+                                                                                          '5. Beach\n6. Holidays\n'
+                                                                                          '7. US States\n'
+                                                                                          '8. Sports & Hobbies```')
                 return
             correct_word, category, underscore_sequence = pick_word(int(args[0]))
 
@@ -330,7 +339,7 @@ class Games:
                 await self.client.say(user.update_user_money(200))
                 return
 
-            if guess.clean_content.upper() in cancel_strings:
+            if guess.clean_content.upper() in ['STOP', 'CANCEL']:
                 await self.client.purge_from(context.message.channel, limit=6)
                 await self.client.say('**Cancelled** the game!! <a:pepehands:485869482602922021> Correct word was: '
                                       '**' + correct_word.upper() + '** ' + context.message.author.mention)

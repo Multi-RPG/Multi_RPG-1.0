@@ -6,7 +6,6 @@ from PIL import ImageFont
 from PIL import ImageDraw
 import urllib.request
 import textwrap
-import re
 
 # prepare data for IMGFLIP public API: https://api.imgflip.com/
 username = 'hangman39'

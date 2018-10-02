@@ -1,37 +1,10 @@
 #!/usr/bin/env python3
 import sqlite3
 from sqlite3 import Error
- 
+
 class Database:
     def __init__(self, id):
         self.id = id
-
-
-    ''' 
-    SQLITE STATEMENTS USED FOR CREATING THE 2 TABLES
-    
-    USERS TABLE
-    -----------
-    sqlite> CREATE TABLE Users(
-   ...> user_id varchar(255) NOT NULL PRIMARY KEY,
-   ...> level int,
-   ...> money int
-   ...> );
-
-    BATTLES TABLE
-    -------------
-    sqlite> CREATE TABLE Battles(
-   ...> fighter_id varchar(255) NOT NULL PRIMARY KEY,
-   ...> battles_lost int,
-   ...> battles_won int,
-   ...> total_winnings int,
-   ...> CONSTRAINT fk_users
-   ...>     FOREIGN KEY (fighter_id)
-   ...>     REFERENCES Users(user_id)
-   ...>     ON UPDATE CASCADE
-   ...>     ON DELETE CASCADE
-   ...> );
-    '''
 
     def connect(self):
         try:
