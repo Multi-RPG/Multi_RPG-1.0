@@ -6,6 +6,7 @@ from PIL import ImageFont
 from PIL import ImageDraw
 import urllib.request
 import textwrap
+import re
 
 # prepare data for IMGFLIP public API: https://api.imgflip.com/
 username = 'hangman39'
@@ -115,7 +116,16 @@ class Memes:
         font = 'arial'
         
         try:
-            order = str(args[0]) # the argument is passed as message object, gotta cast
+            order = ''  # the argument is passed as message object, gotta cast
+            # if the command was processed with mobile quotes “ ”, compile all arguments given
+            if '“' in args[0]:
+                for argument in args:
+                    order = order + ' ' + argument
+
+                # strip mobile's weird double quotes from the arguments
+                order = order.replace('“', '').replace('”', '')
+            else:
+                order = str(args[0])
             print('trump order meme arguments: ' + order)  
         except:
             await self.client.say(context.message.author.mention +
@@ -144,8 +154,7 @@ class Memes:
     async def two_buttons(self, context, *args):
         # using IMGFLIP public API: https://api.imgflip.com/
         template_id = 87743020
-        
-                
+
         # try-catch block, because of *args array.
         # if no argument given in discord after "=pidgeon", it will go to the exception
         try:
@@ -180,7 +189,16 @@ class Memes:
         # try-catch block, because of *args array.
         # if no argument given in discord after "=pidgeon", it will go to the exception
         try:
-            reasons = str(args[0]) # the argument is passed as message object, gotta cast
+            reasons = ''
+            # if the command was processed with mobile quotes “ ”, compile all arguments given
+            if '“' in args[0]:
+                for argument in args:
+                    reasons = reasons + ' ' + argument
+
+                # strip mobile's weird double quotes from the arguments
+                reasons = reasons.replace('“', '').replace('”', '')
+            else:
+                reasons = str(args[0])
             print('reasons to live meme arguments: ' + reasons)
             
         except:
@@ -216,9 +234,18 @@ class Memes:
         # try-catch block, because of *args array.
         # if no argument given in discord after "=pidgeon", it will go to the exception
         try:
-            facts = str(args[0]) # the argument is passed as message object, gotta cast
+            facts = ''
+            # if the command was processed with mobile quotes “ ”, compile all arguments given
+            if '“' in args[0]:
+                for argument in args:
+                    facts = facts + ' ' + argument
+
+                # strip mobile's weird double quotes from the arguments
+                facts = facts.replace('“', '').replace('”', '')
+            else:
+                facts = str(args[0])
             print('book of facts meme arguments: ' + facts)
-            
+
         except:
             await self.client.say(context.message.author.mention +
                                   '```ml\nuse =bookfacts like so: =bookfacts "facts"```')
