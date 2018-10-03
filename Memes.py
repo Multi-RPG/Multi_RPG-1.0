@@ -59,6 +59,7 @@ class Memes:
         # SETUP WHITE BACKGROUND CANVAS
         background = Image.open('custom_memes\memebackground.png')
         draw = ImageDraw.Draw(background)
+        # Set custom true type font from our directory, helvetica neue
         font = ImageFont.truetype("custom_memes\helv.ttf", 25)
         smallfont = ImageFont.truetype("custom_memes\helv.ttf", 21)
 
@@ -115,7 +116,7 @@ class Memes:
         font = 'arial'
         
         try:
-            order = ''  # the argument is passed as message object, gotta cast
+            order = ''  
             # if the command was processed with mobile quotes “ ”, compile all arguments given
             if '“' in args[0]:
                 for argument in args:
@@ -157,7 +158,7 @@ class Memes:
         # try-catch block, because of *args array.
         # if no argument given in discord after "=pidgeon", it will go to the exception
         try:
-            button1 = str(args[0]) # the argument is passed as message object, gotta cast
+            button1 = str(args[0]) 
             button2 = str(args[1]) 
             print('2 buttons meme arguments: ' + button1 + ' ' + button2)
             
@@ -284,7 +285,7 @@ class Memes:
         
         # try-catch block, because of *args array. if no argument given in discord after "=pidgeon", it will go to the exception
         try:
-            cause = str(args[0]) # the argument is passed as message object, gotta cast
+            cause = str(args[0]) 
             reaction = str(args[1]) 
             print('slap button meme arguments: ' + cause + ' ' + reaction)
             
@@ -317,10 +318,10 @@ class Memes:
         # try-catch block, because of *args array.
         # if no argument given in discord after "=pidgeon", it will go to the exception
         try:
-            stage1 = str(args[0]) # the argument is passed as message object, gotta cast
-            stage2 = str(args[1]) # the argument is passed as message object, gotta cast
-            stage3 = str(args[2]) # the argument is passed as message object, gotta cast
-            stage4 = str(args[3]) # the argument is passed as message object, gotta cast
+            stage1 = str(args[0]) 
+            stage2 = str(args[1]) 
+            stage3 = str(args[2]) 
+            stage4 = str(args[3]) 
             print('expanding brain meme arguments: ' + stage1 + ' ' + stage2 + ' ' + stage3 + ' ' + stage4)
             
         except:
@@ -370,7 +371,7 @@ class Memes:
         # try-catch block, because of *args array. if no argument given in discord after "=pidgeon",
         # it will go to the exception
         try:
-            whom = str(args[0]) # the argument is passed as message object, gotta cast
+            whom = str(args[0]) 
             butterfly = str(args[1]) 
             # "is this a X" text section of the meme is the most likely to have multiple words,
             # so use join just in case user didn't put that part in strings
@@ -409,7 +410,7 @@ class Memes:
         # try-catch block, because of *args array.
         # if no argument given in discord after "=pidgeon", it will go to the exception
         try:
-            left = str(args[0]) # the argument is passed as message object, gotta cast
+            left = str(args[0]) 
             right = str(args[1])
             car = " ".join(args[2:len(args)])
             
@@ -446,7 +447,7 @@ class Memes:
         # try-catch block, because of *args array.
         # if no argument given in discord after "=pidgeon" it will go to the exception
         try:
-            new_girl = str(args[0]) # the argument is passed as message object, gotta cast
+            new_girl = str(args[0]) 
             distracted_boyfriend = str(args[1])
             girlfriend = " ".join(args[2:len(args)])
             
