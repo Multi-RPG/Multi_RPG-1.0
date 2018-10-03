@@ -59,7 +59,7 @@ class Memes:
         # SETUP WHITE BACKGROUND CANVAS
         background = Image.open('custom_memes\memebackground.png')
         draw = ImageDraw.Draw(background)
-        # Set custom true type font from our directory, helvetica neue
+        # set custom true type font from our directory, helvetica neue
         font = ImageFont.truetype("custom_memes\helv.ttf", 25)
         smallfont = ImageFont.truetype("custom_memes\helv.ttf", 21)
 
