@@ -6,7 +6,7 @@ Run requirements:
 2. Needs sqlite3, pillow, requests, and discord packages installed (use python3 -m pip install X)
 3. Tokens for the discord bot login (config.txt) and IMGFLIP account password (config2.txt) must be in folder named 'tokens' in main directory. These should be 1 line text files.
 
-Note: Paths are currently setup to run in a windows environment. Adjustment will need to be made for running on Unix.
+Note: In this repository, paths are currently setup to run in a windows environment. Adjustment will need to be made for running on Unix.
 
 SQL statements used for creating the database tables:
 -
