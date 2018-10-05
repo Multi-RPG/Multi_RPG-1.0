@@ -14,8 +14,6 @@ BOT_PREFIX = ["=", "%"]
 client = commands.Bot(command_prefix=BOT_PREFIX)
 client.remove_command('help')
 
-startup_extensions = ["Games", "Utilities", "Memes", "Account"]
-
 @client.event
 async def on_ready():
     print('Logged in as\n'
@@ -29,13 +27,8 @@ async def on_message(message):
     # when we don't want the bot to reply to itself
     if message.author == client.user:
         return
-    elif message.content.upper().startswith('IM'):
-        msg = message.content.format(message)
-        msg = '<:wthumbs:493806177894006786> Greetings ' + msg[3:]\
-              + ', my name is Worry Jr. the 3rd.\nToday, your lucky number is ' + str(random.randint(0, 10))\
-              + '. {0.author.mention}'.format(message)
-        await client.send_message(message.channel, msg)
 
+    # need this statement for bot to recognize commands
     await client.process_commands(message)
 
 @client.command(name='help', description='command information', brief='show this message', aliases=['h'], pass_context = True)
@@ -91,7 +84,7 @@ async def on_command_error(error, context):
         return
 
 if __name__ == "__main__":
-    for extension in startup_extensions:
+    for extension in ["Games", "Utilities", "Memes", "Account"]:
         try:
             client.load_extension(extension)
         except Exception as e:
