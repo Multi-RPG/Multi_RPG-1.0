@@ -69,7 +69,7 @@ async def helper(context):
           '  =trumporder     =trumporder "order"\n' \
           '  =reasonstolive  =reasonstolive "reasons"\n' \
           '  =bookfacts      =bookfacts "facts"```'
-    await client.send_message(context.message.channel, msg)
+    await client.send_message(context.message.author, msg)
 
 # Commands error handling
 @client.event
