@@ -1,21 +1,3 @@
-# Automated-DIBS
-## About
-Dibs.py is a script to reserve study rooms on campus at Tennessee Tech.
-
-## Requirements
-- Python 3.6+
-- Requests module
-- .ini config file with user data in _"tokens/"_
-
-## Usage
-### Linux/macOS
-```console
-foo@bar:~$ ./Dibs.py 
-```
-### Windows
-```console
-C:\Users\jsmith> python Dibs.py
-```
 
 # Discord-Bot
 ## About
@@ -37,7 +19,7 @@ C:\Users\jsmith> python Dibs.py
 
 Note: In this repository, paths are currently setup to run in a windows environment. Adjustment will need to be made for running on Unix.
 
-### SQL statements used for creating the database tables:
+## SQL statements used for creating the database tables:
 
 sqlite> CREATE TABLE Users(
 
