@@ -4,25 +4,28 @@ from discord.ext import commands
 from PIL import Image
 from PIL import ImageFont
 from PIL import ImageDraw
+from pathlib import Path
 import urllib.request
 import textwrap
+import configparser
+import sys
 
 # prepare data for IMGFLIP public API: https://api.imgflip.com/
-username = 'hangman39'
-# read our IMGFLIP account password from text file
-# pass_file = open("/usr/DiscordBot/config2.txt","r") # unix version
-pass_file = open("tokens\config2.txt","r") # windows version
-password = pass_file.read()
-pass_file.close()
 # set URL that we will direct our non-custom memes requests to
 URL = "https://api.imgflip.com/caption_image"
-
-# set header uger-agent as Mozilla Firefox so our image requests (for custom memes) won't be denied
-opener = urllib.request.build_opener()
-opener.addheaders = [('User-agent', 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko)'
-                                    ' Chrome/36.0.1941.0 Safari/537.36')]
-urllib.request.install_opener(opener)
-
+# set up parser to config through our .ini file with our imgflip account details
+config = configparser.ConfigParser()
+imgflip_token_path = Path("tokens/tokenimgflip.ini") # use forward slash "/" for path directories
+# confirm the token is located in the above path
+if imgflip_token_path.is_file():
+    config.read(imgflip_token_path)
+    username = config.get('USER1', 'username')
+    password = config.get('USER1', 'password')
+else:
+    print("\n","User tokens not found at: ",imgflip_token_path,"... Please correct file path in Memes.py file.")
+    sys.exit()
+            
+            
 class Memes:
     def __init__(self, client):
         self.client = client
@@ -45,6 +48,12 @@ class Memes:
                               ' custom twitter-styled meme...')
         user_image = await self.client.wait_for_message(author=context.message.author, timeout=60)
         await self.client.purge_from(context.message.channel, limit=5, check=purge_check)
+
+        # set header uger-agent as Mozilla Firefox so our image requests (for custom memes) won't be denied
+        opener = urllib.request.build_opener()
+        opener.addheaders = [('User-agent', 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko)'
+                                            ' Chrome/36.0.1941.0 Safari/537.36')]
+        urllib.request.install_opener(opener)
 
         # try to start the request to get the image specified by user
         try:

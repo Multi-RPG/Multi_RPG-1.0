@@ -2,16 +2,25 @@
 import discord
 import random
 import datetime
+import configparser
+import sys
 from discord.ext import commands
+from pathlib import Path
 
-# hidden file with our discord bot token
-# token_file = open("/usr/DiscordBot/config.txt","r") # unix version
-token_file = open("tokens\config.txt","r") # windows version
-TOKEN = token_file.read()
-token_file.close()
+# set up parser to config through our .ini file with our bot's token
+config = configparser.ConfigParser()
+bot_token_path = Path("tokens/tokenbot.ini") # use forward slash "/" for path directories
+# confirm the token is located in the above path
+if bot_token_path.is_file():
+    config.read(bot_token_path)
+    # we now have the bot's token
+    TOKEN = config.get('BOT1', 'token')
+else:
+    print("\n","User tokens not found at: ",bot_token_path,"... Please correct file path in Main.py file.")
+    sys.exit()
 
-BOT_PREFIX = ["=", "%"]
-client = commands.Bot(command_prefix=BOT_PREFIX)
+    
+client = commands.Bot(command_prefix=["=", "%"])
 client.remove_command('help')
 
 @client.event
