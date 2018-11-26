@@ -5,7 +5,7 @@ A discord bot, written in python, with several utility/meme generators/RPG eleme
 
 ## Run requirements:
 1. Needs python 3.6+ with sqlite3, pillow, requests, and discord packages installed (use python3 -m pip install X)
-2. Tokens for the discord bot login (config.txt) and IMGFLIP account password (config2.txt) must be in folder named 'tokens' in main directory.
+2. .ini config files with Bot and ImgFlip account data in "tokens/"
 
 ## Usage:
 ### Linux/macOS
