@@ -16,7 +16,7 @@ if bot_token_path.is_file():
     # we now have the bot's token
     TOKEN = config.get('BOT1', 'token')
 else:
-    print("\n","User tokens not found at: ",bot_token_path,"... Please correct file path in Main.py file.")
+    print("\n","Discord bot token not found at: ",bot_token_path,"... Please correct file path in Main.py file.")
     sys.exit()
 
     

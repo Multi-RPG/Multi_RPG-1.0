@@ -22,7 +22,7 @@ if imgflip_token_path.is_file():
     username = config.get('USER1', 'username')
     password = config.get('USER1', 'password')
 else:
-    print("\n","User tokens not found at: ",imgflip_token_path,"... Please correct file path in Memes.py file.")
+    print("\n","IMGFLIP account token not found at: ",imgflip_token_path,"... Please correct file path in Memes.py file.")
     sys.exit()
             
             
