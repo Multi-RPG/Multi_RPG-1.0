@@ -6,29 +6,10 @@ from discord.ext import commands
 from Users import Users
 from random import choices
 
-# open with file containing word bank
-# only read once so we won't have to re-open the file every game call
-# words_file = open("/usr/DiscordBot/words.txt","r") # unix dedicated server version
-words_file = open("db_and_words\words.txt", "r")  # windows version
+# only read words file once so we won't have to re-open the file every game call
+words_file = open("db_and_words\words.txt", "r")
 all_words = words_file.readlines()
 words_file.close()
-
-# prepare array of hangman art
-# only read once so we won't have to re-open the file every game call
-hangmen = []
-with open("db_and_words\hangmen.txt") as my_file:
-    for line in my_file:
-        hangmen.append(line)
-
-# convert respective list index-ranges to string with ''.join
-# the resulting hangmen[0-6] will represent each stage of hangman
-hangmen[0] = ''.join(hangmen[0:6])
-hangmen[1] = ''.join(hangmen[7:13])
-hangmen[2] = ''.join(hangmen[14:20])
-hangmen[3] = ''.join(hangmen[21:27])
-hangmen[4] = ''.join(hangmen[28:34])
-hangmen[5] = ''.join(hangmen[35:41])
-hangmen[6] = ''.join(hangmen[42:49])
 
 # short decorator function declaration, confirm that command user has an account in database
 def has_account():
@@ -39,7 +20,6 @@ def has_account():
         else:
             return True
     return commands.check(predicate)
-
 
 class Games:
     def __init__(self, client):
@@ -279,6 +259,7 @@ class Games:
                       brief='can use "=hangman", type "stop" or "cancel" to end game',
                       aliases=['hm', 'hang', 'HM', 'HANGMAN'], pass_context=True)
     async def hangman(self, context, *args):
+        hangmen = get_hangman_art()
         # initialize message to be printed if user wants category list
         hm_help = '```fix\n1. Country name\n2. Farm\n3. Camping\n4. Household items/devices\n' \
                   '5. Beach\n6. Holidays\n7. US States\n8. Sports & Hobbies```'
@@ -482,6 +463,24 @@ def pick_word(cat):
 
     return random_word.upper(), category, underscore_sequence
 
+def get_hangman_art():
+    # prepare array of hangman art
+    hangmen = []
+    with open("db_and_words\hangmen.txt") as my_file:
+        for line in my_file:
+            hangmen.append(line)
+
+    # convert respective list index-ranges to string with ''.join
+    # the resulting hangmen[0-6] will represent each stage of hangman
+    hangmen[0] = ''.join(hangmen[0:6])
+    hangmen[1] = ''.join(hangmen[7:13])
+    hangmen[2] = ''.join(hangmen[14:20])
+    hangmen[3] = ''.join(hangmen[21:27])
+    hangmen[4] = ''.join(hangmen[28:34])
+    hangmen[5] = ''.join(hangmen[35:41])
+    hangmen[6] = ''.join(hangmen[42:49])
+
+    return hangmen
 
 def add_guess_to_list(guess, guessed):  # accepts guess and list of all guesses
     if len(guess.clean_content) > 1:  # don't want to add whole word to guess list

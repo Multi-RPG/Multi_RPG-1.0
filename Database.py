@@ -8,7 +8,6 @@ class Database:
 
     def connect(self):
         try:
-            # self.connection = sqlite3.connect('/usr/DiscordBot/hangman.db')
             self.connection = sqlite3.connect('db_and_words\hangman.db')
             # Next part required to enable foreign keys on sqlite. It must execute every connection.
             self.connection.execute("PRAGMA foreign_keys = ON")
