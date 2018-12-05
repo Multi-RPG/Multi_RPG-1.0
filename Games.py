@@ -30,23 +30,29 @@ hangmen[4] = ''.join(hangmen[28:34])
 hangmen[5] = ''.join(hangmen[35:41])
 hangmen[6] = ''.join(hangmen[42:49])
 
+# short decorator function declaration, confirm that command user has an account in database
+def has_account():
+    def predicate(ctx):
+        user = Users(ctx.message.author.id)
+        if user.find_user() == 0:
+            return False
+        else:
+            return True
+    return commands.check(predicate)
+
+
 class Games:
     def __init__(self, client):
         self.client = client
 
     '''ROB FUNCTION'''
+    @has_account()
     @commands.cooldown(1, 3600, commands.BucketType.user)
     @commands.command(name='rob', description='Steal money from others', brief='can use =steal',
                       aliases=['thief', 'thieve', 'ROB', 'steal', 'mug'], pass_context=True)
     async def rob(self, context):
         # create instance of the user starting the robbery
         robber = Users(context.message.author.id)
-
-        # make sure the robber has an account
-        if robber.find_user() == 0:
-            await self.client.say(context.message.author.mention + " You don't have an account.\n"
-                                                                   "Use **=create** to make one.")
-            return
 
         # pick a random user in the server to rob
         # user_to_rob variable will function as the victim user's "english" name
@@ -80,8 +86,8 @@ class Games:
                                   '<a:monkacop:490323719063863306>'
                                   '         <a:monkacop:490323719063863306>\n**'
                                   '' + str(user_to_rob) + '** dodged and the '
-                                  'police shot you in the process.\n'
-                                  'You spent **$' + str(bail) + '** to bail out of jail.')
+                                                          'police shot you in the process.\n'
+                                                          'You spent **$' + str(bail) + '** to bail out of jail.')
             return
 
         # we passed the dodge check, so reward thief with 10% of victim's total money
@@ -94,6 +100,8 @@ class Games:
 
 
     '''BATTLE FUNCTION'''
+
+    @has_account()
     @commands.command(name='fight', description='Battle another user in your server',
                       brief='can use "fight @user X --X being amount to bet"',
                       aliases=['battle', 'BATTLE', 'FIGHT'], pass_context=True)
@@ -108,12 +116,6 @@ class Games:
         try:
             # make instance of user for user initiating fight
             fighter1 = Users(context.message.author.id)
-            # quick check to make sure user who initiated fight has an account
-            if fighter1.find_user() == 0:
-                await self.client.say(context.message.author.mention +
-                                      " You don't have an account."
-                                      "\nUse **=create** to make one.")
-                return
 
             # retrieve battle target
             target = args[0]
@@ -168,7 +170,8 @@ class Games:
 
                     # check if they tried to exploit the code by spending all their money during the battle
                     if fighter1.get_user_money(0) < bet or fighter2.get_user_money(0) < bet:
-                        await self.client.say(context.message.author.mention + " One of you spent money while battling...")
+                        await self.client.say(
+                            context.message.author.mention + " One of you spent money while battling...")
                         return
 
                     # check who the winner was returned as
@@ -180,13 +183,13 @@ class Games:
                         # update winner's battle records... battles_won + 1 and total_winnings + X
                         fighter1.update_user_records(0, 1, bet)
 
-                        fighter2.update_user_money(bet*-1)
+                        fighter2.update_user_money(bet * -1)
                         # update loser's battle records... battles_lost + 1
                         fighter2.update_user_records(1, 0, 0)
                     else:
                         await self.client.say(target + ' won **$' + str(bet) +
                                               '** by defeating ' + context.message.author.mention)
-                        fighter1.update_user_money(bet*-1)
+                        fighter1.update_user_money(bet * -1)
                         # update loser's battle records... battles_lost + 1
                         fighter1.update_user_records(1, 0, 0)
 
@@ -207,8 +210,8 @@ class Games:
             await self.client.say(context.message.author.mention +
                                   '```ml\nuse =fight like so: **=fight @user X**      -- X being amount to bet```')
 
-
     '''FLIP COIN FUNCTION'''
+
     @commands.command(name='flip', description='Flip a coin to earn social status.',
                       brief='can use "=flip" or "=flip X", with X being heads or tails',
                       aliases=['f', 'flpi', 'FLIP', 'F'], pass_context=True)
@@ -271,13 +274,14 @@ class Games:
             print("No bet specified")
 
     '''HANGMAN main function'''
+
     @commands.command(name='hangman', description='Guess the word in order to survive.',
                       brief='can use "=hangman", type "stop" or "cancel" to end game',
                       aliases=['hm', 'hang', 'HM', 'HANGMAN'], pass_context=True)
     async def hangman(self, context, *args):
         # initialize message to be printed if user wants category list
         hm_help = '```fix\n1. Country name\n2. Farm\n3. Camping\n4. Household items/devices\n' \
-                             '5. Beach\n6. Holidays\n7. US States\n8. Sports & Hobbies```'
+                  '5. Beach\n6. Holidays\n7. US States\n8. Sports & Hobbies```'
         wrong_guesses = 0  # global running count of incorrect guesses
         guessed_letters = ['']  # string of letters
 
@@ -401,6 +405,7 @@ class Games:
 def setup(client):
     client.add_cog(Games(client))
 
+
 def battle_decider(higher_odds, lower_odds, difference):
     # the maximum player level difference is 9
     # choices function maps a selection to a probability, and selects one choice based off probability
@@ -427,6 +432,7 @@ def battle_decider(higher_odds, lower_odds, difference):
 
     # choices function returning [1] or [2] so use regex to pull the integers out
     return int(re.findall("\d+", str(winner))[0])
+
 
 def pick_word(cat):
     if cat == 1:

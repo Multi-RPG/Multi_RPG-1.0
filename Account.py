@@ -3,10 +3,32 @@ import re
 from discord.ext import commands
 from Users import Users
 
+# short decorator function declaration, confirm that command user has an account in database
+def has_account():
+    def predicate(ctx):
+        user = Users(ctx.message.author.id)
+        if user.find_user() == 0:
+            return False
+        else:
+            return True
+
+    return commands.check(predicate)
+
+# short decorator function declaration, confirm that command user has NO account in database
+def has_no_account():
+    def predicate(ctx):
+        user = Users(ctx.message.author.id)
+        if user.find_user() == 0:
+            return True
+        else:
+            return False
+    return commands.check(predicate)
+
 class Account:
     def __init__(self, client):
         self.client = client
 
+    @has_no_account()
     @commands.command(name='create', description='make a user',
                       brief='start a user account', aliases=['register'], pass_context=True)
     async def register(self, context):
@@ -15,6 +37,7 @@ class Account:
         msg = new_user.add_user()
         await self.client.say(context.message.author.mention + msg)
 
+    @has_account()
     @commands.command(name='delete', description='delete your user',
                       brief='delete your user account', aliases=['del'], pass_context=True)
     async def delete(self, context):
@@ -28,6 +51,7 @@ class Account:
         else:
             await self.client.say(context.message.author.mention + ' Cancelled deletion of account')
 
+    @has_account()
     @commands.command(name='money', aliases=['m', 'MONEY'], pass_context=True)
     async def money(self, context, *args):
         # this 'try' will process if they want to check another person's bank account
@@ -46,6 +70,7 @@ class Account:
             await self.client.say(context.message.author.mention +
                                   " :moneybag: balance: " + user.get_user_money())
 
+    @has_account()
     @commands.command(name='level', aliases=['LEVEL', 'lvl', 'LVL'], pass_context=True)
     async def level(self, context, *args):
         # this 'try' will process if they want to check another player's level
@@ -63,7 +88,7 @@ class Account:
             user = Users(context.message.author.id)
             await self.client.say(context.message.author.mention +
                                   " Your level: " + user.get_user_level())
-
+    @has_account()
     @commands.command(name='give', aliases=['DONATE', 'GIVE', 'pay', 'donate', 'PAY'], pass_context=True)
     async def give(self, context, *args):
         # will automatically go to exception if all arguments weren't supplied correctly
@@ -71,20 +96,19 @@ class Account:
             receiver_string = args[0]
             amnt = int(args[1])
 
-
             # create user instance with their discord ID, check database for their level field
             donator = Users(context.message.author.id)
             # use regex to extract only numbers from "receiver_string" to get their discord ID,
             # ex: <@348195501025394688> to 348195501025394688
             receiver = Users(re.findall("\d+", receiver_string)[0])
 
-            # check if both users have accounts
-            if receiver.find_user() == 0 or donator.find_user() == 0:
+            # check if receiver has account
+            if receiver.find_user() == 0:
                 await self.client.say(context.message.author.mention +
-                                      " Either you or the target doesn't have an account."
+                                      " The target doesn't have an account."
                                       "\nUse **=create** to make one.")
                 return
-            # check if they have enough money for the donation
+            # check if donator has enough money for the donation
             # pass 0 to return integer version of money, see USERS.PY function
             if int(amnt) > donator.get_user_money(0):
                 await self.client.say(context.message.author.mention +
@@ -99,6 +123,7 @@ class Account:
             await self.client.say(context.message.author.mention +
                                   '```ml\nuse =give like so: **=give @user X**    -- X being amnt of money to give```')
 
+    @has_account()
     @commands.command(name='stats', aliases=['battles', 'BRECORDS', 'STATS'], pass_context=True)
     async def battlerecords(self, context, *args):
         # this 'try' will process if they want to check another person's battle records
@@ -118,6 +143,7 @@ class Account:
             await self.client.say(context.message.author.mention + " _Your battle stats..._"
                                                                  + user.get_user_battle_records())
 
+    @has_account()
     @commands.command(name='levelup', aliases=['lup', 'LEVELUP'], pass_context=True)
     async def levelup(self, context):
         # create instance of user who wants to level-up

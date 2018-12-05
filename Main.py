@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 import discord
-import random
-import datetime
 import configparser
 import sys
+import datetime
 from discord.ext import commands
 from pathlib import Path
+
 
 # set up parser to config through our .ini file with our bot's token
 config = configparser.ConfigParser()
@@ -80,6 +80,7 @@ async def helper(context):
           '  =bookfacts      =bookfacts "facts"```'
     await client.send_message(context.message.author, msg)
 
+
 # Commands error handling
 @client.event
 async def on_command_error(error, context):
@@ -89,8 +90,13 @@ async def on_command_error(error, context):
         time = str(datetime.timedelta(seconds=int(error.retry_after)))
         await client.send_message(context.message.channel, content=' You are on cooldown: ' + time)
 
-    if isinstance(error, commands.CommandNotFound):
+    elif isinstance(error, commands.CommandNotFound):
         return
+
+    # we use command checks when checking if user has account in our database or not
+    elif isinstance(error, commands.CheckFailure):
+        return await client.send_message(context.message.channel, " No account found."
+                                                                  "\nUse **=create** to make one.")
 
 if __name__ == "__main__":
     for extension in ["Games", "Utilities", "Memes", "Account"]:
