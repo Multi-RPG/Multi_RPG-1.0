@@ -117,6 +117,7 @@ class Memes:
         await self.client.send_file(context.message.channel, "custom_memes\memegenresult.png")
 
 
+
     @commands.command(name='trumporder', description='executive order from trump', brief='can use =trumporder "order"',
                       aliases=['trump', 'order', 'executiveorder' 'TRUMP', 'EXECUTIVE', 'executive', 'ORDER'], pass_context=True)
     async def trump_order(self, context, *args):
@@ -146,6 +147,7 @@ class Memes:
                 'password':password,
                 'boxes[1][text]':order,
                 'boxes[1][color]':"#000000",
+                'boxes[1][outline_color]': "#bccfd3",
                 'boxes[1][x]':1271,
                 'boxes[1][y]':563,
                 'boxes[1][width]':441,
@@ -163,7 +165,7 @@ class Memes:
     async def two_buttons(self, context, *args):
         # using IMGFLIP public API: https://api.imgflip.com/
         template_id = 87743020
-
+        font = 'arial'
         # try-catch block, because of *args array.
         # if no argument given in discord after "=pidgeon", it will go to the exception
         try:
@@ -180,9 +182,13 @@ class Memes:
                 'username':username,
                 'password':password,
                 'boxes[0][text]':button1,
+                'boxes[0][color]': "#000000",
+                'boxes[0][outline_color]': "#ffffff",
                 'boxes[1][text]':button2,
+                'boxes[1][color]': "#000000",
+                'boxes[1][outline_color]': "#ffffff",
                 'max_font_size':45,
-                'font':'impact'}
+                'font':'arial'}
                 
         r = requests.post(url = URL, data = DATA)
         text = r.json()
@@ -219,11 +225,11 @@ class Memes:
                 'username':username,
                 'password':password,
                 'boxes[1][text]':reasons,
-                'boxes[1][color]':"#ffffff",
-                'boxes[1][outline_color]': "#000000",
+                'boxes[1][color]':"#000000",
+                'boxes[1][outline_color]': "#ffffff",
                 'boxes[1][x]':50,
                 'boxes[1][y]':500,
-                'boxes[1][width]':200,
+                'boxes[1][width]':170,
                 'boxes[1][height]':200,                
                 'max_font_size':24,
                 'font':font}
@@ -264,8 +270,8 @@ class Memes:
                 'username':username,
                 'password':password,
                 'boxes[1][text]':facts,
-                'boxes[1][color]':"#ffffff",
-                'boxes[1][outline_color]': "#000000",
+                'boxes[1][color]':"#000000",
+                'boxes[1][outline_color]': "#e9f5e1",
                 'boxes[1][x]':0,
                 'boxes[1][y]':330,
                 'boxes[1][width]':200,
@@ -278,7 +284,48 @@ class Memes:
                 
         r = requests.post(url = URL, data = DATA)
         text = r.json()
-        await self.client.say(text['data']['url'])    
+        await self.client.say(text['data']['url'])
+
+    @commands.command(name='changemymind', description='change my mind meme', brief='can use =changemymind "statement"',
+                      aliases=['debate', 'CHANGEMYMIND', 'changemind', 'change'], pass_context=True)
+    async def change_my_mind(self, context, *args):
+        # using IMGFLIP public API: https://api.imgflip.com/
+        template_id = 129242436
+        font = 'arial'
+
+        # try-catch block, because of *args array.
+        # if no argument given in discord after "=pidgeon", it will go to the exception
+        try:
+            facts = ''
+            # if the command was processed with mobile quotes “ ”, compile all arguments given
+            if '“' in args[0]:
+                for argument in args:
+                    facts = facts + ' ' + argument
+
+                # strip mobile's weird double quotes from the arguments
+                facts = facts.replace('“', '').replace('”', '')
+            else:
+                facts = str(args[0])
+            print('change my mind meme arguments: ' + facts)
+
+        except:
+            await self.client.say(context.message.author.mention +
+                                  '```ml\nuse =changemymind like so: =changemymind "statement"```')
+            return
+
+        DATA = {'template_id': template_id,
+                'username': username,
+                'password': password,
+                'boxes[1][text]': facts,
+                'boxes[1][color]': "#000000",
+                'boxes[1][outline_color]': "#d6d4e1",
+                'max_font_size': 25,
+                'font': font,
+                'api_paste_format': 'python'}
+
+        r = requests.post(url=URL, data=DATA)
+        text = r.json()
+        await self.client.say(text['data']['url'])
     
     
     
@@ -348,19 +395,19 @@ class Memes:
                 ('boxes[3][text]', stage4),
                 ('font', font),
                 ('boxes[0][color]', "#000000"),
-                ('boxes[0][outline_color]', "#000000"),
+                ('boxes[0][outline_color]', "#ffffff"),
                 ('boxes[0][outline_width]', 1),
                 ('boxes[0][font_shadow]', 0),
                 ('boxes[1][color]',"#000000"),
-                ('boxes[1][outline_color]', "#000000"),
+                ('boxes[1][outline_color]', "#ffffff"),
                 ('boxes[1][outline_width]', 1),
                 ('boxes[1][font_shadow]',0),
                 ('boxes[2][color]',"#000000"),
-                ('boxes[2][outline_color]', "#000000"),
+                ('boxes[2][outline_color]', "#ffffff"),
                 ('boxes[2][outline_width]', 1),
                 ('boxes[2][font_shadow]',0),             
                 ('boxes[3][color]',"#000000"),
-                ('boxes[3][outline_color]', "#000000"),
+                ('boxes[3][outline_color]', "#ffffff"),
                 ('boxes[3][outline_width]', 1),
                 ('boxes[3][font_shadow]',0),
                 ('max_font_size',60),
@@ -376,7 +423,7 @@ class Memes:
     async def pigeon(self, context, *args):
         # using IMGFLIP public API: https://api.imgflip.com/
         template_id = 100777631
-                        
+        font = 'arial'
         # try-catch block, because of *args array. if no argument given in discord after "=pidgeon",
         # it will go to the exception
         try:
@@ -397,11 +444,24 @@ class Memes:
         
         DATA = (
                 ('template_id',template_id),
+                ('font', font),
                 ('username',username),
                 ('password',password),
                 ('boxes[0][text]',whom),
                 ('boxes[1][text]',butterfly),
                 ('boxes[2][text]',is_this_a),
+                ('boxes[0][color]', "#ffffff"),
+                ('boxes[0][outline_color]', "#000000"),
+                ('boxes[0][outline_width]', 1),
+                ('boxes[0][font_shadow]', 0),
+                ('boxes[1][color]', "#ffffff"),
+                ('boxes[1][outline_color]', "#000000"),
+                ('boxes[1][outline_width]', 1),
+                ('boxes[1][font_shadow]', 0),
+                ('boxes[2][color]', "#ffffff"),
+                ('boxes[2][outline_color]', "#000000"),
+                ('boxes[2][outline_width]', 1),
+                ('boxes[2][font_shadow]', 0),
                 ('max_font_size',100),
                 ('api_paste_format','python'),
                 )
@@ -415,7 +475,8 @@ class Memes:
     async def left_exit(self, context, *args):
         # using IMGFLIP public API: https://api.imgflip.com/
         template_id = 124822590
-                        
+        font = 'arial'
+
         # try-catch block, because of *args array.
         # if no argument given in discord after "=pidgeon", it will go to the exception
         try:
@@ -437,6 +498,17 @@ class Memes:
                 ('boxes[0][text]',left),
                 ('boxes[1][text]',right),
                 ('boxes[2][text]',car),
+                ('font',font),
+                ('boxes[0][color]', "#ffffff"),
+                ('boxes[0][outline_color]', "#000000"),
+                ('boxes[0][outline_width]', 1),
+                ('boxes[0][font_shadow]', 0),
+                ('boxes[1][color]', "#ffffff"),
+                ('boxes[1][outline_color]', "#000000"),
+                ('boxes[1][outline_width]', 1),
+                ('boxes[1][font_shadow]', 0),
+                ('boxes[2][color]', "#ffffff"),
+                ('boxes[2][outline_color]', "#000000"),
                 ('max_font_size',75),
                 ('api_paste_format','python'),
                 )
@@ -452,7 +524,8 @@ class Memes:
     async def boyfriend(self, context, *args):
         # using IMGFLIP public API: https://api.imgflip.com/
         template_id = 112126428
-                        
+        font = 'arial'
+
         # try-catch block, because of *args array.
         # if no argument given in discord after "=pidgeon" it will go to the exception
         try:
@@ -474,6 +547,17 @@ class Memes:
                 ('boxes[0][text]',new_girl),
                 ('boxes[1][text]',distracted_boyfriend),
                 ('boxes[2][text]',girlfriend),
+                ('font', font),
+                ('boxes[0][color]', "#ffffff"),
+                ('boxes[0][outline_color]', "#000000"),
+                ('boxes[0][outline_width]', 1),
+                ('boxes[0][font_shadow]', 0),
+                ('boxes[1][color]', "#ffffff"),
+                ('boxes[1][outline_color]', "#000000"),
+                ('boxes[1][outline_width]', 1),
+                ('boxes[1][font_shadow]', 0),
+                ('boxes[2][color]', "#ffffff"),
+                ('boxes[2][outline_color]', "#000000"),
                 ('max_font_size',75),
                 ('api_paste_format','python'),
                 )
