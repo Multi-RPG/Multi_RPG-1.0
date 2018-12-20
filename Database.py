@@ -8,7 +8,7 @@ class Database:
 
     def connect(self):
         try:
-            self.connection = sqlite3.connect('db_and_words\hangman.db')
+            self.connection = sqlite3.connect("db_and_words\hangman.db")
             # Next part required to enable foreign keys on sqlite. It must execute every connection.
             self.connection.execute("PRAGMA foreign_keys = ON")
             return self.connection
@@ -25,6 +25,9 @@ class Database:
         # new user will start off with 0 battles lost, 0 battles won, and 0 total winnings
         sql = "INSERT INTO Battles(fighter_id, battles_lost, battles_won, total_winnings) VALUES(?, ?, ?, ?)"
         cur.execute(sql, (self.id, 0, 0, 0))
+
+        sql = "INSERT INTO Lottery(ticket_id, ticket_guess, ticket_active) VALUES(?, ?, ?)"
+        cur.execute(sql, (self.id, 99999999, 0))
 
         # print users table to console after inserts
         cur.execute("select * from Users")
@@ -91,6 +94,26 @@ class Database:
         # now we can just use array indexes to get each field
         return row[0], row[1], row[2]
 
+    # pass in the winning_number as a parameter from the daily script: a_lottery_script.py
+    def get_lottery_winners(self, winning_number):
+        cur = self.connection.cursor()
+        # find ticket id's with the winning number as their ticket guess, and make sure they have an active ticket
+        sql = "SELECT ticket_id FROM Lottery WHERE ticket_guess = ? AND ticket_active = ?"
+        cur.execute(sql, (winning_number, 1))
+        rows = cur.fetchall()
+        winners = []
+        for row in rows:
+            winners.append(row[0])
+
+        # reset all tickets as well, since this function is only called when checking for winners
+        # set all to inactive, and change all ticket guesses to outside of our defined bounds
+        sql = "UPDATE Lottery SET ticket_guess = 99999999, ticket_active = 0"
+        cur.execute(sql)
+        self.connection.commit()
+
+        # return list of winner id's
+        return winners
+
     def update_money(self, amount):
         cur = self.connection.cursor()
 
@@ -133,3 +156,21 @@ class Database:
 
         self.connection.commit()
         return self.get_battle_records()
+
+    def update_lottery_guess(self, ticket_guess):
+        cur = self.connection.cursor()
+
+        # update specific user's ticket guess
+        # change their ticket to active in order to be considered during next drawing
+        sql = "UPDATE Lottery SET ticket_guess = ?, ticket_active = ? WHERE ticket_id = ?"
+        cur.execute(sql, (ticket_guess, 1, self.id))
+        cur.execute("select * from Lottery")
+
+        rows = cur.fetchall()
+        print("\nLottery table after lottery update: \n")
+        for row in rows:
+            print(row)
+
+        self.connection.commit()
+        return
+

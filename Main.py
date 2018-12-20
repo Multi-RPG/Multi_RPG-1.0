@@ -6,7 +6,6 @@ import datetime
 from discord.ext import commands
 from pathlib import Path
 
-
 # set up parser to config through our .ini file with our bot's token
 config = configparser.ConfigParser()
 bot_token_path = Path("tokens/tokenbot.ini") # use forward slash "/" for path directories
@@ -19,7 +18,6 @@ else:
     print("\n","Discord bot token not found at: ",bot_token_path,"... Please correct file path in Main.py file.")
     sys.exit()
 
-    
 client = commands.Bot(command_prefix=["=", "%"])
 client.remove_command('help')
 
@@ -99,7 +97,7 @@ async def on_command_error(error, context):
                                                                   "\nUse **=create** to make one.")
 
 if __name__ == "__main__":
-    for extension in ["Games", "Utilities", "Memes", "Account"]:
+    for extension in ["Games", "Utilities", "Memes", "Account", "Lottery"]:
         try:
             client.load_extension(extension)
         except Exception as e:

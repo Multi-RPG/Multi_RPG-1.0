@@ -5,7 +5,9 @@ A discord bot, written in python, with several utility/meme generators/RPG eleme
 
 ## Run requirements:
 1. Needs python 3.6+ with sqlite3, pillow, requests, and discord packages installed (use python3 -m pip install X)
-2. .ini config files with Bot and ImgFlip account data in "tokens/"
+2. If using crontab for automation, file paths need to be replaced with your environment's full file paths
+3. .ini config files with Bot and ImgFlip account data in "tokens/"
+
 
 ## Usage:
 ### Linux/macOS
@@ -31,6 +33,7 @@ sqlite> CREATE TABLE Users(
 
 ...> );
 
+ 
 sqlite> CREATE TABLE Battles(
 
 ...> fighter_id varchar(255) NOT NULL PRIMARY KEY,
@@ -52,3 +55,25 @@ sqlite> CREATE TABLE Battles(
 ...>     ON DELETE CASCADE
 
 ...> );
+
+
+sqlite> CREATE Table Lottery(
+
+   ...> ticket_id varchar(255) NOT NULL PRIMARY KEY,
+   
+   ...> ticket_guess int,
+   
+   ...> ticket_active int,
+   
+   ...> CONSTRAINT fk_users2
+   
+   ...> FOREIGN KEY (ticket_id)
+   
+   ...> REFERENCES Users(user_id)
+   
+   ...> ON UPDATE CASCADE
+   
+   ...> ON DELETE CASCADE
+   
+   ...> );
+
