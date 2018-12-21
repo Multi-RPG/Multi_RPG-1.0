@@ -5,8 +5,10 @@ A discord bot, written in python, with several utility/meme generators/RPG eleme
 
 ## Run requirements:
 1. Needs python 3.6+ with sqlite3, pillow, requests, and discord packages installed (use python3 -m pip install X)
-2. If using crontab for automation, file paths need to be replaced with your environment's full file paths
-3. .ini config files with Bot and ImgFlip account data in "tokens/"
+2. .ini config files with Bot and ImgFlip account data in "tokens/"
+3. If using crontab for automation, file paths need to be replaced with your environment's full file paths
+4. If using a_lottery_script to award lotteries, your discord channel needs a channel named 'lottery' for announcements
+
 
 
 ## Usage:

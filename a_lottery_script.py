@@ -42,9 +42,9 @@ async def on_ready():
     winners = db.get_lottery_winners(win_number)
     winners_string = ''
     for winner in winners:
-        # create instance of each user who won, and update their money to add $1000
+        # create instance of each user who won, and update their money to add $3500
         user = Users(winner)
-        user.update_user_money(1500)
+        user.update_user_money(3500)
         # alter each item on list to discord @ format and concatenate into 1 string to ping winners below
         winners_string += ('**TICKET ID:** ' + winner + ' <@' + winner + '>\n')
 
@@ -57,7 +57,7 @@ async def on_ready():
                                                        + "<a:worrycash:525200274340577290>**  LOTTERY ANNOUNCEMENT**"
                                                        + "<a:worrycash:525200274340577290> _" + str(date.today()) + "_"
                                                        + "\nToday's winning number is... **"
-                                                       + str(win_number) + "**\nThe lucky **$1500** winners: \n"
+                                                       + str(win_number) + "**\nThe lucky **$3500** winners: \n"
                                                        + winners_string)
                 elif not winners:
                     winners_string = '<a:worrycry:525209793405648896> **No winners today**... <a:worrycry:525209793405648896>'
@@ -65,7 +65,7 @@ async def on_ready():
                                                        + "<a:worrycash:525200274340577290>**  LOTTERY ANNOUNCEMENT**"
                                                        + "<a:worrycash:525200274340577290> _" + str(date.today()) + "_"
                                                        + "\nToday's winning number is... **"
-                                                       + str( win_number) + "**\nThe lucky **$1500** winners: \n"
+                                                       + str( win_number) + "**\nThe lucky **$3500** winners: \n"
                                                        + winners_string)
 
     sys.exit()

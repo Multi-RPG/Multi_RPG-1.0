@@ -57,6 +57,8 @@ async def helper(context):
           '  =money          use "=money" or "=money @user" to print bank balance\n' \
           '  =give           use "=give @user X" -- X being money to give a user\n' \
           'Games For Money:\n' \
+          '  =lotto          use "=lotto" for a 1/5 chance to win $1500 each day\n' \
+          '                  NOTE: your server must have a text channel named "lottery"\n' \
           '  =rob            use "=rob" for a 6/10 chance to mug a fellow player\n' \
           '  =fight          use "=fight @user X" -- X being money to bet\n' \
           '  =flip           use "=flip" or "=flip X" or "=flip X Y" \n' \
