@@ -56,10 +56,10 @@ class Games:
             victim = Users(user_to_rob.id)
             counter += 1
 
-        # 40% chance to fail rob
-        if 4 >= random.randint(1, 10) >= 1:
-            # take 5% of robber's money for bail funds
-            bail = int(robber.get_user_money(0) * .05)
+        # 30% chance to fail rob
+        if 3 >= random.randint(1, 10) >= 1:
+            # take 7% of robber's money for bail funds
+            bail = int(robber.get_user_money(0) * .07)
             robber.update_user_money(bail * -1)
             await self.client.say('<a:policesiren2:490326123549556746> :oncoming_police_car: '
                                   '<a:policesiren2:490326123549556746>\n'
