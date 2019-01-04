@@ -2,6 +2,7 @@
 import configparser
 import sys
 import random
+import os
 from Users import Users
 from Database import Database
 from discord.ext import commands
@@ -16,7 +17,7 @@ from datetime import date
 client = commands.Bot(command_prefix=["=", "%"])
 # set up parser to config through our .ini file with our bot's token
 config = configparser.ConfigParser()
-bot_token_path = Path("tokens/tokenbot.ini") # use forward slash "/" for path directories
+bot_token_path = Path("/usr/DiscordBot/tokens/tokenbot.ini") # use forward slash "/" for path directories
 # confirm the token is located in the above path
 if bot_token_path.is_file():
     config.read(bot_token_path)
@@ -39,35 +40,44 @@ async def on_ready():
     db = Database(0)
     db.connect()
     # get python list of winner ticket id's who match today's winning number
-    winners = db.get_lottery_winners(win_number)
-    winners_string = ''
-    for winner in winners:
-        # create instance of each user who won, and update their money to add $3500
+    std_winners, prem_winners= db.get_lottery_winners(win_number)
+    std_winners_string = ''
+    for winner in std_winners:
+        # create instance of each basic ticket user who won, and update their money
         user = Users(winner)
-        user.update_user_money(3500)
+        user.update_user_money(250)
         # alter each item on list to discord @ format and concatenate into 1 string to ping winners below
-        winners_string += ('**TICKET ID:** ' + winner + ' <@' + winner + '>\n')
+        std_winners_string += ('**TICKET ID:** ' + winner + ' <@' + winner + '>\n')
+        
+    prem_winners_string = ''
+    for winner in prem_winners:
+        # create instance of each premium ticket user who won, and update their
+        user = Users(winner)
+        user.update_user_money(1000)
+        # alter each item on list to discord @ format and concatenate into 1 string to ping winners below
+        prem_winners_string += ('**TICKET ID:** ' + winner + ' <@' + winner + '>\n')
+    
 
     # for each server the bot is in, post the lottery results in the lottery channel
     for server in client.servers:
         for channel in server.channels:
             if channel.name == 'lottery':
-                if winners:
+                if std_winners or prem_winners:
                     await client.send_message(channel, "▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁\n"
                                                        + "<a:worrycash:525200274340577290>**  LOTTERY ANNOUNCEMENT**"
-                                                       + "<a:worrycash:525200274340577290> _" + str(date.today()) + "_"
+                                                       + "  <a:worrycash:525200274340577290> _" + str(date.today()) + "_"
                                                        + "\nToday's winning number is... **"
-                                                       + str(win_number) + "**\nThe lucky **$3500** winners: \n"
-                                                       + winners_string)
-                elif not winners:
-                    winners_string = '<a:worrycry:525209793405648896> **No winners today**... <a:worrycry:525209793405648896>'
+                                                       + str(win_number) + "**\nThe lucky **$250** winners: \n"
+                                                       + std_winners_string + "\nThe lucky premium **$1,000** winners: \n"
+                                                       + prem_winners_string)
+                elif not std_winners or prem_winners:
+                    std_winners_string = '<a:worrycry:525209793405648896> **No winners today**... <a:worrycry:525209793405648896>'
                     await client.send_message(channel, "▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁\n"
                                                        + "<a:worrycash:525200274340577290>**  LOTTERY ANNOUNCEMENT**"
-                                                       + "<a:worrycash:525200274340577290> _" + str(date.today()) + "_"
+                                                       + "  <a:worrycash:525200274340577290> _" + str(date.today()) + "_"
                                                        + "\nToday's winning number is... **"
-                                                       + str( win_number) + "**\nThe lucky **$3500** winners: \n"
-                                                       + winners_string)
-
-    sys.exit()
+                                                       + str( win_number) + "**\nThe lucky winners: \n"
+                                                       + std_winners_string)
+    os.system('reboot')
 
 client.run(TOKEN)

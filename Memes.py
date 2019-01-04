@@ -316,10 +316,12 @@ class Memes:
         DATA = {'template_id': template_id,
                 'username': username,
                 'password': password,
+                # 'boxes[0][text_align]': 'left',
+                'boxes[1][text_align]': 'left',
                 'boxes[1][text]': facts,
                 'boxes[1][color]': "#000000",
                 'boxes[1][outline_color]': "#d6d4e1",
-                'max_font_size': 25,
+                'max_font_size': 22,
                 'font': font,
                 'api_paste_format': 'python'}
 
@@ -525,7 +527,7 @@ class Memes:
         # using IMGFLIP public API: https://api.imgflip.com/
         template_id = 112126428
         font = 'arial'
-
+        
         # try-catch block, because of *args array.
         # if no argument given in discord after "=pidgeon" it will go to the exception
         try:

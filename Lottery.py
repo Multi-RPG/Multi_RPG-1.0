@@ -19,40 +19,81 @@ class Lottery:
 
     '''ENTER LOTTERY FUNCTION'''
     @has_account()
-    @commands.cooldown(1, 500, commands.BucketType.user)
+    @commands.cooldown(1, 10, commands.BucketType.user)
     @commands.command(name='lotto', description='Enter the daily lottery.', brief='can use =lotto',
                       aliases=['LOTTO', 'lottery', 'LOTTERY'], pass_context=True)
     async def enter_lottery(self, context):
         # create instance of the user entering the lotto
         entry = Users(context.message.author.id)
-
-        await self.client.say('<a:worryhead:525164940231704577> Welcome to the Lotto! <a:worryhead:525164940231704577>\n'
+        # if they already purchased a premium ticket, don’t let them overwrite it by mistake with a free ticket
+        if entry.get_user_ticket_status() == 2:
+            await self.client.say('**ERROR!** You have already entered and paid your $100 entry for the **premium lottery** today! <a:worryhead:525164940231704577>')
+            return
+            
+        await self.client.say('<a:worryhead:525164940231704577> Welcome to the **Basic** Lotto! <a:worryhead:525164940231704577>\n'
                               ' Please enter your **ticket guess** now (1-5):')
         guess = await self.client.wait_for_message(author=context.message.author,
                                                    timeout=60)  # wait for user's ticket guess
 
-        counter = 0
-        while not guess.clean_content.isdigit():
-            # only give 3 tries to input a valid integer digit
-            counter += 1
-            if counter == 3:
-                return
-            await self.client.say('Please enter your **ticket guess** again, as an integer (1-5):')
-            guess = await self.client.wait_for_message(author=context.message.author,
-                                                       timeout=60)  # wait for user's ticket guess
+        if not guess.clean_content.isdigit():
+            await self.client.say('Cancelled lottery entry!')
+            return
 
         # next loop may be redundant, but you can never know what your end-users will do
-        # check if the digit is 1-5
+        counter = 0
         while not 5 >= int(guess.clean_content) >= 1:
             counter += 1
+            # give them 3 attempts to input a 1-5 integer
             if counter == 3:
                 return
             await self.client.say('Please enter your **ticket guess** again, as an integer (1-5):')
             guess = await self.client.wait_for_message(author=context.message.author,
                                                        timeout=60)  # wait for user's ticket guess
 
-        # update their ticket_guess in the database with their new guess
-        await self.client.say(entry.update_user_lottery_guess(guess.clean_content))
+        await self.client.say(entry.update_user_lottery_guess(guess.clean_content, 1))
+        
+    '''ENTER PREMIUM LOTTERY FUNCTION'''
+    @has_account()
+    @commands.cooldown(1, 10, commands.BucketType.user)
+    @commands.command(name='lotto2', description='Enter the daily lottery as a premium ticket.', brief='can use =lotto2',
+                      aliases=['LOTTO2', 'lottery2', 'LOTTERY2'], pass_context=True)
+    async def enter_lottery2(self, context):
+        # create instance of the user entering the lotto
+        entry = Users(context.message.author.id)
+        # if they already purchased a premium ticket, don’t let them overwrite it by mistake by purchasing another one
+        if entry.get_user_ticket_status() == 2:
+            await self.client.say('**ERROR!** You have already entered and paid your $99 entry for the **premium lottery** today! <a:worryhead:525164940231704577>')
+            return
+            
+        if entry.get_user_money(0) < 99:
+            await self.client.say('**ERROR!** You do not have **$99** to enter the premium lottery... Use =lotto for the free lotto <a:worryhead:525164940231704577>')
+            return
+        
+        await self.client.say('<a:worryhead:525164940231704577> Welcome to the **Premium** Lotto! (tickets cost **$99**) <a:worryhead:525164940231704577>\n'
+                              ' Please enter your **ticket guess** now (1-5):')
+        guess = await self.client.wait_for_message(author=context.message.author,
+                                                   timeout=60)  # wait for user's ticket guess
+
+        if not guess.clean_content.isdigit():
+            await self.client.say('Cancelled lottery entry!')
+            return
+
+        # next loop may be redundant, but you can never know what your end-users will do
+        counter = 0
+        while not 5 >= int(guess.clean_content) >= 1:
+            counter += 1
+            # give them 3 attempts to input a 1-5 integer
+            if counter == 3:
+                return
+            await self.client.say('Please enter your **ticket guess** again, as an integer (1-5):')
+            guess = await self.client.wait_for_message(author=context.message.author,
+                                                       timeout=60)  # wait for user's ticket guess
+
+        # take the entry fee for premium lottery
+        entry.update_user_money(-99)
+        await self.client.say(entry.update_user_lottery_guess(guess.clean_content, 2))
+        
+    
 
 def setup(client):
     client.add_cog(Lottery(client))

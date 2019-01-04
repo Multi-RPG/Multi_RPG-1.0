@@ -72,6 +72,11 @@ class Users:
                     '\n:crossed_swords:  won: ' + battles_won +
                     '\nTotal winnings: ' + total_winnings)
 
+    def get_user_ticket_status(self):
+        hm_db = Database(self.id)
+        hm_db.connect()
+        return hm_db.get_ticket_status()
+    
     def update_user_money(self, amount):
         hm_db = Database(self.id)
         hm_db.connect()
@@ -89,10 +94,10 @@ class Users:
         return " Your new battle records: **" \
                + str(hm_db.update_battle_records(battles_lost, battles_won, total_winnings)) + "**"
 
-    def update_user_lottery_guess(self, ticket_guess):
+    def update_user_lottery_guess(self, ticket_guess, ticket_active):
         hm_db = Database(self.id)
         hm_db.connect()
 
-        hm_db.update_lottery_guess(ticket_guess)
+        hm_db.update_lottery_guess(ticket_guess, ticket_active)
         return "Thanks! You are ticket ID: **" + self.id + "**\n <a:pepehack:525159339007148032> " \
                "Entering your ticket guess in our database now <a:pepehack:525159339007148032>"

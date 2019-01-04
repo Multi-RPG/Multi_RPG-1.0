@@ -3,7 +3,6 @@ import re
 from discord.ext import commands
 from Users import Users
 
-
 # short decorator function declaration, confirm that command user has an account in database
 def has_account():
     def predicate(ctx):
@@ -15,7 +14,6 @@ def has_account():
 
     return commands.check(predicate)
 
-
 # short decorator function declaration, confirm that command user has NO account in database
 def has_no_account():
     def predicate(ctx):
@@ -24,9 +22,7 @@ def has_no_account():
             return True
         else:
             return False
-
     return commands.check(predicate)
-
 
 class Account:
     def __init__(self, client):
@@ -92,16 +88,18 @@ class Account:
             user = Users(context.message.author.id)
             await self.client.say(context.message.author.mention +
                                   " Your level: " + user.get_user_level())
-
+                                  
+                                                                                            
     @has_account()
-    @commands.command(name='give', aliases=['DONATE', 'GIVE', 'pay', 'donate', 'PAY', 'gift', 'GIFT'],
-                      pass_context=True)
+    @commands.command(name='give', aliases=['DONATE', 'GIVE', 'pay', 'donate', 'PAY', 'gift', 'GIFT'], pass_context=True)
     async def give(self, context, *args):
         # will automatically go to exception if all arguments weren't supplied correctly
         try:
             receiver_string = args[0]
             amnt = int(args[1])
-
+            if amnt < 1:
+                await self.client.say("Can’t GIFT DEBT!")
+                return
             # create user instance with their discord ID, check database for their level field
             donator = Users(context.message.author.id)
             # use regex to extract only numbers from "receiver_string" to get their discord ID,
@@ -140,14 +138,14 @@ class Account:
             # create user instance with their target's discord ID, check database for their money field
             user = Users(re.findall("\d+", args[0])[0])
             await self.client.say(context.message.author.mention + " _Target's battle stats..._"
-                                  + user.get_user_battle_records())
+                                                                 + user.get_user_battle_records())
 
         # if they passed no parameter, get their own records
         except:
             # create user instance with their discord ID, check database for their level field
             user = Users(context.message.author.id)
             await self.client.say(context.message.author.mention + " _Your battle stats..._"
-                                  + user.get_user_battle_records())
+                                                                 + user.get_user_battle_records())
 
     @has_account()
     @commands.command(name='levelup', aliases=['lup', 'LEVELUP'], pass_context=True)
@@ -156,8 +154,8 @@ class Account:
         user = Users(context.message.author.id)
         # get the user's current level
         # calculate the cost of their next level-up
-        user_level = user.get_user_level(0)  # get int version of level, SEE USERS.PY
-        level_up_cost = user_level * 2000
+        user_level = user.get_user_level(0) # get int version of level, SEE USERS.PY
+        level_up_cost = user_level * 300
 
         # check if they are max level
         if user_level == 10:
@@ -167,31 +165,32 @@ class Account:
         # check if they have enough money for a level-up
         if user.get_user_money(0) < level_up_cost:
             await self.client.say(context.message.author.mention + ' Not enough money for level-up...'
-                                  + ' <a:pepehands:485869482602922021>\n'
-                                  + '** **\nAccount balance: '
-                                  + user.get_user_money() + '\nLevel **'
-                                  + str(user_level + 1) + '** requires: **$'
-                                  + str(level_up_cost) + '**')
+                                                                 + ' <a:pepehands:485869482602922021>\n'
+                                                                 + '** **\nAccount balance: '
+                                                                 + user.get_user_money() + '\nLevel **'
+                                                                 + str(user_level + 1) + '** requires: **$'
+                                                                 + str(level_up_cost) + '**')
             return
 
         # passed conditional, so they have enough money to level up
         # confirm if they really want to level-up
         await self.client.say(context.message.author.mention + '\nAccount balance: ' + user.get_user_money()
-                              + '\nLevel **' + str(user_level + 1)
-                              + '** requires: **$' + str(level_up_cost)
-                              + '**\n** **\nDo you want to level-up?'
-                              + ' Type **confirm** to confirm.')
+                                                             + '\nLevel **' + str(user_level + 1)
+                                                             + '** requires: **$' + str(level_up_cost)
+                                                             + '**\n** **\nDo you want to level-up?'
+                                                             + ' Type **confirm** to confirm.')
 
         # wait for user's input
         confirm = await self.client.wait_for_message(author=context.message.author, timeout=60)
         if confirm.clean_content.upper() == 'CONFIRM':
             # deduct the level-up cost from their account
-            user.update_user_money(level_up_cost * -1)
+            user.update_user_money(level_up_cost*-1)
             # increase level by 1 and print new level
             await self.client.say(context.message.author.mention + user.update_user_level())
         else:
             await self.client.say(context.message.author.mention + ' Cancelled level-up.')
 
+            
     @has_account()
     @commands.cooldown(1, 86400, commands.BucketType.user)
     @commands.command(name='daily', aliases=['DAILY', 'dailygamble'], pass_context=True)
@@ -200,12 +199,27 @@ class Account:
         user = Users(context.message.author.id)
         # get the user's current level
         # calculate the cost of their next level-up
-        user_level = user.get_user_level(0)  # get int version of level, SEE USERS.PY
-        dailyreward = user_level * 500
+        user_level = user.get_user_level(0) # get int version of level, SEE USERS.PY
+        dailyreward = user_level * 50
 
         await self.client.say('<a:worryswipe:525755450218643496> Daily **$' + str(dailyreward) +
-                              '** received! <a:worryswipe:525755450218643496>\n' + user.update_user_money(dailyreward))
+              '** received! <a:worryswipe:525755450218643496>\n' + user.update_user_money(dailyreward))
+              
+              
+    @has_account()
+    @commands.cooldown(1, 1, commands.BucketType.user)
+    @commands.command(name='daily2', aliases=['DAILY2’, dailygamble2'], pass_context=True)
+    async def daily2(self, context):
+        # create instance of user who wants to get their daily money
+        user = Users(context.message.author.id)
+        # get the user's current level
+        # calculate the cost of their next level-up
+        user_level = user.get_user_level(0) # get int version of level, SEE USERS.PY
+        dailyreward = user_level * 3000
 
-
+        await self.client.say('<a:worryswipe:525755450218643496> Daily **$' + str(dailyreward) +
+              '** received! <a:worryswipe:525755450218643496>\n' + user.update_user_money(dailyreward))
+              
+              
 def setup(client):
     client.add_cog(Account(client))

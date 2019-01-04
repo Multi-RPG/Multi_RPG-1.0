@@ -30,66 +30,103 @@ class Games:
     @commands.cooldown(1, 3600, commands.BucketType.user)
     @commands.command(name='rob', description='Steal money from others', brief='can use =steal',
                       aliases=['thief', 'thieve', 'ROB', 'steal', 'mug'], pass_context=True)
-    async def rob(self, context):
+    async def rob(self, context, *args):
         # create instance of the user starting the robbery
         robber = Users(context.message.author.id)
-
+        # declare 30% fail chance, used to calculate chance of failing rob
+        fail_chance = 30
+        level_difference = 0
         # pick a random user in the server to rob
-        # user_to_rob variable will function as the victim user's "english" name
-        user_to_rob = random.choice(list(context.message.server.members))
+        # target variable will function as the victim user's "english" name
+        target = random.choice(list(context.message.server.members))
         # make an instance of the target
-        victim = Users(user_to_rob.id)
+        victim = Users(target.id)
+        victim_id = target.id
         counter = 1
+
+        # if randomly chosen victim has an account, and robber specified NO target, account for any level difference
+        if not args and victim.find_user() == 1:
+            level_difference = (robber.get_user_level(0) - victim.get_user_level(0))
+
+        # if they specified a rob target, change the random target to their specified target
+        if args:
+            # retrieve rob target
+            target = args[0]
+            # use regex to extract only the user-id from the user targeted
+            victim_id = int(re.findall("\d+", target)[0])
+            victim = Users(victim_id)
+            # higher fail chance, 35%, if they want to specify a rob target
+            fail_chance = 35
+            # if the target doesn't have an account, change fail chance back to 30% and the target will reroll next loop
+            if victim.find_user() == 0:
+                fail_chance = 30
+                await self.client.say(context.message.author.mention +
+                                      " Your rob target doesn't have an account."
+                                      "\n**Rerolling** rob target now!")
 
         # while the user to rob is yourself, re-roll the target
         # while the user to rob does not have an account in the database, re-roll the target
-        while user_to_rob == context.message.author or victim.find_user() == 0:
+        # while the user to rob is not within 3 levels of yourself, re-roll the target
+        while victim_id == context.message.author.id or victim.find_user() == 0 or level_difference > 3:
             # only try 60 members in the user's server
-            # otherwise if the user was the only player with an account in the discord server, infinite while loop
+            # otherwise if the user was the sole player with an account in the discord server, infinite while loop
             # this part is inefficient, but only way I can think of right now with discord's functionality
             if counter == 60:
                 await self.client.say('No users found to rob...')
                 return
-            user_to_rob = random.choice(list(context.message.server.members))
+            target = random.choice(list(context.message.server.members))
             # create a new instance of victim each loop
             # in order to check if the reroll has an account in database
-            victim = Users(user_to_rob.id)
+            victim = Users(target.id)
+            victim_id = target.id
             counter += 1
+            if victim.find_user() == 1:
+                level_difference = abs(robber.get_user_level(0) - victim.get_user_level(0))
 
-        # 30% chance to fail rob
-        if 3 >= random.randint(1, 10) >= 1:
-            # take 7% of robber's money for bail funds
-            bail = int(robber.get_user_money(0) * .07)
+        # calculate random integer 1-100
+        # if the result is within 1 through fail chance, they failed the rob
+        if fail_chance >= random.randint(1, 100) >= 1:
+            robber_level = robber.get_user_level(0)
+
+            bail = int(robber_level * 5.3)
             robber.update_user_money(bail * -1)
             await self.client.say('<a:policesiren2:490326123549556746> :oncoming_police_car: '
                                   '<a:policesiren2:490326123549556746>\n'
-                                  '<a:monkacop:490323719063863306>'
-                                  '         <a:monkacop:490323719063863306>\n**'
-                                  '' + str(user_to_rob) + '** dodged and the '
-                                                          'police shot you in the process.\n'
-                                                          'You spent **$' + str(bail) + '** to bail out of jail.')
+                                  '<a:monkacop:490323719063863306>         <a:monkacop:490323719063863306>\n**'
+                                  '' + str(target) + '** dodged and the police shot you in the process.\n'
+                                  'You spent **$' + str(bail) + '** to bail out of jail.')
             return
 
-        # we passed the dodge check, so reward thief with 10% of victim's total money
-        prize = int(victim.get_user_money(0) * .10)
-        victim.update_user_money(prize * -1)
-        robber.update_user_money(prize)
-        await self.client.say('**Success!** <:poggers:490322361891946496>\n'
-                              'You robbed **$'
-                              '' + str(prize) + '** from **' + str(user_to_rob) + '**')
+        # we passed the dodge check, so reward thief with prize and bonus prize
+        victim_money = victim.get_user_money(0)
+        victim_level = victim.get_user_level(0)
+        robber_level = robber.get_user_level(0)
+
+        # the victim will only lose the prize, not the bonus prize
+        prize = int(victim_level * 9.2)
+        bonus_prize = int(robber_level * 23.4)
+
+        # balancing mechanic, only let victims lose money by robbers when they are greater than -50x their level in money
+        if victim_money > (victim_level * -50):
+            # subtract prize from victim
+            victim.update_user_money(prize * -1)
+        # reward robber with prize and bonus prize
+        robber.update_user_money(prize + bonus_prize)
+        await self.client.say('**Success!** <:poggers:490322361891946496> '
+                              'You robbed **$' + str(prize) + '** (+**$' + str(bonus_prize)
+                              + '**) from **' + str(target) + '**')
 
 
     '''BATTLE FUNCTION'''
-
     @has_account()
     @commands.command(name='fight', description='Battle another user in your server',
                       brief='can use "fight @user X --X being amount to bet"',
                       aliases=['battle', 'BATTLE', 'FIGHT'], pass_context=True)
     async def battle_user(self, context, *args):
         # retrieve how much the fighter is betting on the battle
-        try:
+        if len(args) == 2:
             bet = int(args[1])
-        except:
+        else:
             await self.client.say('No bet specified, defaulting to **$10**\n ** **')
             bet = 10
 
@@ -191,7 +228,6 @@ class Games:
                                   '```ml\nuse =fight like so: **=fight @user X**      -- X being amount to bet```')
 
     '''FLIP COIN FUNCTION'''
-
     @commands.command(name='flip', description='Flip a coin to earn social status.',
                       brief='can use "=flip" or "=flip X", with X being heads or tails',
                       aliases=['f', 'flpi', 'FLIP', 'F'], pass_context=True)
@@ -200,16 +236,15 @@ class Games:
         win = 0
 
         # first, check if they specified a bet and they have enough money for it
-        try:
+        if args:
             user = Users(context.message.author.id)
             bet = int(args[1])
             # pass 0 to return integer version of money, see USERS.PY function
-            if bet > user.get_user_money(0):
+            if bet > user.get_user_money(0) or bet < 1:
                 await self.client.say("You don't have enough money for that bet..."
                                       " <a:pepehands:485869482602922021> " + context.message.author.mention)
                 return
-        except:
-            pass
+
 
         # check if they specified a guess of heads or tails
         # process if they won or not
@@ -268,7 +303,7 @@ class Games:
 
         # pick starting word with a category, also make the string of underscores to replace later
         # check if they want to list the categories
-        try:
+        if args:
             if args[0] in ('help', 'HELP', 'categories', 'cats', 'h'):
                 await self.client.say(context.message.author.mention + ' Categories:\n' + '```fix\n1. Country name\n'
                                                                                           '2. Farm\n3. Camping\n'
@@ -280,7 +315,7 @@ class Games:
             correct_word, category, underscore_sequence = pick_word(int(args[0]))
 
         # if no category was specified in argument by user...
-        except:
+        else:
             # pick random category 1-8
             rand_category = random.randint(1, 8)
             correct_word, category, underscore_sequence = pick_word(rand_category)
@@ -342,9 +377,9 @@ class Games:
                 await self.client.say(hangmen[wrong_guesses])
                 await self.client.say('You **won** the game!! <a:worryHype:487059927731273739> Correct word was: '
                                       '**' + correct_word.upper() + '** ' + context.message.author.mention)
-                # add $200 to user's bank account now
+                # add $500 to user's bank account now
                 user = Users(context.message.author.id)
-                await self.client.say(user.update_user_money(200))
+                await self.client.say(user.update_user_money(300))
                 return
 
             # clear up last 6 messages, only 5 if first round, to reduce bot spam

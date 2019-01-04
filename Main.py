@@ -38,7 +38,7 @@ async def on_message(message):
     # need this statement for bot to recognize commands
     await client.process_commands(message)
 
-@client.command(name='help', description='command information', brief='show this message', aliases=['h'], pass_context = True)
+@client.command(name='help', description='command information', brief='show this message', aliases=['h'], pass_context=True)
 async def helper(context):
     # using discord's "ml" language coloring scheme for the encoded help message
     msg = '```ml\n' \
@@ -55,11 +55,14 @@ async def helper(context):
           '  =level          use "=level" or "=level @user" to print account level\n' \
           '  =stats          use "=stats" or "=stats @user" to print battle stats\n' \
           '  =money          use "=money" or "=money @user" to print bank balance\n' \
-          '  =give           use "=give @user X" -- X being money to give a user\n' \
+          '  =give           use "=give @user X" -- X being money to give a user\n```'
+    msg2 = '```ml\n' \
           'Games For Money:\n' \
-          '  =lotto          use "=lotto" for a 1/5 chance to win $1500 each day\n' \
+          '  =lotto          use "=lotto" for a 1/5 chance to win $3500 each day\n' \
+          '  =lotto2         use "=lotto2" for a 1/5 chance to win $10000 each day\n' \
           '                  NOTE: your server must have a text channel named "lottery"\n' \
-          '  =rob            use "=rob" for a 6/10 chance to mug a fellow player\n' \
+          '  =rob            use "=rob" for a 7/10 chance to mug a random player\n' \
+          '  =rob            use "=rob @user" for a 6/10 chance to mug a specified player\n' \
           '  =fight          use "=fight @user X" -- X being money to bet\n' \
           '  =flip           use "=flip" or "=flip X" or "=flip X Y" \n' \
           '                  -- X being heads or tails guess\n' \
@@ -69,6 +72,7 @@ async def helper(context):
           '                  use "stop" or "cancel" to stop game\n' \
           'Meme Maker:  \n' \
           '  =custom         =custom to create a custom Twitter-style meme \n' \
+          '  =changemymind   =changemymind "opinion" \n' \
           '  =pigeon         =pigeon "boy" "butterfly" "is this a pidgeon?" \n' \
           '  =boyfriend      =boyfriend "new girl" "distracted boyfriend" "girlfriend"\n' \
           '  =brain          =brain "stage1" "stage2" "stage3" "stage4"\n' \
@@ -79,6 +83,7 @@ async def helper(context):
           '  =reasonstolive  =reasonstolive "reasons"\n' \
           '  =bookfacts      =bookfacts "facts"```'
     await client.send_message(context.message.author, msg)
+    await client.send_message(context.message.author, msg2)
 
 
 # Commands error handling
@@ -106,5 +111,5 @@ if __name__ == "__main__":
             exc = '{}: {}'.format(type(e).__name__, e)
             print('Failed to load extension {}\n{}'.format(extension, exc))
 
-        
+
 client.run(TOKEN)
