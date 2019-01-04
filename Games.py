@@ -103,8 +103,8 @@ class Games:
         robber_level = robber.get_user_level(0)
 
         # the victim will only lose the prize, not the bonus prize
-        prize = int(victim_level * 9.2)
-        bonus_prize = int(robber_level * 23.4)
+        prize = int(victim_level * 8.2)
+        bonus_prize = int(robber_level * 24.4)
 
         # balancing mechanic, only let victims lose money by robbers when they are greater than -50x their level in money
         if victim_money > (victim_level * -50):
