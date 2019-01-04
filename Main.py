@@ -58,8 +58,8 @@ async def helper(context):
           '  =give           use "=give @user X" -- X being money to give a user\n```'
     msg2 = '```ml\n' \
           'Games For Money:\n' \
-          '  =lotto          use "=lotto" for a 1/5 chance to win $3500 each day\n' \
-          '  =lotto2         use "=lotto2" for a 1/5 chance to win $10000 each day\n' \
+          '  =lotto          use "=lotto" for a 1/5 chance to win $250 each day\n' \
+          '  =lotto2         use "=lotto2" for a 1/5 chance to win $1000 each day\n' \
           '                  NOTE: your server must have a text channel named "lottery"\n' \
           '  =rob            use "=rob" for a 7/10 chance to mug a random player\n' \
           '  =rob            use "=rob @user" for a 6/10 chance to mug a specified player\n' \
