@@ -126,6 +126,9 @@ class Games:
         # retrieve how much the fighter is betting on the battle
         if len(args) == 2:
             bet = int(args[1])
+            if bet < 1:
+                await self.client.say('Bet cant be negative...')
+                return
         else:
             await self.client.say('No bet specified, defaulting to **$10**\n ** **')
             bet = 10
@@ -166,24 +169,25 @@ class Games:
             try:
                 confirm = await self.client.wait_for_message(timeout=60, check=fighter2check)
                 if confirm.clean_content.upper() == 'YES':
+                    await self.client.delete_message(confirm)
                     # have to use 2 messages to enlarge the emojis
                     await self.client.say('**Commencing battle!** Fight will conclude in 10 seconds...')
                     await self.client.say('<a:worryfight1:493220414206509056> <a:worryfight2:493220431738699786>')
                     await asyncio.sleep(10)
-                    # get the difference in player level between each player
-                    difference = fighter1.get_user_level(0) - fighter2.get_user_level(0)
 
-                    # if fighter1 is higher level or same level
-                    if difference >= 0:
-                        # decide winner, with fighter 1 having better odds (unless same level)
-                        winner = battle_decider(1, 2, difference)
+                    # get the stats of each fighter
+                    # add fighter's items' total level + 3x their account level to use as weight in win probability
+                    f1_stats = fighter1.get_user_item_score() + (fighter1.get_user_level(0)*3)
+                    f2_stats = fighter2.get_user_item_score() + (fighter2.get_user_level(0)*3)
+                    total = (f1_stats + f2_stats)
+                    f1_weight = f1_stats / total
+                    f2_weight = f2_stats / total
 
-                    # if fighter2 is higher level
-                    elif difference < 0:
-                        # make level difference positive before calling our function
-                        difference *= -1
-                        # decide winner, with fighter 2 having better odds
-                        winner = battle_decider(2, 1, difference)
+
+                    # decide winner with custom function
+                    # if it returns 1, fighter 1 won
+                    # if it returns 2, fighter 2 won
+                    winner = battle_decider(1, 2, f1_weight, f2_weight)
 
                     # check if they tried to exploit the code by spending all their money during the battle
                     if fighter1.get_user_money(0) < bet or fighter2.get_user_money(0) < bet:
@@ -203,7 +207,7 @@ class Games:
                         fighter2.update_user_money(bet * -1)
                         # update loser's battle records... battles_lost + 1
                         fighter2.update_user_records(1, 0, 0)
-                    else:
+                    elif winner == 2:
                         await self.client.say(target + ' won **$' + str(bet) +
                                               '** by defeating ' + context.message.author.mention)
                         fighter1.update_user_money(bet * -1)
@@ -220,12 +224,12 @@ class Games:
             except:
                 await self.client.say('**Battle request ignored...** <a:pepehands:485869482602922021>')
 
-
+    
 
         # if they used syntax incorrectly
         except:
             await self.client.say(context.message.author.mention +
-                                  '```ml\nuse =fight like so: **=fight @user X**      -- X being amount to bet```')
+                                  '```ml\nuse =fight like so: "=fight @user X"  -- X being amount to bet```')
 
     '''FLIP COIN FUNCTION'''
     @commands.command(name='flip', description='Flip a coin to earn social status.',
@@ -236,7 +240,8 @@ class Games:
         win = 0
 
         # first, check if they specified a bet and they have enough money for it
-        if args:
+        # this try/catch block will simply pass if they did not specify a bet
+        try:
             user = Users(context.message.author.id)
             bet = int(args[1])
             # pass 0 to return integer version of money, see USERS.PY function
@@ -244,12 +249,13 @@ class Games:
                 await self.client.say("You don't have enough money for that bet..."
                                       " <a:pepehands:485869482602922021> " + context.message.author.mention)
                 return
-
+        except:
+            pass
 
         # check if they specified a guess of heads or tails
         # process if they won or not
-        try:
-            if args[0] == 'heads':
+        if args:
+            if args[0] == 'heads' or 'HEADS':
                 if result == 1:
                     msg = '<:heads:486705167643967508> Result is **Heads**! You win! <a:worryHype:487059927731273739>'
                     win = 1
@@ -261,9 +267,8 @@ class Games:
                 else:
                     msg = '<:heads:486705184370589718> Result is **Tails**! You win! <a:worryHype:487059927731273739>'
                     win = 1
-        except:
+        else:
             # no arguments provided at all. so just give a result
-            print("No argument specified for betting on the coin side.")
             if result == 1:
                 msg = '<:heads:486705167643967508> Result is **Heads**!'
             else:
@@ -282,11 +287,12 @@ class Games:
                 # if they have $0 after that flip, give a donation dollar to discourage account re-creation
                 # pass in 0 for get_user_money to return the money as integer, SEE USERS.PY
                 if user.get_user_money(0) == 0:
-                    msg += "\n** **\n_The gambling gods have shown mercy on your bankrupt existence, and given you **$1**_"
+                    msg += "\n** **\n_Mission failed. We'll get 'em next time. Take this **$1**._"
                     msg += "\n" + user.update_user_money(1)
             await self.client.say(msg)
         except:
-            print("No bet specified")
+            return
+
 
     '''HANGMAN main function'''
 
@@ -320,135 +326,121 @@ class Games:
             rand_category = random.randint(1, 8)
             correct_word, category, underscore_sequence = pick_word(rand_category)
 
-        await self.client.say(context.message.author.mention + ' Word category is: **```fix\n' + category + '```**')
-        await self.client.say('** **')
-        # print the hangman ascii setup
-        await self.client.say(hangmen[0])
-        await self.client.say('** **\n' + "".join(underscore_sequence))
+        # print the hangman starting interface and ascii setup
         # use ** ** for empty line, discord doesn't allow empty messages.
         # also, using "".join because discord api can't  print lists.
         # we could cast, but the format would be unfriendly for the game.
+        await self.client.say(context.message.author.mention + ' Word category is: **```fix\n' + category + '\n```**')
+        art_msg = await self.client.say('\n** **\n' + hangmen[0] + '\n** **\n' + "".join(underscore_sequence))
 
+        counter = 0
         while True:  # main game loop
-            await self.client.say('*Guess a letter or the entire word now...*')
-            guess = await self.client.wait_for_message(author=context.message.author,
-                                                       timeout=60)  # wait for user's guess
+            guess_prompt_msg = await self.client.say('*Guess a letter or the entire word now...*')
+            guess_msg = await self.client.wait_for_message(author=context.message.author,
+                                                       timeout=60)  # wait for user's guess_msg
+
+            # make already_guessed boolean to facilitate a while loop that will loop if the user makes duplicate guess
             already_guessed = 1
-            while already_guessed == 1:  # loop that will exit immediately if letter guess isn't a repeat
-                if guess.clean_content.upper() in str("".join(guessed_letters)):
-                    await self.client.purge_from(context.message.channel, limit=1)
-                    await self.client.say('\n*You already tried that. Guess a different letter now...*')
-                    # wait for user's guess now
-                    guess = await self.client.wait_for_message(author=context.message.author, timeout=30)
-                    # account for that extra message, so delete last one
-                    await self.client.purge_from(context.message.channel, limit=1)
+            while already_guessed == 1:  # loop that will exit immediately if letter guess_msg isn't a repeat
+                if guess_msg.clean_content.upper() in str("".join(guessed_letters)):
+                    await self.client.delete_message(guess_msg)
+                    already_guessed_msg = await self.client.say('\n*You already tried that.'
+                                                                ' Guess a different letter now...*')
+                    # wait for user's guess_msg now
+                    guess_msg = await self.client.wait_for_message(author=context.message.author, timeout=30)
+                    await self.client.delete_message(already_guessed_msg)
                 else:
                     already_guessed = 0
 
             '''RUN WIN CHECKS AND CANCEL CHECKS NOW'''
             # run conditionals to check if they guessed entire word or they used a cancel keyword
-            print(guess.clean_content.upper() + ' and correct word: ' + correct_word)  # console print
-            if guess.clean_content.upper() == correct_word:
-                await self.client.purge_from(context.message.channel, limit=6)
-                await self.client.say(hangmen[wrong_guesses])
-                await self.client.say('**Correct word pick** <a:worryHype:487059927731273739>')
-                await self.client.say('You **won** the game!! <a:worryHype:487059927731273739> Correct word was:'
+            print(guess_msg.clean_content.upper() + ' and correct word: ' + correct_word)  # console print
+            if guess_msg.clean_content.upper() == correct_word:
+                await self.client.delete_message(art_msg)
+                await self.client.say(hangmen[wrong_guesses] + '**Correct word pick** <a:worryHype:487059927731273739>' +
+                                      'You **won** the game!! <a:worryHype:487059927731273739> Correct word was:'
                                       ' **' + correct_word.upper() + '** ' + context.message.author.mention)
-                # add $200 to user's bank account now
+                # add WINNINGS to user's bank account now
                 user = Users(context.message.author.id)
-                await self.client.say(user.update_user_money(200))
+                await self.client.say(user.update_user_money(30))
                 return
 
-            if guess.clean_content.upper() in ['STOP', 'CANCEL']:
-                await self.client.purge_from(context.message.channel, limit=6)
+            if guess_msg.clean_content.upper() in ['STOP', 'CANCEL']:
+                await self.client.delete_message(art_msg)
                 await self.client.say('**Cancelled** the game!! <a:pepehands:485869482602922021> Correct word was: '
                                       '**' + correct_word.upper() + '** ' + context.message.author.mention)
                 return
 
             # quick win check, check for any underscores left to fill.
             # if unknown_letters ends up as 0 for this iteration, then there are no letters left to guess.
-            num_matches, underscore_sequence = find_matches(guess, correct_word, underscore_sequence)
+            num_matches, underscore_sequence = find_matches(guess_msg, correct_word, underscore_sequence)
             unknown_letters = 0
             for x in underscore_sequence:
-                if x == '\u2581':  # if it's an underscore still, the letter is still unknown to the user
+                if x == '\u2581':  # if there is a blank underscore , the letter is still unknown to the user
                     unknown_letters += 1
             if unknown_letters == 0:
-                await self.client.purge_from(context.message.channel, limit=6)
-                await self.client.say(hangmen[wrong_guesses])
-                await self.client.say('You **won** the game!! <a:worryHype:487059927731273739> Correct word was: '
+                await self.client.delete_message(art_msg)
+                await self.client.say(hangmen[wrong_guesses] + 'You **won** the game!!' +
+                                      ' <a:worryHype:487059927731273739> Correct word was: ' +
                                       '**' + correct_word.upper() + '** ' + context.message.author.mention)
-                # add $500 to user's bank account now
+                # add WINNINGS to user's bank account now
                 user = Users(context.message.author.id)
-                await self.client.say(user.update_user_money(300))
+                await self.client.say(user.update_user_money(30))
                 return
 
-            # clear up last 6 messages, only 5 if first round, to reduce bot spam
-            if len(guessed_letters) == 1:
-                await self.client.purge_from(context.message.channel, limit=5)
-            else:
-                await self.client.purge_from(context.message.channel, limit=6)
 
-            # print whether they guessed a correct letter or not
+            # now clear all messages besides category
+            await self.client.delete_message(art_msg)
+            await self.client.delete_message(guess_prompt_msg)
+            await self.client.delete_message(guess_msg)
+            # pick_result_msg, underscore_seq_msg, guessed_list_msg will only exist if the game has gone at least 1 loop
+            if counter > 0:
+                await self.client.delete_message(pick_result_msg)
+                await self.client.delete_message(underscore_seq_msg)
+                await self.client.delete_message(guessed_list_msg)
+
+            # if user's guess has zero matches in the correct word
             if num_matches == 0:
                 wrong_guesses += 1  # no letters matched, so they guessed a wrong letter
-                if len(guess.clean_content) == 1:
-                    await self.client.say('**Wrong letter pick** <a:pepehands:485869482602922021>')
+                if len(guess_msg.clean_content) == 1:
+                    pick_result_msg = await self.client.say('**Wrong letter pick** <a:pepehands:485869482602922021>')
                 else:
-                    await self.client.say('**Wrong word pick** <a:pepehands:485869482602922021>')
+                    pick_result_msg = await self.client.say('**Wrong word pick** <a:pepehands:485869482602922021>')
+            # if user's guess has any matches found in the correct word
             else:
-                await self.client.say('**Correct letter pick** <a:worryHype:487059927731273739>')
+                pick_result_msg = await self.client.say('**Correct letter pick** <a:worryHype:487059927731273739>')
                 # don't need "correct word pick" next because that would trigger
                 # in the conditional right after the guess is taken
 
             # print the ascii art corresponding to wrong guesses
             if wrong_guesses < 6:
-                await self.client.say(hangmen[wrong_guesses])
+                art_msg = await self.client.say(hangmen[wrong_guesses])
             elif wrong_guesses == 6:
-                await self.client.say(hangmen[6])
-                await self.client.say('\nYou were **hanged**! <a:pepehands:485869482602922021> The word was: '
+                await self.client.say(hangmen[6] + '\nYou were **hanged**! <a:pepehands:485869482602922021>' +
+                                      ' The word was: ' +
                                       '**' + correct_word + '**\n' + context.message.author.mention)
                 return
 
             # print underscores/letters, our main interface
-            await self.client.say('** **\n**' + "".join(underscore_sequence) + '**')
+            underscore_seq_msg = await self.client.say('** **\n**' + "".join(underscore_sequence) + '**')
             # add last guessed letter to our guessed-so-far list
-            guessed_letters, all_guessed = add_guess_to_list(guess, guessed_letters)
+            guessed_letters, all_guessed = add_guess_to_list(guess_msg, guessed_letters)
             # print all letters guessed so far
-            # all_guessed is just the string version of guessed_letters (a list version)
-            await self.client.say('** ```fix\nGuessed so far: ' + all_guessed + '``` **')
+            guessed_list_msg = await self.client.say('** ```fix\nGuessed so far: ' + all_guessed + '``` **')
+            # add 1 to the main game loop's counter
+            counter += 1
 
 
 def setup(client):
     client.add_cog(Games(client))
 
 
-def battle_decider(higher_odds, lower_odds, difference):
-    # the maximum player level difference is 9
+def battle_decider(fighter1, fighter2, fighter1_weight, fighter2_weight):
     # choices function maps a selection to a probability, and selects one choice based off probability
-    if difference == 1:
-        winner = choices([higher_odds, lower_odds], [.52, .48])
-    elif difference == 2:
-        winner = choices([higher_odds, lower_odds], [.54, .46])
-    elif difference == 3:
-        winner = choices([higher_odds, lower_odds], [.56, .44])
-    elif difference == 4:
-        winner = choices([higher_odds, lower_odds], [.58, .42])
-    elif difference == 5:
-        winner = choices([higher_odds, lower_odds], [.60, .40])
-    elif difference == 6:
-        winner = choices([higher_odds, lower_odds], [.62, .38])
-    elif difference == 7:
-        winner = choices([higher_odds, lower_odds], [.64, .36])
-    elif difference == 8:
-        winner = choices([higher_odds, lower_odds], [.66, .34])
-    elif difference == 9:
-        winner = choices([higher_odds, lower_odds], [.68, .32])
-    else:
-        winner = choices([higher_odds, lower_odds], [.50, .50])
-
+    winner = choices([fighter1, fighter2], [fighter1_weight, fighter2_weight])
+    print(winner)
     # choices function returning [1] or [2] so use regex to pull the integers out
     return int(re.findall("\d+", str(winner))[0])
-
 
 def pick_word(cat):
     if cat == 1:

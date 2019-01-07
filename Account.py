@@ -138,14 +138,13 @@ class Account:
             # create user instance with their target's discord ID, check database for their money field
             user = Users(re.findall("\d+", args[0])[0])
             await self.client.say(context.message.author.mention + " _Target's battle stats..._"
-                                                                 + user.get_user_battle_records())
+                                  + user.get_user_battle_stats())
 
         # if they passed no parameter, get their own records
         except:
             # create user instance with their discord ID, check database for their level field
             user = Users(context.message.author.id)
-            await self.client.say(context.message.author.mention + " _Your battle stats..._"
-                                                                 + user.get_user_battle_records())
+            await self.client.say(context.message.author.mention + user.get_user_battle_stats())
 
     @has_account()
     @commands.command(name='levelup', aliases=['lup', 'LEVELUP'], pass_context=True)
