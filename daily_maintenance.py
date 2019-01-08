@@ -46,7 +46,7 @@ async def on_ready():
         user.update_user_money(250)
         # alter each item on list to discord @ format and concatenate into 1 string to ping winners below
         std_winners_string += ('**TICKET ID:** ' + winner + ' <@' + winner + '>\n')
-        
+
     prem_winners_string = ''
     for winner in prem_winners:
         # create instance of each premium ticket user who won, and update their
@@ -54,7 +54,7 @@ async def on_ready():
         user.update_user_money(1000)
         # alter each item on list to discord @ format and concatenate into 1 string to ping winners below
         prem_winners_string += ('**TICKET ID:** ' + winner + ' <@' + winner + '>\n')
-    
+
 
     # for each server the bot is in, post the lottery results in the lottery channel
     for server in client.servers:
@@ -94,7 +94,7 @@ async def on_ready():
                     channel_found = 1
 
 
-    # RESET DAILY SHOP NOW! 
+    # RESET DAILY SHOP NOW!
     db.reset_shop()
 
     # make sure to change this path to the full file path if you plan to use crontab, or else it will not work
@@ -116,7 +116,7 @@ async def on_ready():
             item_price = config.get(item, 'price')
 
             db.insert_shop_item(item_name, item_type, item_level, item_price)
-    
+
 
     sys.exit(0)
 client.run(TOKEN)
