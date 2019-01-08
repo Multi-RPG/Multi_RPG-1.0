@@ -24,6 +24,7 @@ def has_no_account():
             return False
     return commands.check(predicate)
 
+
 class Account:
     def __init__(self, client):
         self.client = client
@@ -71,6 +72,68 @@ class Account:
                                   " :moneybag: balance: " + user.get_user_money())
 
     @has_account()
+    @commands.command(name='bank', aliases=['balance'], pass_context=True)
+    async def check_bank_balance(self, context):
+        user = Users(context.message.author.id)
+        bank_amount = user.get_user_bank_balance()
+        await self.client.say(f"{context.message.author.mention} :computer: Bank balance is: {user.get_user_bank_balance()}")
+
+    @has_account()
+    @commands.cooldown(1, 14400, commands.BucketType.user) # 4hours cooldown to avoid abuse
+    @commands.command(name='transfer', description='transfer a giving ammount to user bank',
+                      brief='transfer money', aliases=['xfer'], pass_context=True)
+    async def deposit_bank(self, context, *args):
+        if args:
+            amount = int(args[0])
+            user = Users(context.message.author.id)
+            user_money = user.get_user_money(0)
+            user_bank_money = user.get_user_bank_balance(0)
+
+            # check if user has the amount in his/her bag
+            if amount > user_money or amount < 1:
+                await self.client.say(" You don't have enough money to "
+                                      "make a deposit <a:pepehands:485869482602922021> "
+                                      + context.message.author.mention)
+                return
+            # check if user is carrying at least $50 in his/her bag
+            aux = user_money-50
+            if user_money-amount < 50:
+                await self.client.say(f"Invalid amount, you have to carry at "
+                                      f"least $50 in your bag!\n"
+                                      f"Max amount for transfering is: ${aux}")
+                return
+
+            new_user_money = amount * -1 # autistic but ok :feelsbothman:
+            await self.client.say(f"{context.message.author.mention} Thank you! Your money has been transfered "
+                                  f" <a:pepehack:525159339007148032>")
+            await self.client.say(f'{context.message.author.mention} {user.update_user_bank_balance(amount)}')
+            await self.client.say(f'{context.message.author.mention} {user.update_user_money(new_user_money)}')
+        else:
+            await self.client.say("Invalid input!\n ```Usage: '=transfer x' or '=xfer x' -- x being money to deposit```")
+            return
+
+    @has_account()
+    @commands.command(name='withdraw', description='withdraw a giving amount to user bag',
+                      brief='withdraw money', aliases=['draw', 'extract'], pass_context=True)
+    async def withdraw_bank(self, context, *args):
+        if args:
+            user = Users(context.message.author.id)
+            amount = int(args[0])
+
+            # check if user has the amount in his bank Account
+            if amount > user.get_user_bank_balance(0) or amount < 1:
+                await self.client.say(f" You don't have ${amount} in your bank."
+                                      f" <:pepethink1:356600456165851136>")
+                return
+
+            new_user_bank_money = amount * -1
+            await self.client.say(f"{context.message.author.mention} Thank you! {user.update_user_money(amount)}\n"
+                                  f" {user.update_user_bank_balance(new_user_bank_money)}")
+        else:
+            await self.client.say("Invalid input!\n ```Usage: '=draw x' or '=extract x' -- x being money to withdraw```")
+            return
+
+    @has_account()
     @commands.command(name='level', aliases=['LEVEL', 'lvl', 'LVL'], pass_context=True)
     async def level(self, context, *args):
         # this 'try' will process if they want to check another player's level
@@ -88,8 +151,8 @@ class Account:
             user = Users(context.message.author.id)
             await self.client.say(context.message.author.mention +
                                   " Your level: " + user.get_user_level())
-                                  
-                                                                                            
+
+
     @has_account()
     @commands.command(name='give', aliases=['DONATE', 'GIVE', 'pay', 'donate', 'PAY', 'gift', 'GIFT'], pass_context=True)
     async def give(self, context, *args):
@@ -190,7 +253,7 @@ class Account:
         else:
             await self.client.say(context.message.author.mention + ' Cancelled level-up.')
 
-            
+
     @has_account()
     @commands.cooldown(1, 86400, commands.BucketType.user)
     @commands.command(name='daily', aliases=['DAILY', 'dailygamble'], pass_context=True)
@@ -204,8 +267,8 @@ class Account:
 
         await self.client.say('<a:worryswipe:525755450218643496> Daily **$' + str(dailyreward) +
               '** received! <a:worryswipe:525755450218643496>\n' + user.update_user_money(dailyreward))
-              
-              
+
+
     @has_account()
     @commands.cooldown(1, 1, commands.BucketType.user)
     @commands.command(name='daily2', aliases=['DAILY2’, dailygamble2'], pass_context=True)
@@ -219,7 +282,7 @@ class Account:
 
         await self.client.say('<a:worryswipe:525755450218643496> Daily **$' + str(dailyreward) +
               '** received! <a:worryswipe:525755450218643496>\n' + user.update_user_money(dailyreward))
-              
-              
+
+
 def setup(client):
     client.add_cog(Account(client))
