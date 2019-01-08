@@ -50,25 +50,46 @@ class Users:
         elif string == 1:
             return "**" + str(hm_db.get_level()) + "**"
 
+    # returns integer of user's weapon + helmet + chest + boots levels' total
+    def get_user_item_score(self):
+        hm_db = Database(self.id)
+        hm_db.connect()
+
+        return hm_db.get_item_score()
+
     # pass 0 to 'string' to return integer version of user's battles records EX: 3, default is string, EX: "**3**"
-    def get_user_battle_records(self, string=1):
+    def get_user_battle_stats(self, string=1):
         hm_db = Database(self.id)
         hm_db.connect()
 
         # if we want integer form of each battle record
         if string == 0:
-            return hm_db.get_battle_records()
+            return hm_db.get_battle_stats()
         # if we want the full formatted string sequence of battle records
         elif string == 1:
             # assign each variable from the sql query
-            battles_lost, battles_won, total_winnings = hm_db.get_battle_records()
+            weapon_level, helmet_level, chest_level, boots_level,\
+            battles_lost, battles_won, total_winnings = hm_db.get_battle_stats()
+
             # add full bold discord-format to each variable
+            item_score = '**' + str(weapon_level + helmet_level + chest_level + boots_level) + '**'
+
+            weapon_level = '**' + str(weapon_level) + '**'
+            helmet_level = '**' + str(helmet_level) + '**'
+            chest_level = '**' + str(chest_level) + '**'
+            boots_level = '**' + str(boots_level) + '**'
             battles_lost = '**' + str(battles_lost) + '**'
             battles_won = '**' + str(battles_won) + '**'
             total_winnings = '**$' + str(total_winnings) + '**'
 
-            return ('\n** **\n'
-                    ':crossed_swords:  lost: ' + battles_lost +
+            return ('\n**STATS:**\n'
+                    'Weapon:  ' + weapon_level +
+                    '\nHelmet:    ' + helmet_level +
+                    '\nChest:       ' + chest_level +
+                    '\nBoots:       ' + boots_level +
+                    '\n**Total:**       ' + item_score +
+                    '\n\n**RECORDS:**\n'
+                    ':crossed_swords:  lost:  ' + battles_lost +
                     '\n:crossed_swords:  won: ' + battles_won +
                     '\nTotal winnings: ' + total_winnings)
 
@@ -86,6 +107,23 @@ class Users:
         hm_db = Database(self.id)
         hm_db.connect()
         return " Your new level: **" + str(hm_db.update_level()) + "**"
+
+    def update_user_battle_gear(self, gear_type, level):
+        hm_db = Database(self.id)
+        hm_db.connect()
+
+        if gear_type == 'weapon':
+            return " Your new total item score: **" + \
+                   str(hm_db.update_battle_weapon(level)) + "**"
+        elif gear_type == 'helmet':
+            return " Your new total item score: **" +\
+               str(hm_db.update_battle_helmet(level)) + "**"
+        elif gear_type == 'chest':
+            return " Your new total item score: **" +\
+               str(hm_db.update_battle_chest(level)) + "**"
+        elif gear_type == 'boots':
+            return " Your new total item score: **" +\
+               str(hm_db.update_battle_boots(level)) + "**"
 
     def update_user_records(self, battles_lost, battles_won, total_winnings):
         hm_db = Database(self.id)

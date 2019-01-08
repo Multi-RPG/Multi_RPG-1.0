@@ -39,6 +39,21 @@ class Database:
         self.connection.commit()
         return self.get_money()
 
+    def insert_shop_item(self, name, type, level, price):
+        cur = self.connection.cursor()
+
+        sql = "INSERT INTO Shop(name, type, level, price) VALUES(?, ?, ?, ?)"
+        cur.execute(sql, (name, type, level, price))
+
+        # print users table to console after inserts
+        cur.execute("select * from Shop")
+        rows = cur.fetchall()
+        print("\nShop after insert: \n")
+        for row in rows:
+            print(row)
+
+        self.connection.commit()
+
     def find_acct(self):
         cur = self.connection.cursor()
 
@@ -54,7 +69,7 @@ class Database:
             return 1
         except:
             return 0
-                
+
     def delete_acct(self):
         cur = self.connection.cursor()
 
@@ -84,17 +99,25 @@ class Database:
         row = cur.fetchone()
         return row[0]
 
-    def get_battle_records(self):
+    def get_battle_stats(self):
         cur = self.connection.cursor()
 
-        sql = "SELECT battles_lost, battles_won, total_winnings FROM Battles WHERE fighter_id = ?"
+        sql = "SELECT weapon_level, helmet_level, chest_level, boots_level, " \
+              "battles_lost, battles_won, total_winnings FROM Battles WHERE fighter_id = ?"
         cur.execute(sql, (self.id,))
         row = cur.fetchone()
         # fetchone() returns only 1 row, and not in tuple format like fetchall()
         # now we can just use array indexes to get each field
-        return row[0], row[1], row[2]
-        
-        
+        return row[0], row[1], row[2], row[3], row[4], row[5], row[6]
+
+    def get_item_score(self):
+        cur = self.connection.cursor()
+
+        sql = "SELECT weapon_level + helmet_level + chest_level + boots_level FROM Battles WHERE fighter_id = ?"
+        cur.execute(sql, (self.id,))
+        row = cur.fetchone()
+        return row[0]
+
     def get_ticket_status(self):
         cur = self.connection.cursor()
         
@@ -102,9 +125,8 @@ class Database:
         cur.execute(sql, (self.id,))
         row = cur.fetchone()
         return row[0]
-     
 
-    # pass in the winning_number as a parameter from the daily script: a_lottery_script.py
+    # pass in the winning_number as a parameter from the daily script: daily_maintenance.py
     def get_lottery_winners(self, winning_number):
         cur = self.connection.cursor()
         # find ticket id's with the winning number as their ticket guess, and their active_ticket is 1, which defines a basic ticket
@@ -125,14 +147,29 @@ class Database:
         
 
         # reset all tickets as well, since this function is only called when checking for winners
-        # set all to inactive, and change all ticket guesses to outside of our defined bounds
-        sql = "UPDATE Lottery SET ticket_guess = 99999999, ticket_active = 0"
-        cur.execute(sql)
-        self.connection.commit()
+        self.reset_lottery()
 
         # return list of winner id's (basic and premium)
         return std_winners, prem_winners
 
+    def get_shop_list(self):
+        cur = self.connection.cursor()
+
+        sql = "SELECT * from SHOP"
+        cur.execute(sql)
+        rows = cur.fetchall()
+        return rows
+
+    def get_shop_item(self, item_id):
+        cur = self.connection.cursor()
+
+        # test if the user ID exists in the datbase
+        sql = "SELECT * FROM SHOP WHERE item_id = ?"
+        cur.execute(sql, (item_id,))
+        row = cur.fetchone()
+        print(row)
+        return row
+        # see if a row exists in the fetch results, if not, they don't have an account
     
     def daily_all(self):
         cur = self.connection.cursor()
@@ -173,6 +210,62 @@ class Database:
         self.connection.commit()
         return self.get_level()
 
+    def update_battle_weapon(self, weapon_level):
+        cur = self.connection.cursor()
+
+        sql = "UPDATE Battles SET weapon_level = ? WHERE fighter_id = ?"
+        cur.execute(sql, (weapon_level, self.id))
+        cur.execute("SELECT * from Battles")
+        rows = cur.fetchall()
+        print("\nBattles table after battle gear update: \n")
+        for row in rows:
+            print(row)
+
+        self.connection.commit()
+        return self.get_item_score()
+
+    def update_battle_helmet(self, helmet_level):
+        cur = self.connection.cursor()
+
+        sql = "UPDATE Battles SET helmet_level = ? WHERE fighter_id = ?"
+        cur.execute(sql, (helmet_level, self.id))
+        cur.execute("SELECT * from Battles")
+        rows = cur.fetchall()
+        print("\nBattles table after battle gear update: \n")
+        for row in rows:
+            print(row)
+
+        self.connection.commit()
+        return self.get_item_score()
+
+    def update_battle_chest(self, chest_level):
+        cur = self.connection.cursor()
+
+        sql = "UPDATE Battles SET chest_level = ? WHERE fighter_id = ?"
+        cur.execute(sql, (chest_level, self.id))
+        cur.execute("SELECT * from Battles")
+        rows = cur.fetchall()
+        print("\nBattles table after battle gear update: \n")
+        for row in rows:
+            print(row)
+
+        self.connection.commit()
+        return self.get_item_score()
+
+    def update_battle_boots(self, boots_level):
+        cur = self.connection.cursor()
+
+        sql = "UPDATE Battles SET boots_level = ? WHERE fighter_id = ?"
+        cur.execute(sql, (boots_level, self.id))
+        cur.execute("SELECT * from Battles")
+        rows = cur.fetchall()
+        print("\nBattles table after battle gear update: \n")
+        for row in rows:
+            print(row)
+
+        self.connection.commit()
+        return self.get_item_score()
+
     def update_battle_records(self, battles_lost, battles_won, total_winnings):
         cur = self.connection.cursor()
 
@@ -181,12 +274,12 @@ class Database:
         cur.execute(sql, (battles_lost, battles_won, total_winnings, self.id))
         cur.execute("select * from Battles")
         rows = cur.fetchall()
-        print("\nBattles table after battles update: \n")
+        print("\nBattles table after battle records update: \n")
         for row in rows:
             print(row)
 
         self.connection.commit()
-        return self.get_battle_records()
+        return self.get_battle_stats()
 
     def update_lottery_guess(self, ticket_guess, ticket_active):
         cur = self.connection.cursor()
@@ -203,5 +296,20 @@ class Database:
             print(row)
 
         self.connection.commit()
-        return
 
+    def reset_lottery(self):
+        cur = self.connection.cursor()
+        # set all to inactive, and change all ticket guesses to outside of our defined bounds
+        sql = "UPDATE Lottery SET ticket_guess = 99999999, ticket_active = 0"
+        cur.execute(sql)
+        self.connection.commit()
+
+
+    def reset_shop(self):
+        cur = self.connection.cursor()
+        sql = "DELETE FROM SHOP"
+        cur.execute(sql)
+
+        sql = "UPDATE sqlite_sequence SET seq = 0"
+        cur.execute(sql)
+        self.connection.commit()
