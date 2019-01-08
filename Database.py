@@ -14,13 +14,13 @@ class Database:
             return self.connection
         except Error as e:
             print(e)
-        
+
     def insert_acct(self):
         cur = self.connection.cursor()
 
-        # new user will start off with level 1, and $50
-        sql = "INSERT INTO Users(user_id, level, money) VALUES(?, ?, ?)"
-        cur.execute(sql, (self.id, 1, 50))
+        # new user will start off with level 1, $50 in bag and $0 in bank
+        sql = "INSERT INTO Users(user_id, level, money, bank) VALUES(?, ?, ?, ?)"
+        cur.execute(sql, (self.id, 1, 50, 0))
 
         # new user will start off with 0 battles lost, 0 battles won, and 0 total winnings
         sql = "INSERT INTO Battles(fighter_id, battles_lost, battles_won, total_winnings) VALUES(?, ?, ?, ?)"
@@ -91,6 +91,14 @@ class Database:
         row = cur.fetchone()
         return row[0]
 
+    def get_bank_balance(self):
+        cur = self.connection.cursor()
+
+        sql = "SELECT bank FROM Users WHERE user_id = ?"
+        cur.execute(sql, (self.id,))
+        row = cur.fetchone()
+        return row[0]
+
     def get_level(self):
         cur = self.connection.cursor()
 
@@ -108,6 +116,7 @@ class Database:
         row = cur.fetchone()
         # fetchone() returns only 1 row, and not in tuple format like fetchall()
         # now we can just use array indexes to get each field
+<<<<<<< HEAD
         return row[0], row[1], row[2], row[3], row[4], row[5], row[6]
 
     def get_item_score(self):
@@ -117,14 +126,22 @@ class Database:
         cur.execute(sql, (self.id,))
         row = cur.fetchone()
         return row[0]
+=======
+        return row[0], row[1], row[2]
+
+>>>>>>> dev
 
     def get_ticket_status(self):
         cur = self.connection.cursor()
-        
+
         sql = "SELECT ticket_active FROM Lottery WHERE ticket_id = ?"
         cur.execute(sql, (self.id,))
         row = cur.fetchone()
         return row[0]
+<<<<<<< HEAD
+=======
+
+>>>>>>> dev
 
     # pass in the winning_number as a parameter from the daily script: daily_maintenance.py
     def get_lottery_winners(self, winning_number):
@@ -136,15 +153,15 @@ class Database:
         std_winners = []
         for row in rows:
             std_winners.append(row[0])
-         
-        # find ticket id's with the winning number as their ticket guess, and their active_ticket is 2, which defined a premium ticket 
+
+        # find ticket id's with the winning number as their ticket guess, and their active_ticket is 2, which defined a premium ticket
         sql = "SELECT ticket_id FROM Lottery WHERE ticket_guess = ? AND ticket_active = ?"
         cur.execute(sql, (winning_number, 2))
         rows = cur.fetchall()
         prem_winners = []
         for row in rows:
             prem_winners.append(row[0])
-        
+
 
         # reset all tickets as well, since this function is only called when checking for winners
         self.reset_lottery()
@@ -152,6 +169,7 @@ class Database:
         # return list of winner id's (basic and premium)
         return std_winners, prem_winners
 
+<<<<<<< HEAD
     def get_shop_list(self):
         cur = self.connection.cursor()
 
@@ -171,17 +189,20 @@ class Database:
         return row
         # see if a row exists in the fetch results, if not, they don't have an account
     
+=======
+
+>>>>>>> dev
     def daily_all(self):
         cur = self.connection.cursor()
         cur2 = self.connection.cursor()
-        
+
         # for every user, reward X * level
         for row in cur.execute('SELECT * FROM Users' ):
             sql = "UPDATE Users SET money = money + (500*level) WHERE user_id = ?"
             id = row[0]
             cur2.execute(sql, (id,))
         self.connection.commit()
-        
+
     def update_money(self, amount):
         cur = self.connection.cursor()
 
@@ -195,6 +216,20 @@ class Database:
 
         self.connection.commit()
         return self.get_money()
+
+    def update_bank_balance(self, balance):
+        cur = self.connection.cursor()
+
+        sql = "UPDATE Users SET bank = bank + ? WHERE user_id = ?"
+        cur.execute(sql, (balance, self.id))
+        cur.execute("select * from Users")
+        rows = cur.fetchall()
+        print("\nUsers table after bank update: \n")
+        for row in rows:
+            print(row)
+
+        self.connection.commit()
+        return self.get_bank_balance()
 
     def update_level(self):
         cur = self.connection.cursor()
@@ -296,6 +331,7 @@ class Database:
             print(row)
 
         self.connection.commit()
+<<<<<<< HEAD
 
     def reset_lottery(self):
         cur = self.connection.cursor()
@@ -313,3 +349,6 @@ class Database:
         sql = "UPDATE sqlite_sequence SET seq = 0"
         cur.execute(sql)
         self.connection.commit()
+=======
+        return
+>>>>>>> dev

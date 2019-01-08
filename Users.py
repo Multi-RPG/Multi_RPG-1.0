@@ -38,6 +38,15 @@ class Users:
         elif string == 1:
             return "**$" + str(hm_db.get_money()) + "**"
 
+    def get_user_bank_balance(self, string=1):
+        hm_db = Database(self.id)
+        hm_db.connect()
+
+        if string == 0:
+            return hm_db.get_bank_balance()
+        elif string == 1:
+            return " **$" + str(hm_db.get_bank_balance()) + "**"
+
     # pass 0 to 'string' to return integer version of user's level EX: 3, default is string, EX: "**3**"
     def get_user_level(self, string=1):
         hm_db = Database(self.id)
@@ -97,11 +106,16 @@ class Users:
         hm_db = Database(self.id)
         hm_db.connect()
         return hm_db.get_ticket_status()
-    
+
     def update_user_money(self, amount):
         hm_db = Database(self.id)
         hm_db.connect()
         return "Your new account balance: **$" + str(hm_db.update_money(amount)) + "**"
+
+    def update_user_bank_balance(self, balance):
+        hm_db = Database(self.id)
+        hm_db.connect()
+        return "Your new bank balance: **$" + str(hm_db.update_bank_balance(balance)) + "**"
 
     def update_user_level(self):
         hm_db = Database(self.id)

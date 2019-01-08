@@ -29,7 +29,7 @@ class Lottery:
         if entry.get_user_ticket_status() == 2:
             await self.client.say('**ERROR!** You have already entered and paid your $100 entry for the **premium lottery** today! <a:worryhead:525164940231704577>')
             return
-            
+
         await self.client.say('<a:worryhead:525164940231704577> Welcome to the **Basic** Lotto! <a:worryhead:525164940231704577>\n'
                               ' Please enter your **ticket guess** now (1-5):')
         guess = await self.client.wait_for_message(author=context.message.author,
@@ -51,7 +51,7 @@ class Lottery:
                                                        timeout=60)  # wait for user's ticket guess
 
         await self.client.say(entry.update_user_lottery_guess(guess.clean_content, 1))
-        
+
     '''ENTER PREMIUM LOTTERY FUNCTION'''
     @has_account()
     @commands.cooldown(1, 10, commands.BucketType.user)
@@ -64,11 +64,11 @@ class Lottery:
         if entry.get_user_ticket_status() == 2:
             await self.client.say('**ERROR!** You have already entered and paid your $99 entry for the **premium lottery** today! <a:worryhead:525164940231704577>')
             return
-            
+
         if entry.get_user_money(0) < 99:
             await self.client.say('**ERROR!** You do not have **$99** to enter the premium lottery... Use =lotto for the free lotto <a:worryhead:525164940231704577>')
             return
-        
+
         await self.client.say('<a:worryhead:525164940231704577> Welcome to the **Premium** Lotto! (tickets cost **$99**) <a:worryhead:525164940231704577>\n'
                               ' Please enter your **ticket guess** now (1-5):')
         guess = await self.client.wait_for_message(author=context.message.author,
@@ -92,8 +92,7 @@ class Lottery:
         # take the entry fee for premium lottery
         entry.update_user_money(-99)
         await self.client.say(entry.update_user_lottery_guess(guess.clean_content, 2))
-        
-    
+
 
 def setup(client):
     client.add_cog(Lottery(client))
