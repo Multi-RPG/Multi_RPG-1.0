@@ -116,7 +116,6 @@ class Database:
         row = cur.fetchone()
         # fetchone() returns only 1 row, and not in tuple format like fetchall()
         # now we can just use array indexes to get each field
-<<<<<<< HEAD
         return row[0], row[1], row[2], row[3], row[4], row[5], row[6]
 
     def get_item_score(self):
@@ -126,10 +125,6 @@ class Database:
         cur.execute(sql, (self.id,))
         row = cur.fetchone()
         return row[0]
-=======
-        return row[0], row[1], row[2]
-
->>>>>>> dev
 
     def get_ticket_status(self):
         cur = self.connection.cursor()
@@ -138,10 +133,6 @@ class Database:
         cur.execute(sql, (self.id,))
         row = cur.fetchone()
         return row[0]
-<<<<<<< HEAD
-=======
-
->>>>>>> dev
 
     # pass in the winning_number as a parameter from the daily script: daily_maintenance.py
     def get_lottery_winners(self, winning_number):
@@ -169,7 +160,6 @@ class Database:
         # return list of winner id's (basic and premium)
         return std_winners, prem_winners
 
-<<<<<<< HEAD
     def get_shop_list(self):
         cur = self.connection.cursor()
 
@@ -188,10 +178,7 @@ class Database:
         print(row)
         return row
         # see if a row exists in the fetch results, if not, they don't have an account
-    
-=======
 
->>>>>>> dev
     def daily_all(self):
         cur = self.connection.cursor()
         cur2 = self.connection.cursor()
@@ -331,7 +318,6 @@ class Database:
             print(row)
 
         self.connection.commit()
-<<<<<<< HEAD
 
     def reset_lottery(self):
         cur = self.connection.cursor()
@@ -349,6 +335,3 @@ class Database:
         sql = "UPDATE sqlite_sequence SET seq = 0"
         cur.execute(sql)
         self.connection.commit()
-=======
-        return
->>>>>>> dev
