@@ -69,8 +69,8 @@ class Games:
 
         # while the user to rob is yourself, re-roll the target
         # while the user to rob does not have an account in the database, re-roll the target
-        # while the user to rob is not within 3 levels of yourself, re-roll the target
-        while victim_id == context.message.author.id or victim.find_user() == 0 or level_difference > 5:
+        # while the user to rob is not close to your level, re-roll the target
+        while victim_id == context.message.author.id or victim.find_user() == 0 or level_difference > 4:
             # only try 60 members in the user's server
             # otherwise if the user was the sole player with an account in the discord server, infinite while loop
             # this part is inefficient, but only way I can think of right now with discord's functionality
