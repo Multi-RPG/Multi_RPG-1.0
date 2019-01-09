@@ -3,6 +3,10 @@ import discord
 import configparser
 import sys
 import datetime
+
+
+# To reset Users ticket usage for testing, uncomment the line below
+# from Database import Database
 from discord.ext import commands
 from pathlib import Path
 
@@ -28,6 +32,11 @@ async def on_ready():
           + client.user.id + '\n'
           + '---------')
     await client.change_presence(game=discord.Game(name='=help for commands'))
+
+    # Testing: Uncomment the three lines below to reset Users ticket usage
+    # db = Database(0)
+    # db.connect()
+    # db.reset_bank_daily_usage()
 
 @client.event
 async def on_message(message):
@@ -57,8 +66,11 @@ async def helper(context):
           '                  (this results in higher profits & battle successes)\n\n' \
           '  =level          use "=level" or "=level @user" to print account level\n' \
           '  =stats          use "=stats" or "=stats @user" to print battle & gear stats\n' \
-          '  =money          use "=money" or "=money @user" to print bank balance\n' \
-          '  =give           use "=give @user X" -- X being money to give a user\n```'
+          '  =money          use "=money" or "=money @user" to print bag balance\n' \
+          '  =give           use "=give @user X" -- X being money to give a user\n' \
+          '  =bank           use "=bank" to print bank balance\n' \
+          '  =transfer       use "=transfer X" or "=xfer X" -- X being money to transfer\n' \
+          '  =draw           use "=draw X" or "=withdraw X" -- X being money to withdraw\n```'
     msg2 = '```ml\n' \
           'Games For Money:\n' \
           '  =lotto          use "=lotto" for a 1/5 chance to win 75x your level each day\n' \
