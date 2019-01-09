@@ -1,6 +1,9 @@
 #!/usr/bin/env python3
 from Database import Database
 
+# This class serves as a medium between the front-end bot code and the back-end database class
+# Performs string or data manipulation as well, so database class can be as simple as possible
+
 class Users:
     def __init__(self, id):
         self.id = id
@@ -83,12 +86,12 @@ class Users:
             total_winnings = '**$' + str(total_winnings) + '**'
 
             return ('\n**STATS:**\n'
-                    'Weapon:  ' + weapon_level +
-                    '\nHelmet:    ' + helmet_level +
-                    '\nChest:       ' + chest_level +
-                    '\nBoots:       ' + boots_level +
+                    '<:weapon1:532252764097740861> Weapon:  ' + weapon_level +
+                    '\n<:helmet2:532252796255469588> Helmet:    ' + helmet_level +
+                    '\n<:chest5:532255708679503873> Chest:       ' + chest_level +
+                    '\n<:boots1:532252814953676807> Boots:       ' + boots_level +
                     '\n**Total:**       ' + item_score +
-                    '\n\n**RECORDS:**\n'
+                    '\n\n**COMBAT RECORDS:**\n'
                     ':crossed_swords:  lost:  ' + battles_lost +
                     '\n:crossed_swords:  won: ' + battles_won +
                     '\nTotal winnings: ' + total_winnings)
@@ -97,7 +100,8 @@ class Users:
         hm_db = Database(self.id)
         hm_db.connect()
         return hm_db.get_ticket_status()
-    
+
+    # this function calls the Database function to add amount to bank account
     def update_user_money(self, amount):
         hm_db = Database(self.id)
         hm_db.connect()
@@ -124,6 +128,15 @@ class Users:
         elif gear_type == 'boots':
             return " Your new total item score: **" +\
                str(hm_db.update_battle_boots(level)) + "**"
+
+
+    def update_user_tourney_server_id(self, server_name, server_id):
+        hm_db = Database(self.id)
+        hm_db.connect()
+
+        hm_db.update_tourney_server_id(server_id)
+        return ":crossed_swords: Registered for **" + server_name + "** daily colosseum tournament! :crossed_swords:"\
+               + "\nResults will be live by :alarm_clock: **7 AM PST!**"
 
     def update_user_records(self, battles_lost, battles_won, total_winnings):
         hm_db = Database(self.id)

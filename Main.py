@@ -50,22 +50,25 @@ async def helper(context):
           'Account:\n' \
           '  =create         use "=create" to make a account\n' \
           '  =delete         use "=delete" to delete your account\n' \
-          '  =daily          use "=daily" for free money equal to 50x your level\n' \
+          '  =daily          use "=daily" for free money equal to 60x your level\n' \
           '  =shop           use "=shop" to view the daily shop items\n' \
           '  =buy            use "=buy X" to purchase shop item  -- X being item #\n' \
           '  =levelup        use "=levelup" to level up your account\n' \
-          '                  (this gives 2% increased battle win probability)\n\n' \
+          '                  (this results in higher profits & battle successes)\n\n' \
           '  =level          use "=level" or "=level @user" to print account level\n' \
           '  =stats          use "=stats" or "=stats @user" to print battle & gear stats\n' \
           '  =money          use "=money" or "=money @user" to print bank balance\n' \
           '  =give           use "=give @user X" -- X being money to give a user\n```'
     msg2 = '```ml\n' \
           'Games For Money:\n' \
-          '  =lotto          use "=lotto" for a 1/5 chance to win $250 each day\n' \
-          '  =lotto2         use "=lotto2" for a 1/5 chance to win $1000 each day\n' \
-          '                  NOTE: your server must have a text channel named "lottery"\n' \
+          '  =lotto          use "=lotto" for a 1/5 chance to win 75x your level each day\n' \
+          '  =lotto2         use "=lotto2" for a 1/5 chance to win 165x your level each day\n' \
+          '  =tourney        use "=tourney" to compete in a server-based, daily FFA tournament\n' \
+          '                  NOTE: this event takes item level & user level into calculation\n' \
+          '                  NOTE: this event requires AT LEAST 2 entries from your server\n' \
+          '                  NOTE: the reward is 180x your level for first, 60x for second\n' \
           '  =rob            use "=rob" for a 7/10 chance to mug a random player\n' \
-          '  =rob            use "=rob @user" for a 6/10 chance to mug a specified player\n' \
+          '  =rob            use "=rob @user" for a 6.5/10 chance to mug a specified player\n' \
           '  =fight          use "=fight @user X" -- X being money to bet\n' \
           '  =flip           use "=flip" or "=flip X" or "=flip X Y" \n' \
           '                  -- X being heads or tails guess\n' \

@@ -14,26 +14,20 @@ def has_account():
 
     return commands.check(predicate)
 
-# short decorator function declaration, confirm that command user has NO account in database
-def has_no_account():
-    def predicate(ctx):
-        user = Users(ctx.message.author.id)
-        if user.find_user() == 0:
-            return True
-        else:
-            return False
-    return commands.check(predicate)
-
 class Account:
     def __init__(self, client):
         self.client = client
 
-    @has_no_account()
     @commands.command(name='create', description='make a user',
                       brief='start a user account', aliases=['register'], pass_context=True)
     async def register(self, context):
         # create new user instance with their discord ID to store in database
         new_user = Users(context.message.author.id)
+
+        if new_user.find_user() == 1:
+            await self.client.say('<:worrymag1:531214786646507540> You **already** have an account registered!')
+            return
+
         msg = new_user.add_user()
         await self.client.say(context.message.author.mention + msg)
 
@@ -154,11 +148,11 @@ class Account:
         # get the user's current level
         # calculate the cost of their next level-up
         user_level = user.get_user_level(0) # get int version of level, SEE USERS.PY
-        level_up_cost = user_level * 300
+        # level up cost algorithm, inspired by D&D algorithm
+        level_up_cost = int(300 * ((user_level + 1)**1.43) - (300 * user_level))
 
-        # check if they are max level
-        if user_level == 10:
-            await self.client.say(context.message.author.mention + 'You are level **10**, the max level!')
+        if user_level == 13:
+            self.client.say('You are already level 13, the max level!')
             return
 
         # check if they have enough money for a level-up
@@ -199,26 +193,10 @@ class Account:
         # get the user's current level
         # calculate the cost of their next level-up
         user_level = user.get_user_level(0) # get int version of level, SEE USERS.PY
-        dailyreward = user_level * 50
+        dailyreward = user_level * 60
 
         await self.client.say('<a:worryswipe:525755450218643496> Daily **$' + str(dailyreward) +
-              '** received! <a:worryswipe:525755450218643496>\n' + user.update_user_money(dailyreward))
-              
-              
-    @has_account()
-    @commands.cooldown(1, 1, commands.BucketType.user)
-    @commands.command(name='daily2', aliases=['DAILY2’, dailygamble2'], pass_context=True)
-    async def daily2(self, context):
-        # create instance of user who wants to get their daily money
-        user = Users(context.message.author.id)
-        # get the user's current level
-        # calculate the cost of their next level-up
-        user_level = user.get_user_level(0) # get int version of level, SEE USERS.PY
-        dailyreward = user_level * 3000
-
-        await self.client.say('<a:worryswipe:525755450218643496> Daily **$' + str(dailyreward) +
-              '** received! <a:worryswipe:525755450218643496>\n' + user.update_user_money(dailyreward))
-              
+                              '** received! <a:worryswipe:525755450218643496>\n' + user.update_user_money(dailyreward))
               
 def setup(client):
     client.add_cog(Account(client))

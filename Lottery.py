@@ -27,11 +27,12 @@ class Lottery:
         entry = Users(context.message.author.id)
         # if they already purchased a premium ticket, don’t let them overwrite it by mistake with a free ticket
         if entry.get_user_ticket_status() == 2:
-            await self.client.say('**ERROR!** You have already entered and paid your $100 entry for the **premium lottery** today! <a:worryhead:525164940231704577>')
+            await self.client.say('**ERROR!** You have already entered and paid your entry fee'
+                                  ' for the **premium lottery** today! <a:worryhead:525164940231704577>')
             return
             
-        await self.client.say('<a:worryhead:525164940231704577> Welcome to the **Basic** Lotto! <a:worryhead:525164940231704577>\n'
-                              ' Please enter your **ticket guess** now (1-5):')
+        await self.client.say('<a:worryhead:525164940231704577> Welcome to the **Basic** Lotto!'
+                              ' <a:worryhead:525164940231704577>\n Please enter your **ticket guess** now (1-5):')
         guess = await self.client.wait_for_message(author=context.message.author,
                                                    timeout=60)  # wait for user's ticket guess
 
@@ -60,16 +61,19 @@ class Lottery:
     async def enter_lottery2(self, context):
         # create instance of the user entering the lotto
         entry = Users(context.message.author.id)
+        entry_fee = entry.get_user_level(0) * 17
         # if they already purchased a premium ticket, don’t let them overwrite it by mistake by purchasing another one
         if entry.get_user_ticket_status() == 2:
-            await self.client.say('**ERROR!** You have already entered and paid your $99 entry for the **premium lottery** today! <a:worryhead:525164940231704577>')
+            await self.client.say('**ERROR!** You have already entered and paid your $**' + str(entry_fee) + '** entry'
+                                  ' for the **premium lottery** today! <a:worryhead:525164940231704577>')
             return
             
-        if entry.get_user_money(0) < 99:
-            await self.client.say('**ERROR!** You do not have **$99** to enter the premium lottery... Use =lotto for the free lotto <a:worryhead:525164940231704577>')
+        if entry.get_user_money(0) < entry_fee:
+            await self.client.say('**ERROR!** You do not have **$' + str(entry_fee) +'** to enter the premium lottery...'
+                                  ' Use =lotto for the free lotto <a:worryhead:525164940231704577>')
             return
-        
-        await self.client.say('<a:worryhead:525164940231704577> Welcome to the **Premium** Lotto! (tickets cost **$99**) <a:worryhead:525164940231704577>\n'
+        await self.client.say('<a:worryhead:525164940231704577> Welcome to the **Premium** Lotto! '
+                              '<a:worryhead:525164940231704577> _(Your ticket will cost **$' + str(entry_fee) + '**)_ \n'
                               ' Please enter your **ticket guess** now (1-5):')
         guess = await self.client.wait_for_message(author=context.message.author,
                                                    timeout=60)  # wait for user's ticket guess
@@ -90,7 +94,7 @@ class Lottery:
                                                        timeout=60)  # wait for user's ticket guess
 
         # take the entry fee for premium lottery
-        entry.update_user_money(-99)
+        entry.update_user_money(-entry_fee)
         await self.client.say(entry.update_user_lottery_guess(guess.clean_content, 2))
         
     

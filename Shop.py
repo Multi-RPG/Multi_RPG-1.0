@@ -25,30 +25,42 @@ class Shop:
         self.client = client
 
     @has_account()
-    @commands.cooldown(1, 36, commands.BucketType.user)
+    @commands.cooldown(1, 33, commands.BucketType.user)
     @commands.command(name='shop', description='view daily shop',
                       brief='view the daily shop', aliases=['SHOP'], pass_context=True)
     async def shop(self, context):
+        # connect to database file
         db = Database(0)
         db.connect()
+        # get list of current shop items from database
         daily_items = db.get_shop_list()
-        # for each server the bot is in, post the lottery results in the lottery channel
-
         string = "\n<a:worryhead:525164940231704577> **Daily Shop** <a:worryhead:525164940231704577>\n"
 
+        # for each item retreived from database, get the details of each one from the returned tuple
         for item in daily_items:
             item_id = item[0]
             item_name = item[1]
             item_type = item[2]
             item_lvl = item[3]
             item_price = item[4]
+
+            if item_type == 'weapon':
+                item_type = '<:weapon1:532252764097740861>'
+            elif item_type == 'helmet':
+                item_type = '<:helmet2:532252796255469588>'
+            elif item_type == 'chest':
+                item_type = '<:chest5:532255708679503873>'
+            elif item_type == 'boots':
+                item_type = '<:boots1:532252814953676807>'
+
+
             string += ("**Item " + str(item_id) + "**: " + item_name +
                        " (**Lvl " + str(item_lvl) + "**)\n              __Type__: " +
                        item_type + "\n              __Price__: **$" + str(item_price) + "**\n")
         string += "\n" + help_msg
 
         msg = await self.client.say(string)
-        # wait 20 seconds then delete the shop list
+        # wait X seconds then delete the shop list message to reduce channel clutter
         await asyncio.sleep(30)
         await self.client.delete_message(msg)
 
