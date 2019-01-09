@@ -125,7 +125,6 @@ class Games:
     @commands.command(name='tournament', aliases=['TOURNAMENT', 'tourney', 'TOURNEY'], pass_context=True)
     async def enter_daily_tournament(self, context):
         # the bulk work of this feature is when the results are calculated from daily_maintenance.py
-        
         # create instance of user who wants to enter the daily, server-specific colosseum tournament
         fighter = Users(context.message.author.id)
         # update their tourney_server_id entry to be the server they executed the command on
