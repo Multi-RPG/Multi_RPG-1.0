@@ -191,9 +191,9 @@ class Games:
                     await asyncio.sleep(10)
 
                     # get the stats of each fighter
-                    # add fighter's items' total level + 3x their account level to use as weight in win probability
-                    f1_stats = fighter1.get_user_item_score() + (fighter1.get_user_level(0)*3)
-                    f2_stats = fighter2.get_user_item_score() + (fighter2.get_user_level(0)*3)
+                    # algorithm for calculating a fighter's stats in duels: (item score + user level*2 + 20)
+                    f1_stats = fighter1.get_user_item_score() + (fighter1.get_user_level(0)*2) + 20
+                    f2_stats = fighter2.get_user_item_score() + (fighter2.get_user_level(0)*2) + 20
                     total = (f1_stats + f2_stats)
                     f1_weight = f1_stats / total
                     f2_weight = f2_stats / total

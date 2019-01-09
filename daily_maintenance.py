@@ -97,11 +97,11 @@ async def on_ready():
                 if channel.name == 'lottery':
                     channel_found = 1
                     if std_winners or prem_winners:
-                        await client.send_message(channel, "▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁\n"
+                        await client.send_message(channel, "▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁\n"
                                                            + ":shopping_cart: __**SHOP ANNOUNCEMENT**__ " + ":shopping_cart:"
                                                            + "_" + str(date.today()) + "_"
                                                            + "\nDaily shop has been reset! Check out **=shop**!\n"
-                                                           + "▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁\n"
+                                                           + "▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁\n"
                                                            + "<a:worrycash:525200274340577290>__**LOTTERY ANNOUNCEMENT**__"
                                                            + " <a:worrycash:525200274340577290> _" + str(date.today()) + "_"
                                                            + "\nToday's winning number is... **"
@@ -109,11 +109,16 @@ async def on_ready():
                                                            + std_winners_string + "\nThe lucky premium winners: \n"
                                                            + prem_winners_string)
                     elif not std_winners or prem_winners:
-                        std_winners_string = '<a:worrycry:525209793405648896> **No winners today**... <a:worrycry:525209793405648896>'
-                        await client.send_message(channel, "▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁\n"
+                        std_winners_string = '\n<a:worrycry:525209793405648896> _No winners today..._' \
+                                             '  <a:worrycry:525209793405648896>'
+                        await client.send_message(channel, "▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁\n"
                                                            + ":shopping_cart: __**SHOP ANNOUNCEMENT**__ " + ":shopping_cart:"
                                                            + "_" + str(date.today()) + "_"
-                                                           + "\nDaily shop has been reset! Check out **=shop**!\n")
+                                                           + "\nDaily shop has been reset! Check out **=shop**!\n"
+                                                           + "▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁\n"
+                                                           + "<a:worrycash:525200274340577290>__**LOTTERY ANNOUNCEMENT**__"
+                                                           + " <a:worrycash:525200274340577290> _" + str(date.today()) + "_"
+                                                           + std_winners_string)
 
             # if there were no channels found with the name 'lottery'.....
             # make the channel, then restart the loop to iterate through the channels and send results in the new channel
@@ -136,14 +141,14 @@ async def on_ready():
             # we need the sum pool of stats of all fighters in the server
             for fighter_id in server_fighters_ids:
                 fighter = Users(fighter_id)
-                # algorithm for calculating a fighter's stats: (item score + user level*2 + 25)
+                # algorithm for calculating a fighter's stats in tourneys: (item score + user level*2 + 25)
                 fighter_stats = (fighter.get_user_item_score() + (fighter.get_user_level(0) * 2)) + 25
                 total_stats_pool += fighter_stats
 
             # now we need to divide each fighter's stats by the sum stat pool in order to get specific win chances
             for fighter_id in server_fighters_ids:
                 fighter = Users(fighter_id)
-                # algorithm for calculating a fighter's stats: (item score + user level*2 + 25)
+                # algorithm for calculating a fighter's stats in tourneys: (item score + user level*2 + 25)
                 fighter_stats = (fighter.get_user_item_score() + (fighter.get_user_level(0) * 2)) + 25
                 fighter_weight = fighter_stats / total_stats_pool
                 server_fighters_weights.append(fighter_weight)
