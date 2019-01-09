@@ -66,7 +66,7 @@ async def helper(context):
           '  =tourney        use "=tourney" to compete in a server-based, daily FFA tournament\n' \
           '                  NOTE: this event takes item level & user level into calculation\n' \
           '                  NOTE: this event requires AT LEAST 2 entries from your server\n' \
-          '                  NOTE: the reward is 180x your level for first, 60x for second\n' \
+          '                  NOTE: the reward is 180x your level for first, 90x for second\n' \
           '  =rob            use "=rob" for a 7/10 chance to mug a random player\n' \
           '  =rob            use "=rob @user" for a 6.5/10 chance to mug a specified player\n' \
           '  =fight          use "=fight @user X" -- X being money to bet\n' \

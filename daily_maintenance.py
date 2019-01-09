@@ -169,7 +169,7 @@ async def on_ready():
 
             # update their money accordingly
             prize1 = first_place.get_user_level(0) * 180
-            prize2 = second_place.get_user_level(0) * 60
+            prize2 = second_place.get_user_level(0) * 90
             first_place.update_user_money(prize1)
             second_place.update_user_money(prize2)
             # first place will count as a win in records
