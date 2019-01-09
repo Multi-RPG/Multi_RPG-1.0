@@ -109,7 +109,7 @@ class Games:
         prize = int(victim_level * 8.6)
         bonus_prize = int(robber_level * 24.4)
 
-        # balancing mechanic, don't let victims lose any more money when they have less than -50x their level
+        # balancing mechanic, don't let victims lose any more money when they have less money than -50x their level
         if not victim_money < (victim_level * -50):
             # subtract prize from victim
             victim.update_user_money(prize * -1)
