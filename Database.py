@@ -126,6 +126,19 @@ class Database:
         row = cur.fetchone()
         return row[0]
 
+    # pass in a server_id, and retrieve all fighters who registered for that server's tournament
+    def get_server_tourney_members(self, server_id):
+        cur = self.connection.cursor()
+
+        sql = "SELECT fighter_id FROM Battles WHERE tourney_server_id = ?"
+        cur.execute(sql, (server_id,))
+
+        rows = cur.fetchall()
+        server_fighters = []
+        for row in rows:
+            server_fighters.append(row[0])
+        return server_fighters
+
     def get_ticket_status(self):
         cur = self.connection.cursor()
 
@@ -152,10 +165,6 @@ class Database:
         prem_winners = []
         for row in rows:
             prem_winners.append(row[0])
-
-
-        # reset all tickets as well, since this function is only called when checking for winners
-        self.reset_lottery()
 
         # return list of winner id's (basic and premium)
         return std_winners, prem_winners
@@ -184,7 +193,7 @@ class Database:
         cur2 = self.connection.cursor()
 
         # for every user, reward X * level
-        for row in cur.execute('SELECT * FROM Users' ):
+        for row in cur.execute('SELECT * FROM Users'):
             sql = "UPDATE Users SET money = money + (500*level) WHERE user_id = ?"
             id = row[0]
             cur2.execute(sql, (id,))
@@ -288,6 +297,18 @@ class Database:
         self.connection.commit()
         return self.get_item_score()
 
+    def update_tourney_server_id(self, server_id):
+        cur = self.connection.cursor()
+        sql = "UPDATE Battles SET tourney_server_id = ? WHERE fighter_id = ?"
+        cur.execute(sql, (server_id, self.id))
+        cur.execute("SELECT * from Battles")
+        rows = cur.fetchall()
+        print("\nBattles table after battle gear update: \n")
+        for row in rows:
+            print(row)
+
+        self.connection.commit()
+
     def update_battle_records(self, battles_lost, battles_won, total_winnings):
         cur = self.connection.cursor()
 
@@ -319,10 +340,11 @@ class Database:
 
         self.connection.commit()
 
+
     def reset_lottery(self):
         cur = self.connection.cursor()
         # set all to inactive, and change all ticket guesses to outside of our defined bounds
-        sql = "UPDATE Lottery SET ticket_guess = 99999999, ticket_active = 0"
+        sql = "UPDATE Lottery SET ticket_guess = 0, ticket_active = 0"
         cur.execute(sql)
         self.connection.commit()
 
@@ -333,5 +355,12 @@ class Database:
         cur.execute(sql)
 
         sql = "UPDATE sqlite_sequence SET seq = 0"
+        cur.execute(sql)
+        self.connection.commit()
+
+    def reset_tourney(self):
+        cur = self.connection.cursor()
+        # set all fighter's server id's to 0, so they won't be pulled for the next tournament unless they register again
+        sql = "UPDATE Battles SET tourney_server_id = 0"
         cur.execute(sql)
         self.connection.commit()

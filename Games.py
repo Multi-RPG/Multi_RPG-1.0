@@ -50,24 +50,27 @@ class Games:
 
         # if they specified a rob target, change the random target to their specified target
         if args:
-            # retrieve rob target
-            target = args[0]
-            # use regex to extract only the user-id from the user targeted
-            victim_id = int(re.findall("\d+", target)[0])
-            victim = Users(victim_id)
-            # higher fail chance, 35%, if they want to specify a rob target
-            fail_chance = 35
-            # if the target doesn't have an account, change fail chance back to 30% and the target will reroll next loop
-            if victim.find_user() == 0:
-                fail_chance = 30
-                await self.client.say(context.message.author.mention +
-                                      " Your rob target doesn't have an account."
-                                      "\n**Rerolling** rob target now!")
+            try:
+                # retrieve rob target
+                target = args[0]
+                # use regex to extract only the user-id from the user targeted
+                victim_id = int(re.findall("\d+", target)[0])
+                victim = Users(victim_id)
+                # higher fail chance, 35%, if they want to specify a rob target
+                fail_chance = 35
+                # if the target doesn't have an account, change fail chance back to 30% and the target will reroll next loop
+                if victim.find_user() == 0:
+                    fail_chance = 30
+                    await self.client.say(context.message.author.mention +
+                                          " Your rob target doesn't have an account."
+                                          "\n**Rerolling** rob target now!")
+            except:
+                pass
 
         # while the user to rob is yourself, re-roll the target
         # while the user to rob does not have an account in the database, re-roll the target
-        # while the user to rob is not within 3 levels of yourself, re-roll the target
-        while victim_id == context.message.author.id or victim.find_user() == 0 or level_difference > 3:
+        # while the user to rob is not close to your level, re-roll the target
+        while victim_id == context.message.author.id or victim.find_user() == 0 or level_difference > 4:
             # only try 60 members in the user's server
             # otherwise if the user was the sole player with an account in the discord server, infinite while loop
             # this part is inefficient, but only way I can think of right now with discord's functionality
@@ -103,11 +106,11 @@ class Games:
         robber_level = robber.get_user_level(0)
 
         # the victim will only lose the prize, not the bonus prize
-        prize = int(victim_level * 8.2)
+        prize = int(victim_level * 8.6)
         bonus_prize = int(robber_level * 24.4)
 
-        # balancing mechanic, only let victims lose money by robbers when they are greater than -50x their level in money
-        if victim_money > (victim_level * -50):
+        # balancing mechanic, don't let victims lose any more money when they have less money than -50x their level
+        if not victim_money < (victim_level * -50):
             # subtract prize from victim
             victim.update_user_money(prize * -1)
         # reward robber with prize and bonus prize
@@ -116,12 +119,24 @@ class Games:
                               'You robbed **$' + str(prize) + '** (+**$' + str(bonus_prize)
                               + '**) from **' + str(target) + '**')
 
-
-    '''BATTLE FUNCTION'''
+    '''TOURNAMENT BATTLE FUNCTION'''
     @has_account()
+    @commands.cooldown(1, 10, commands.BucketType.user)
+    @commands.command(name='tournament', aliases=['TOURNAMENT', 'tourney', 'TOURNEY'], pass_context=True)
+    async def enter_daily_tournament(self, context):
+        # the bulk work of this feature is when the results are calculated from daily_maintenance.py
+        # create instance of user who wants to enter the daily, server-specific colosseum tournament
+        fighter = Users(context.message.author.id)
+        # update their tourney_server_id entry to be the server they executed the command on
+        await self.client.say(
+            fighter.update_user_tourney_server_id(context.message.server.name, context.message.server.id))
+
+    '''1v1 BATTLE FUNCTION'''
+    @has_account()
+    @commands.cooldown(1, 10, commands.BucketType.user)
     @commands.command(name='fight', description='Battle another user in your server',
                       brief='can use "fight @user X --X being amount to bet"',
-                      aliases=['battle', 'BATTLE', 'FIGHT'], pass_context=True)
+                      aliases=['battle', 'BATTLE', 'FIGHT', 'duel', 'DUEL'], pass_context=True)
     async def battle_user(self, context, *args):
         # retrieve how much the fighter is betting on the battle
         if len(args) == 2:
@@ -252,22 +267,26 @@ class Games:
         except:
             pass
 
+
         # check if they specified a guess of heads or tails
         # process if they won or not
-        if args:
-            if args[0] == 'heads' or 'HEADS':
+        try:
+            if args[0] in ['heads', 'HEADS']:
                 if result == 1:
                     msg = '<:heads:486705167643967508> Result is **Heads**! You win! <a:worryHype:487059927731273739>'
                     win = 1
                 else:
                     msg = '<:heads:486705184370589718> Result is **Tails**! You lost. <a:pepehands:485869482602922021>'
-            else:
+            elif args[0] in ['tails', 'TAILS']:
                 if result == 1:
                     msg = '<:heads:486705167643967508> Result is **Heads**! You lost. <a:pepehands:485869482602922021>'
                 else:
                     msg = '<:heads:486705184370589718> Result is **Tails**! You win! <a:worryHype:487059927731273739>'
                     win = 1
-        else:
+            else:
+                await self.client.say('Did you mean heads or tails? Use **=flip heads** or **=flip tails** next time.')
+                return
+        except:
             # no arguments provided at all. so just give a result
             if result == 1:
                 msg = '<:heads:486705167643967508> Result is **Heads**!'
@@ -362,7 +381,7 @@ class Games:
                                       ' **' + correct_word.upper() + '** ' + context.message.author.mention)
                 # add WINNINGS to user's bank account now
                 user = Users(context.message.author.id)
-                await self.client.say(user.update_user_money(30))
+                await self.client.say(user.update_user_money(user.get_user_level(0) * 10))
                 return
 
             if guess_msg.clean_content.upper() in ['STOP', 'CANCEL']:
