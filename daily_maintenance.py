@@ -4,6 +4,7 @@ import sys
 import random
 import discord
 import numpy
+
 from numpy import random
 from Users import Users
 from Database import Database
@@ -202,6 +203,8 @@ async def on_ready():
 
     # reset tournament entries after every server's tournament is processed
     db.reset_tourney()
+    #  reset bank transfer usage
+    db.reset_bank_daily_usage()
 
     # end this daily maintenance program
     sys.exit(0)

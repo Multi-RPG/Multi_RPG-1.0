@@ -110,8 +110,10 @@ class Users:
         hm_db.connect()
         return hm_db.get_ticket_status()
 
-
-    # this function calls the Database function to add amount to bank account
+    def get_user_bank_status(self):
+        hm_db = Database(self.id)
+        hm_db.connect()
+        return hm_db.get_bank_status()
 
     def update_user_money(self, amount):
         hm_db = Database(self.id)
@@ -168,3 +170,9 @@ class Users:
         hm_db.update_lottery_guess(ticket_guess, ticket_active)
         return "Thanks! You are ticket ID: **" + self.id + "**\n <a:pepehack:525159339007148032> " \
                "Entering your ticket guess in our database now <a:pepehack:525159339007148032>"
+
+    #  Updates users transfer availability
+    def update_user_bank_status(self):
+        hm_db = Database(self.id)
+        hm_db.connect()
+        hm_db.update_bank_status()

@@ -2,6 +2,7 @@
 import sqlite3
 from sqlite3 import Error
 
+
 class Database:
     def __init__(self, id):
         self.id = id
@@ -18,9 +19,9 @@ class Database:
     def insert_acct(self):
         cur = self.connection.cursor()
 
-        # new user will start off with level 1, $50 in bag and $0 in bank
+        # new user will start off with level 1, $50 in bag and $0 in bank, status
         sql = "INSERT INTO Users(user_id, level, money, bank) VALUES(?, ?, ?, ?)"
-        cur.execute(sql, (self.id, 1, 50, 0))
+        cur.execute(sql, (self.id, 1, 50, 0, 0))
 
         # new user will start off with 0 battles lost, 0 battles won, and 0 total winnings
         sql = "INSERT INTO Battles(fighter_id, battles_lost, battles_won, total_winnings) VALUES(?, ?, ?, ?)"
@@ -134,7 +135,7 @@ class Database:
         cur.execute(sql, (server_id,))
 
         rows = cur.fetchall()
-        server_fighters = []
+        server_fighters = [ ]
         for row in rows:
             server_fighters.append(row[0])
         return server_fighters
@@ -143,6 +144,13 @@ class Database:
         cur = self.connection.cursor()
 
         sql = "SELECT ticket_active FROM Lottery WHERE ticket_id = ?"
+        cur.execute(sql, (self.id,))
+        row = cur.fetchone()
+        return row[0]
+
+    def get_bank_status(self):
+        cur = self.connection.cursor()
+        sql = "SELECT ticket FROM Users WHERE user_id = ?"
         cur.execute(sql, (self.id,))
         row = cur.fetchone()
         return row[0]
@@ -180,7 +188,7 @@ class Database:
     def get_shop_item(self, item_id):
         cur = self.connection.cursor()
 
-        # test if the user ID exists in the datbase
+        # test if the user ID exists in the database
         sql = "SELECT * FROM SHOP WHERE item_id = ?"
         cur.execute(sql, (item_id,))
         row = cur.fetchone()
@@ -340,6 +348,18 @@ class Database:
 
         self.connection.commit()
 
+    def update_bank_status(self):
+        cur = self.connection.cursor()
+        sql = "UPDATE Users SET ticket = ticket + 1 WHERE user_id = ?"
+        cur.execute(sql, (self.id,))
+        cur.execute("SELECT * from Users")
+
+        rows = cur.fetchall()
+        print(f"\nUsers table after bank status update: \n")
+        for row in rows:
+            print(row)
+
+        self.connection.commit()
 
     def reset_lottery(self):
         cur = self.connection.cursor()
@@ -347,7 +367,6 @@ class Database:
         sql = "UPDATE Lottery SET ticket_guess = 0, ticket_active = 0"
         cur.execute(sql)
         self.connection.commit()
-
 
     def reset_shop(self):
         cur = self.connection.cursor()
@@ -362,5 +381,11 @@ class Database:
         cur = self.connection.cursor()
         # set all fighter's server id's to 0, so they won't be pulled for the next tournament unless they register again
         sql = "UPDATE Battles SET tourney_server_id = 0"
+        cur.execute(sql)
+        self.connection.commit()
+
+    def reset_bank_daily_usage(self):
+        cur = self.connection.cursor()
+        sql = "UPDATE Users SET ticket = 0"
         cur.execute(sql)
         self.connection.commit()

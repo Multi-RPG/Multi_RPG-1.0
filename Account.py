@@ -3,7 +3,9 @@ import re
 from discord.ext import commands
 from Users import Users
 
-# short decorator function declaration, confirm that command user has an account in database
+
+# short decorator function declaration,
+# confirm that command user has an account in database
 def has_account():
     def predicate(ctx):
         user = Users(ctx.message.author.id)
@@ -14,32 +16,22 @@ def has_account():
 
     return commands.check(predicate)
 
-<<<<<<< HEAD
-# short decorator function declaration, confirm that command user has NO account in database
-def has_no_account():
-    def predicate(ctx):
-        user = Users(ctx.message.author.id)
-        if user.find_user() == 0:
-            return True
-        else:
-            return False
-    return commands.check(predicate)
 
-
-=======
->>>>>>> 008c5f06951d5649d50dd67bce87cc913d6260b0
 class Account:
     def __init__(self, client):
         self.client = client
 
     @commands.command(name='create', description='make a user',
-                      brief='start a user account', aliases=['register'], pass_context=True)
+                      brief='start a user account', aliases=['register'],
+                      pass_context=True)
     async def register(self, context):
         # create new user instance with their discord ID to store in database
         new_user = Users(context.message.author.id)
 
         if new_user.find_user() == 1:
-            await self.client.say('<:worrymag1:531214786646507540> You **already** have an account registered!')
+            await self.client.say('<:worrymag1:531214786646507540> '
+                                  'You **already** '
+                                  'have an account registered!')
             return
 
         msg = new_user.add_user()
@@ -47,10 +39,13 @@ class Account:
 
     @has_account()
     @commands.command(name='delete', description='delete your user',
-                      brief='delete your user account', aliases=['del'], pass_context=True)
+                      brief='delete your user account', aliases=['del'],
+                      pass_context=True)
     async def delete(self, context):
-        # create user instance with their discord ID, delete user from database based off their discord ID
-        await self.client.say('Do you really want to delete your account? Type **confirm** to confirm.')
+        # create user instance with their discord ID,
+        # delete user from database based off their discord ID
+        await self.client.say('Do you really want to delete your account? '
+                              'Type **confirm** to confirm.')
         # wait for user's input
         guess = await self.client.wait_for_message(author=context.message.author, timeout=60)
         if guess.clean_content.upper() == 'CONFIRM':
@@ -60,14 +55,15 @@ class Account:
             await self.client.say(context.message.author.mention + ' Cancelled deletion of account')
 
     @has_account()
-    @commands.command(name='money', aliases=['m', 'MONEY'], pass_context=True)
+    @commands.command(name='money', aliases=['m', 'MONEY', 'bag'], pass_context=True)
     async def money(self, context, *args):
         # this 'try' will process if they want to check another person's bank account
         # it will only process if they passed that user as an argument
         try:
             # use regex to extract only numbers to get their discord ID,
             # ex: <@348195501025394688> to 348195501025394688
-            # create user instance with their target's discord ID, check database for their money field
+            # create user instance with their target's discord ID,
+            # check database for their money field
             user = Users(re.findall("\d+", args[0])[0])
             await self.client.say(context.message.author.mention +
                                   " That user's :moneybag: balance: " + user.get_user_money())
@@ -82,41 +78,52 @@ class Account:
     @commands.command(name='bank', aliases=['balance'], pass_context=True)
     async def check_bank_balance(self, context):
         user = Users(context.message.author.id)
-        bank_amount = user.get_user_bank_balance()
-        await self.client.say(f"{context.message.author.mention} :computer: Bank balance is: {user.get_user_bank_balance()}")
+        await self.client.say(f"{context.message.author.mention} "
+                              f":bank: Bank balance: "
+                              f"{user.get_user_bank_balance()}")
 
     @has_account()
-    @commands.cooldown(1, 14400, commands.BucketType.user) # 4hours cooldown to avoid abuse
     @commands.command(name='transfer', description='transfer a giving ammount to user bank',
                       brief='transfer money', aliases=['xfer'], pass_context=True)
     async def deposit_bank(self, context, *args):
+        user = Users(context.message.author.id)
+        # Check if user has already made four deposits.
+        if user.get_user_bank_status() == 4:
+            await self.client.say(f"**ERROR!** You have already transferred "
+                                  f"4 times today! <a:worryhead:525164940231704577>")
+            return
+
         if args:
             amount = int(args[0])
-            user = Users(context.message.author.id)
-            user_money = user.get_user_money(0)
-            user_bank_money = user.get_user_bank_balance(0)
 
-            # check if user has the amount in his/her bag
-            if amount > user_money or amount < 1:
-                await self.client.say(" You don't have enough money to "
-                                      "make a deposit <a:pepehands:485869482602922021> "
-                                      + context.message.author.mention)
+            #  Check if user has enough money
+            if amount > user.get_user_money(0) or amount < 1:
+                await self.client.say(f" You don't have enough money to"
+                                      f" make a deposit <:peposhrug:505512243316654080>"
+                                      f" {context.message.author.mention}")
                 return
-            # check if user is carrying at least $50 in his/her bag
-            aux = user_money-50
-            if user_money-amount < 50:
+
+            #  Check if user meets the requirement
+            #  User must carry a minimum amount of $50 in his bag
+            if user.get_user_money(0)-amount < 50:
                 await self.client.say(f"Invalid amount, you have to carry at "
-                                      f"least $50 in your bag!\n"
-                                      f"Max amount for transfering is: ${aux}")
+                                      f"least $50 in your bag!\n "
+                                      f"You can only transfer up to "
+                                      f"${user.get_user_money(0) - 50}")
                 return
 
-            new_user_money = amount * -1 # autistic but ok :feelsbothman:
-            await self.client.say(f"{context.message.author.mention} Thank you! Your money has been transfered "
-                                  f" <a:pepehack:525159339007148032>")
-            await self.client.say(f'{context.message.author.mention} {user.update_user_bank_balance(amount)}')
-            await self.client.say(f'{context.message.author.mention} {user.update_user_money(new_user_money)}')
+            new_user_money = amount * -1  # autistic but ok :feelsbothman:
+            await self.client.say(f"{context.message.author.mention} "
+                                  f" :bank: Thank you! :bank: \n"
+                                  f" Your money has been transferred "
+                                  f" <a:pepehack:525159339007148032>\n"
+                                  f" {user.update_user_bank_balance(amount)} :moneybag:\n"
+                                  f" {user.update_user_money(new_user_money)} :computer:")
+            user.update_user_bank_status()
         else:
-            await self.client.say("Invalid input!\n ```Usage: '=transfer x' or '=xfer x' -- x being money to deposit```")
+            await self.client.say("Invalid input! :no_entry_sign:\n "
+                                  "```Usage: '=transfer x' or "
+                                  "'=xfer x' -- x being money to deposit```")
             return
 
     @has_account()
@@ -134,10 +141,12 @@ class Account:
                 return
 
             new_user_bank_money = amount * -1
-            await self.client.say(f"{context.message.author.mention} Thank you! {user.update_user_money(amount)}\n"
+            await self.client.say(f"{context.message.author.mention} Thank you!"
+                                  f" {user.update_user_money(amount)}\n"
                                   f" {user.update_user_bank_balance(new_user_bank_money)}")
         else:
-            await self.client.say("Invalid input!\n ```Usage: '=draw x' or '=extract x' -- x being money to withdraw```")
+            await self.client.say("Invalid input!\n ```Usage: '=draw x' or "
+                                  "'=extract x' -- x being money to withdraw```")
             return
 
     @has_account()
@@ -161,7 +170,8 @@ class Account:
 
 
     @has_account()
-    @commands.command(name='give', aliases=['DONATE', 'GIVE', 'pay', 'donate', 'PAY', 'gift', 'GIFT'], pass_context=True)
+    @commands.command(name='give', aliases=['DONATE', 'GIVE', 'pay', 'donate',
+                                            'PAY', 'gift', 'GIFT'], pass_context=True)
     async def give(self, context, *args):
         # will automatically go to exception if all arguments weren't supplied correctly
         try:
@@ -190,7 +200,8 @@ class Account:
                                       " <a:pepehands:485869482602922021> ")
                 return
 
-            # pass the donation amount, pass the receiver user object, and pass the receiver's string name
+            # pass the donation amount, pass the receiver user object,
+            # and pass the receiver's string name
             msg = donator.donate_money(int(amnt), receiver, receiver_string)
             await self.client.say(msg)
         except:

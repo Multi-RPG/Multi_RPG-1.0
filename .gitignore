@@ -1,8 +1,11 @@
 __pycache__/
 test/
 tokens/
+
+
 db_and_words/
 .idea/
 
 TODO.txt
+
 db_and_words/hangman.db
