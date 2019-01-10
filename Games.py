@@ -379,12 +379,17 @@ class Games:
                 await self.client.delete_message(art_msg)
                 await self.client.delete_message(guess_prompt_msg)
                 await self.client.delete_message(guess_msg)
+                # pick_result_msg, underscore_seq_msg, guessed_list_msg will only exist if the game has gone at least 1 loop
+                if counter > 0:
+                    await self.client.delete_message(pick_result_msg)
+                    await self.client.delete_message(underscore_seq_msg)
+                    await self.client.delete_message(guessed_list_msg)
                 await self.client.say(hangmen[wrong_guesses] + '**Correct word pick** <a:worryHype:487059927731273739>' +
                                       'You **won** the game!! <a:worryHype:487059927731273739> Correct word was:'
                                       ' **' + correct_word.upper() + '** ' + context.message.author.mention)
                 # add WINNINGS to user's bank account now
                 user = Users(context.message.author.id)
-                await self.client.say(user.update_user_money(user.get_user_level(0) * 10))
+                await self.client.say(user.update_user_money(user.get_user_level(0) * 8))
                 return
 
             if guess_msg.clean_content.upper() in ['STOP', 'CANCEL']:
@@ -392,6 +397,11 @@ class Games:
                 await self.client.delete_message(art_msg)
                 await self.client.delete_message(guess_prompt_msg)
                 await self.client.delete_message(guess_msg)
+                # pick_result_msg, underscore_seq_msg, guessed_list_msg will only exist if the game has gone at least 1 loop
+                if counter > 0:
+                    await self.client.delete_message(pick_result_msg)
+                    await self.client.delete_message(underscore_seq_msg)
+                    await self.client.delete_message(guessed_list_msg)
                 await self.client.say('**Cancelled** the game!! <a:pepehands:485869482602922021> Correct word was: '
                                       '**' + correct_word.upper() + '** ' + context.message.author.mention)
                 return
@@ -408,12 +418,17 @@ class Games:
                 await self.client.delete_message(art_msg)
                 await self.client.delete_message(guess_prompt_msg)
                 await self.client.delete_message(guess_msg)
+                # pick_result_msg, underscore_seq_msg, guessed_list_msg will only exist if the game has gone at least 1 loop
+                if counter > 0:
+                    await self.client.delete_message(pick_result_msg)
+                    await self.client.delete_message(underscore_seq_msg)
+                    await self.client.delete_message(guessed_list_msg)
                 await self.client.say(hangmen[wrong_guesses] + 'You **won** the game!!' +
                                       ' <a:worryHype:487059927731273739> Correct word was: ' +
                                       '**' + correct_word.upper() + '** ' + context.message.author.mention)
                 # add WINNINGS to user's bank account now
                 user = Users(context.message.author.id)
-                await self.client.say(user.update_user_money(30))
+                await self.client.say(user.update_user_money(user.get_user_level(0) * 8))
                 return
 
 
