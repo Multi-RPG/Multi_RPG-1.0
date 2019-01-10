@@ -29,7 +29,9 @@ sqlite> CREATE TABLE Users(
 
 ...> money int,
 
-...> bank int
+...> bank int,
+
+...> ticket int,
 
 ...> );
 
