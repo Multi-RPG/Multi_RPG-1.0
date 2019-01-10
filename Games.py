@@ -349,7 +349,7 @@ class Games:
         # use ** ** for empty line, discord doesn't allow empty messages.
         # also, using "".join because discord api can't  print lists.
         # we could cast, but the format would be unfriendly for the game.
-        await self.client.say(context.message.author.mention + ' Word category is: **```fix\n' + category + '\n```**')
+        cat_msg = await self.client.say(context.message.author.mention + ' Word category is: **```fix\n' + category + '\n```**')
         art_msg = await self.client.say('\n** **\n' + hangmen[0] + '\n** **\n' + "".join(underscore_sequence))
 
         counter = 0
@@ -375,7 +375,10 @@ class Games:
             # run conditionals to check if they guessed entire word or they used a cancel keyword
             print(guess_msg.clean_content.upper() + ' and correct word: ' + correct_word)  # console print
             if guess_msg.clean_content.upper() == correct_word:
+                await self.client.delete_message(cat_msg)
                 await self.client.delete_message(art_msg)
+                await self.client.delete_message(guess_prompt_msg)
+                await self.client.delete_message(guess_msg)
                 await self.client.say(hangmen[wrong_guesses] + '**Correct word pick** <a:worryHype:487059927731273739>' +
                                       'You **won** the game!! <a:worryHype:487059927731273739> Correct word was:'
                                       ' **' + correct_word.upper() + '** ' + context.message.author.mention)
@@ -385,7 +388,10 @@ class Games:
                 return
 
             if guess_msg.clean_content.upper() in ['STOP', 'CANCEL']:
+                await self.client.delete_message(cat_msg)
                 await self.client.delete_message(art_msg)
+                await self.client.delete_message(guess_prompt_msg)
+                await self.client.delete_message(guess_msg)
                 await self.client.say('**Cancelled** the game!! <a:pepehands:485869482602922021> Correct word was: '
                                       '**' + correct_word.upper() + '** ' + context.message.author.mention)
                 return
@@ -398,7 +404,10 @@ class Games:
                 if x == '\u2581':  # if there is a blank underscore , the letter is still unknown to the user
                     unknown_letters += 1
             if unknown_letters == 0:
+                await self.client.delete_message(cat_msg)
                 await self.client.delete_message(art_msg)
+                await self.client.delete_message(guess_prompt_msg)
+                await self.client.delete_message(guess_msg)
                 await self.client.say(hangmen[wrong_guesses] + 'You **won** the game!!' +
                                       ' <a:worryHype:487059927731273739> Correct word was: ' +
                                       '**' + correct_word.upper() + '** ' + context.message.author.mention)
@@ -408,7 +417,7 @@ class Games:
                 return
 
 
-            # now clear all messages besides category
+            # now clear all messages besides category message (cat_msg variable)
             await self.client.delete_message(art_msg)
             await self.client.delete_message(guess_prompt_msg)
             await self.client.delete_message(guess_msg)
@@ -435,6 +444,8 @@ class Games:
             if wrong_guesses < 6:
                 art_msg = await self.client.say(hangmen[wrong_guesses])
             elif wrong_guesses == 6:
+                await self.client.delete_message(cat_msg)
+                await self.client.delete_message(pick_result_msg)
                 await self.client.say(hangmen[6] + '\nYou were **hanged**! <a:pepehands:485869482602922021>' +
                                       ' The word was: ' +
                                       '**' + correct_word + '**\n' + context.message.author.mention)
