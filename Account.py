@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import re
+import asyncio
 from discord.ext import commands
 from Users import Users
 
@@ -21,6 +22,7 @@ class Account:
     def __init__(self, client):
         self.client = client
 
+    @commands.cooldown(1, 5, commands.BucketType.user)
     @commands.command(name='create', description='make a user',
                       brief='start a user account', aliases=['register'],
                       pass_context=True)
@@ -34,28 +36,11 @@ class Account:
                                   'have an account registered!')
             return
 
-        msg = new_user.add_user()
-        await self.client.say(context.message.author.mention + msg)
+        await self.client.say(context.message.author.mention + new_user.add_user())
 
     @has_account()
-    @commands.command(name='delete', description='delete your user',
-                      brief='delete your user account', aliases=['del'],
-                      pass_context=True)
-    async def delete(self, context):
-        # create user instance with their discord ID,
-        # delete user from database based off their discord ID
-        await self.client.say('Do you really want to delete your account? '
-                              'Type **confirm** to confirm.')
-        # wait for user's input
-        guess = await self.client.wait_for_message(author=context.message.author, timeout=60)
-        if guess.clean_content.upper() == 'CONFIRM':
-            user = Users(context.message.author.id)
-            await self.client.say(context.message.author.mention + user.delete_user())
-        else:
-            await self.client.say(context.message.author.mention + ' Cancelled deletion of account')
-
-    @has_account()
-    @commands.command(name='money', aliases=['m', 'MONEY', 'bag'], pass_context=True)
+    @commands.cooldown(1, 5, commands.BucketType.user)
+    @commands.command(name='money', aliases=['m', 'MONEY'], pass_context=True)
     async def money(self, context, *args):
         # this 'try' will process if they want to check another person's bank account
         # it will only process if they passed that user as an argument
@@ -73,6 +58,9 @@ class Account:
             user = Users(context.message.author.id)
             await self.client.say(context.message.author.mention +
                                   " :moneybag: balance: " + user.get_user_money())
+
+        # delete original message to reduce spam
+        await self.client.delete_message(context.message)
 
     @has_account()
     @commands.command(name='bank', aliases=['balance'], pass_context=True)
@@ -150,6 +138,7 @@ class Account:
             return
 
     @has_account()
+    @commands.cooldown(1, 5, commands.BucketType.user)
     @commands.command(name='level', aliases=['LEVEL', 'lvl', 'LVL'], pass_context=True)
     async def level(self, context, *args):
         # this 'try' will process if they want to check another player's level
@@ -168,10 +157,12 @@ class Account:
             await self.client.say(context.message.author.mention +
                                   " Your level: " + user.get_user_level())
 
+        # delete original message to reduce spam
+        await self.client.delete_message(context.message)
 
     @has_account()
-    @commands.command(name='give', aliases=['DONATE', 'GIVE', 'pay', 'donate',
-                                            'PAY', 'gift', 'GIFT'], pass_context=True)
+    @commands.cooldown(1, 5, commands.BucketType.user)
+    @commands.command(name='give', aliases=['DONATE', 'GIVE', 'pay', 'donate', 'PAY', 'gift', 'GIFT'], pass_context=True)
     async def give(self, context, *args):
         # will automatically go to exception if all arguments weren't supplied correctly
         try:
@@ -209,6 +200,7 @@ class Account:
                                   '```ml\nuse =give like so: **=give @user X**    -- X being amnt of money to give```')
 
     @has_account()
+    @commands.cooldown(1, 5, commands.BucketType.user)
     @commands.command(name='stats', aliases=['battles', 'BRECORDS', 'STATS'], pass_context=True)
     async def battlerecords(self, context, *args):
         # this 'try' will process if they want to check another person's battle records
@@ -228,6 +220,7 @@ class Account:
             await self.client.say(context.message.author.mention + user.get_user_battle_stats())
 
     @has_account()
+    @commands.cooldown(1, 5, commands.BucketType.user)
     @commands.command(name='levelup', aliases=['lup', 'LEVELUP'], pass_context=True)
     async def levelup(self, context):
         # create instance of user who wants to level-up
@@ -244,12 +237,16 @@ class Account:
 
         # check if they have enough money for a level-up
         if user.get_user_money(0) < level_up_cost:
-            await self.client.say(context.message.author.mention + ' Not enough money for level-up...'
-                                                                 + ' <a:pepehands:485869482602922021>\n'
-                                                                 + '** **\nAccount balance: '
-                                                                 + user.get_user_money() + '\nLevel **'
-                                                                 + str(user_level + 1) + '** requires: **$'
-                                                                 + str(level_up_cost) + '**')
+            error_msg = await self.client.say(context.message.author.mention + ' Not enough money for level-up...'
+                                                                             + ' <a:pepehands:485869482602922021>\n'
+                                                                             + '** **\nAccount balance: '
+                                                                             + user.get_user_money() + '\nLevel **'
+                                                                             + str(user_level + 1) + '** requires: **$'
+                                                                             + str(level_up_cost) + '**')
+            # wait 15 seconds then delete error message and original message to reduce spam
+            await asyncio.sleep(15)
+            await self.client.delete_message(error_msg)
+            await self.client.delete_message(context.message)
             return
 
         # passed conditional, so they have enough money to level up

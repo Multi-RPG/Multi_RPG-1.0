@@ -191,9 +191,9 @@ class Games:
                     await asyncio.sleep(10)
 
                     # get the stats of each fighter
-                    # add fighter's items' total level + 3x their account level to use as weight in win probability
-                    f1_stats = fighter1.get_user_item_score() + (fighter1.get_user_level(0)*3)
-                    f2_stats = fighter2.get_user_item_score() + (fighter2.get_user_level(0)*3)
+                    # algorithm for calculating a fighter's stats in duels: (item score + user level*2 + 20)
+                    f1_stats = fighter1.get_user_item_score() + (fighter1.get_user_level(0)*2) + 20
+                    f2_stats = fighter2.get_user_item_score() + (fighter2.get_user_level(0)*2) + 20
                     total = (f1_stats + f2_stats)
                     f1_weight = f1_stats / total
                     f2_weight = f2_stats / total
@@ -349,7 +349,7 @@ class Games:
         # use ** ** for empty line, discord doesn't allow empty messages.
         # also, using "".join because discord api can't  print lists.
         # we could cast, but the format would be unfriendly for the game.
-        await self.client.say(context.message.author.mention + ' Word category is: **```fix\n' + category + '\n```**')
+        cat_msg = await self.client.say(context.message.author.mention + ' Word category is: **```fix\n' + category + '\n```**')
         art_msg = await self.client.say('\n** **\n' + hangmen[0] + '\n** **\n' + "".join(underscore_sequence))
 
         counter = 0
@@ -375,17 +375,33 @@ class Games:
             # run conditionals to check if they guessed entire word or they used a cancel keyword
             print(guess_msg.clean_content.upper() + ' and correct word: ' + correct_word)  # console print
             if guess_msg.clean_content.upper() == correct_word:
+                await self.client.delete_message(cat_msg)
                 await self.client.delete_message(art_msg)
+                await self.client.delete_message(guess_prompt_msg)
+                await self.client.delete_message(guess_msg)
+                # pick_result_msg, underscore_seq_msg, guessed_list_msg will only exist if the game has gone at least 1 loop
+                if counter > 0:
+                    await self.client.delete_message(pick_result_msg)
+                    await self.client.delete_message(underscore_seq_msg)
+                    await self.client.delete_message(guessed_list_msg)
                 await self.client.say(hangmen[wrong_guesses] + '**Correct word pick** <a:worryHype:487059927731273739>' +
                                       'You **won** the game!! <a:worryHype:487059927731273739> Correct word was:'
                                       ' **' + correct_word.upper() + '** ' + context.message.author.mention)
                 # add WINNINGS to user's bank account now
                 user = Users(context.message.author.id)
-                await self.client.say(user.update_user_money(user.get_user_level(0) * 10))
+                await self.client.say(user.update_user_money(user.get_user_level(0) * 9))
                 return
 
             if guess_msg.clean_content.upper() in ['STOP', 'CANCEL']:
+                await self.client.delete_message(cat_msg)
                 await self.client.delete_message(art_msg)
+                await self.client.delete_message(guess_prompt_msg)
+                await self.client.delete_message(guess_msg)
+                # pick_result_msg, underscore_seq_msg, guessed_list_msg will only exist if the game has gone at least 1 loop
+                if counter > 0:
+                    await self.client.delete_message(pick_result_msg)
+                    await self.client.delete_message(underscore_seq_msg)
+                    await self.client.delete_message(guessed_list_msg)
                 await self.client.say('**Cancelled** the game!! <a:pepehands:485869482602922021> Correct word was: '
                                       '**' + correct_word.upper() + '** ' + context.message.author.mention)
                 return
@@ -398,17 +414,25 @@ class Games:
                 if x == '\u2581':  # if there is a blank underscore , the letter is still unknown to the user
                     unknown_letters += 1
             if unknown_letters == 0:
+                await self.client.delete_message(cat_msg)
                 await self.client.delete_message(art_msg)
+                await self.client.delete_message(guess_prompt_msg)
+                await self.client.delete_message(guess_msg)
+                # pick_result_msg, underscore_seq_msg, guessed_list_msg will only exist if the game has gone at least 1 loop
+                if counter > 0:
+                    await self.client.delete_message(pick_result_msg)
+                    await self.client.delete_message(underscore_seq_msg)
+                    await self.client.delete_message(guessed_list_msg)
                 await self.client.say(hangmen[wrong_guesses] + 'You **won** the game!!' +
                                       ' <a:worryHype:487059927731273739> Correct word was: ' +
                                       '**' + correct_word.upper() + '** ' + context.message.author.mention)
                 # add WINNINGS to user's bank account now
                 user = Users(context.message.author.id)
-                await self.client.say(user.update_user_money(30))
+                await self.client.say(user.update_user_money(user.get_user_level(0) * 9))
                 return
 
 
-            # now clear all messages besides category
+            # now clear all messages besides category message (cat_msg variable)
             await self.client.delete_message(art_msg)
             await self.client.delete_message(guess_prompt_msg)
             await self.client.delete_message(guess_msg)
@@ -435,6 +459,8 @@ class Games:
             if wrong_guesses < 6:
                 art_msg = await self.client.say(hangmen[wrong_guesses])
             elif wrong_guesses == 6:
+                await self.client.delete_message(cat_msg)
+                await self.client.delete_message(pick_result_msg)
                 await self.client.say(hangmen[6] + '\nYou were **hanged**! <a:pepehands:485869482602922021>' +
                                       ' The word was: ' +
                                       '**' + correct_word + '**\n' + context.message.author.mention)
