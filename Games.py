@@ -389,7 +389,7 @@ class Games:
                                       ' **' + correct_word.upper() + '** ' + context.message.author.mention)
                 # add WINNINGS to user's bank account now
                 user = Users(context.message.author.id)
-                await self.client.say(user.update_user_money(user.get_user_level(0) * 8))
+                await self.client.say(user.update_user_money(user.get_user_level(0) * 9))
                 return
 
             if guess_msg.clean_content.upper() in ['STOP', 'CANCEL']:
@@ -428,7 +428,7 @@ class Games:
                                       '**' + correct_word.upper() + '** ' + context.message.author.mention)
                 # add WINNINGS to user's bank account now
                 user = Users(context.message.author.id)
-                await self.client.say(user.update_user_money(user.get_user_level(0) * 8))
+                await self.client.say(user.update_user_money(user.get_user_level(0) * 9))
                 return
 
 
