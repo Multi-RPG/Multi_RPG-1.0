@@ -17,19 +17,6 @@ def has_account():
     return commands.check(predicate)
 
 
-# short decorator function declaration,
-# confirm that command user has NO account in database
-def has_no_account():
-
-    def predicate(ctx):
-        user = Users(ctx.message.author.id)
-        if user.find_user() == 0:
-            return True
-        else:
-            return False
-    return commands.check(predicate)
-
-
 class Account:
     def __init__(self, client):
         self.client = client
