@@ -20,7 +20,7 @@ class Database:
         cur = self.connection.cursor()
 
         # new user will start off with level 1, $50 in bag and $0 in bank, status
-        sql = "INSERT INTO Users(user_id, level, money, bank) VALUES(?, ?, ?, ?, ?)"
+        sql = "INSERT INTO Users(user_id, level, money, bank, ticket) VALUES(?, ?, ?, ?, ?)"
         cur.execute(sql, (self.id, 1, 50, 0, 0))
 
         # new user will start off with 0 battles lost, 0 battles won, and 0 total winnings
@@ -389,3 +389,4 @@ class Database:
         sql = "UPDATE Users SET ticket = 0"
         cur.execute(sql)
         self.connection.commit()
+		
