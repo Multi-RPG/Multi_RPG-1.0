@@ -32,20 +32,6 @@ class Account:
 
         await self.client.say(context.message.author.mention + new_user.add_user())
 
-    @has_account()
-    @commands.cooldown(1, 5, commands.BucketType.user)
-    @commands.command(name='delete', description='delete your user',
-                      brief='delete your user account', aliases=['del'], pass_context=True)
-    async def delete(self, context):
-        # create user instance with their discord ID, delete user from database based off their discord ID
-        await self.client.say('Do you really want to delete your account? Type **confirm** to confirm.')
-        # wait for user's input
-        guess = await self.client.wait_for_message(author=context.message.author, timeout=60)
-        if guess.clean_content.upper() == 'CONFIRM':
-            user = Users(context.message.author.id)
-            await self.client.say(context.message.author.mention + user.delete_user())
-        else:
-            await self.client.say(context.message.author.mention + ' Cancelled deletion of account')
 
     @has_account()
     @commands.cooldown(1, 5, commands.BucketType.user)
