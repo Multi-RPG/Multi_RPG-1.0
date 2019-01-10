@@ -28,8 +28,10 @@ class Lottery:
         entry = Users(context.message.author.id)
         # if they already purchased a premium ticket, don’t let them overwrite it by mistake with a free ticket
         if entry.get_user_ticket_status() == 2:
-            await self.client.say('**ERROR!** You have already entered and paid your entry fee'
-                                  ' for the **premium lottery** today! <a:worryhead:525164940231704577>')
+            error_msg = await self.client.say('**ERROR!** You have already entered and paid your entry fee'
+                                              ' for the **premium lottery** today! <a:worryhead:525164940231704577>')
+            await asyncio.sleep(8)
+            await self.client.delete_message(error_msg)
             return
             
         intro_msg = await self.client.say('<a:worryhead:525164940231704577> Welcome to the **Basic** Lotto!'

@@ -141,15 +141,15 @@ async def on_ready():
             # we need the sum pool of stats of all fighters in the server
             for fighter_id in server_fighters_ids:
                 fighter = Users(fighter_id)
-                # algorithm for calculating a fighter's stats in tourneys: (item score + user level*2 + 25)
-                fighter_stats = (fighter.get_user_item_score() + (fighter.get_user_level(0) * 2)) + 25
+                # algorithm for calculating a fighter's stats in tourneys: (item score + user level*2 + 22)
+                fighter_stats = (fighter.get_user_item_score() + (fighter.get_user_level(0) * 2)) + 22
                 total_stats_pool += fighter_stats
 
             # now we need to divide each fighter's stats by the sum stat pool in order to get specific win chances
             for fighter_id in server_fighters_ids:
                 fighter = Users(fighter_id)
-                # algorithm for calculating a fighter's stats in tourneys: (item score + user level*2 + 25)
-                fighter_stats = (fighter.get_user_item_score() + (fighter.get_user_level(0) * 2)) + 25
+                # algorithm for calculating a fighter's stats in tourneys: (item score + user level*2 + 22)
+                fighter_stats = (fighter.get_user_item_score() + (fighter.get_user_level(0) * 2)) + 22
                 fighter_weight = fighter_stats / total_stats_pool
                 server_fighters_weights.append(fighter_weight)
 
