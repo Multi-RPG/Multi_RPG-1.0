@@ -74,7 +74,7 @@ async def on_ready():
     for winner in std_winners:
         # create instance of each basic ticket user who won, and update their money
         user = Users(winner)
-        user.update_user_money(user.get_user_level(0) * 75)
+        user.update_user_money(user.get_user_level(0) * 80)
         # alter each item on list to discord @ format and concatenate into 1 string to ping winners below
         std_winners_string += ('**TICKET ID:** ' + winner + ' <@' + winner + '>\n')
         
@@ -82,7 +82,7 @@ async def on_ready():
     for winner in prem_winners:
         # create instance of each premium ticket user who won, and update their
         user = Users(winner)
-        user.update_user_money(user.get_user_level(0) * 165)
+        user.update_user_money(user.get_user_level(0) * 170)
         # alter each item on list to discord @ format and concatenate into 1 string to ping winners below
         prem_winners_string += ('**TICKET ID:** ' + winner + ' <@' + winner + '>\n')
     
@@ -97,12 +97,16 @@ async def on_ready():
                 if channel.name == 'lottery':
                     channel_found = 1
                     if std_winners or prem_winners:
-                        await client.send_message(channel, "▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁\n"
+                        if not std_winners:
+                            std_winners_string = '**N/A**'
+                        elif not prem_winners:
+                            prem_winners_string = '**N/A**'
+                        await client.send_message(channel, "▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁\n"
                                                            + ":shopping_cart: __**SHOP ANNOUNCEMENT**__ " + ":shopping_cart:"
                                                            + "_" + str(date.today()) + "_"
                                                            + "\nDaily shop has been reset! Check out **=shop**!\n"
-                                                           + "▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁\n"
-                                                           + "<a:worrycash:525200274340577290>__**LOTTERY ANNOUNCEMENT**__"
+                                                           + "▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁\n"
+                                                           + "<a:worrycash:525200274340577290> __**LOTTERY ANNOUNCEMENT**__"
                                                            + " <a:worrycash:525200274340577290> _" + str(date.today()) + "_"
                                                            + "\nToday's winning number is... **"
                                                            + str(win_number) + "**\nThe lucky basic winners: \n"
@@ -111,12 +115,12 @@ async def on_ready():
                     elif not std_winners or prem_winners:
                         std_winners_string = '\n<a:worrycry:525209793405648896> _No winners today..._' \
                                              '  <a:worrycry:525209793405648896>'
-                        await client.send_message(channel, "▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁\n"
+                        await client.send_message(channel, "▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁\n"
                                                            + ":shopping_cart: __**SHOP ANNOUNCEMENT**__ " + ":shopping_cart:"
                                                            + "_" + str(date.today()) + "_"
                                                            + "\nDaily shop has been reset! Check out **=shop**!\n"
-                                                           + "▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁\n"
-                                                           + "<a:worrycash:525200274340577290>__**LOTTERY ANNOUNCEMENT**__"
+                                                           + "▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁\n"
+                                                           + "<a:worrycash:525200274340577290> __**LOTTERY ANNOUNCEMENT**__"
                                                            + " <a:worrycash:525200274340577290> _" + str(date.today()) + "_"
                                                            + std_winners_string)
 
@@ -168,8 +172,8 @@ async def on_ready():
             second_place = Users(server_winners[1])
 
             # update their money accordingly
-            prize1 = first_place.get_user_level(0) * 180
-            prize2 = second_place.get_user_level(0) * 90
+            prize1 = first_place.get_user_level(0) * 170
+            prize2 = second_place.get_user_level(0) * 100
             first_place.update_user_money(prize1)
             second_place.update_user_money(prize2)
             # first place will count as a win in records
@@ -180,7 +184,7 @@ async def on_ready():
             # find the channel in the server and state the results
             for channel in server.channels:
                 if channel.name == 'lottery':
-                    await client.send_message(channel, '▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁\n'
+                    await client.send_message(channel, '▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁\n'
                                                        ':crossed_swords: __**TOURNEY ANNOUNCEMENT**__ :crossed_swords: _'
                                                        + str(date.today()) + '_\n\n**:trophy: 1st place: ** ' + '<@'
                                                        + server_winners[0] + '> :trophy:  __Prize__: **$' + str(prize1)
