@@ -389,4 +389,3 @@ class Database:
         sql = "UPDATE Users SET ticket = 0"
         cur.execute(sql)
         self.connection.commit()
-		
