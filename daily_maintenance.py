@@ -64,7 +64,7 @@ async def on_ready():
 
     ''' PERFORM DAILY LOTTERY MAINTENANCE NOW'''
     # generate a random winning number 1-5
-    win_number = 1
+    win_number = random.randint(1,5)
     # get python list of winner ticket id's who match today's winning number
     std_winners, prem_winners = db.get_lottery_winners(win_number)
     # we have today's winners now, so reset lottery
