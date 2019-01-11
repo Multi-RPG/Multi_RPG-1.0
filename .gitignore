@@ -3,3 +3,8 @@ db_and_words/
 .idea/
 
 
+Dibs.py
+__pycache__/
+a_shop_script.py
+custom_memes/UserAvatar.webp
+daily.py
