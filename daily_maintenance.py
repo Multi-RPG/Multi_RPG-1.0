@@ -92,16 +92,16 @@ async def on_ready():
         prem_winners_string = '\n<a:worrycry:525209793405648896> no premium winners...  <a:worrycry:525209793405648896>'
 
     global_announcement = "▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁\n" \
-                                + ":shopping_cart: __**SHOP ANNOUNCEMENT**__ " + ":shopping_cart:" \
-                                + "_" + str(date.today()) + "_" \
-                                + "\nDaily shop has been reset! Check out **=shop**!\n" \
-                                + "▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁\n" \
-                                + "<a:worrycash:525200274340577290> __**LOTTERY ANNOUNCEMENT**__" \
-                                + " <a:worrycash:525200274340577290> _" + str(date.today()) + "_" \
-                                + "\nToday's winning number is... **" \
-                                + str(win_number) + "**\n\n__The lucky **basic** winners:__  " \
-                                + std_winners_string + "\n__The lucky **premium** winners:__  " \
-                                + prem_winners_string
+                          + ":shopping_cart: __**SHOP ANNOUNCEMENT**__ " + ":shopping_cart:" \
+                          + "_" + str(date.today()) + "_" \
+                          + "\nDaily shop has been reset! Check out **=shop**!\n" \
+                          + "▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁\n" \
+                          + "<a:worrycash:525200274340577290> __**LOTTERY ANNOUNCEMENT**__" \
+                          + " <a:worrycash:525200274340577290> _" + str(date.today()) + "_" \
+                          + "\nToday's winning number is... **" \
+                          + str(win_number) + "**\n\n__The lucky **basic** winners:__  " \
+                          + std_winners_string + "\n__The lucky **premium** winners:__  " \
+                          + prem_winners_string
 
     # for each server the bot is in, post the lottery results in the lottery channel
     for server in client.servers:
