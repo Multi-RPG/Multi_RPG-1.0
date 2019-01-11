@@ -38,7 +38,6 @@ async def on_ready():
     db = Database(0)
     db.connect()
 
-
     ''' PERFORM DAILY SHOP MAINTENANCE NOW! '''
     db.reset_shop()
 
@@ -65,7 +64,7 @@ async def on_ready():
 
     ''' PERFORM DAILY LOTTERY MAINTENANCE NOW'''
     # generate a random winning number 1-5
-    win_number = random.randint(1,5)
+    win_number = 1
     # get python list of winner ticket id's who match today's winning number
     std_winners, prem_winners = db.get_lottery_winners(win_number)
     # we have today's winners now, so reset lottery
@@ -76,7 +75,7 @@ async def on_ready():
         user = Users(winner)
         user.update_user_money(user.get_user_level(0) * 80)
         # alter each item on list to discord @ format and concatenate into 1 string to ping winners below
-        std_winners_string += ('**TICKET ID:** ' + winner + ' <@' + winner + '>\n')
+        std_winners_string += ('\n**TICKET ID:** ' + winner + ' <@' + winner + '>')
         
     prem_winners_string = ''
     for winner in prem_winners:
@@ -84,59 +83,53 @@ async def on_ready():
         user = Users(winner)
         user.update_user_money(user.get_user_level(0) * 170)
         # alter each item on list to discord @ format and concatenate into 1 string to ping winners below
-        prem_winners_string += ('**TICKET ID:** ' + winner + ' <@' + winner + '>\n')
-    
+        prem_winners_string += ('\n**TICKET ID:** ' + winner + ' <@' + winner + '>')
+
+    # prepare string of shop reset notifcation & lottery results to send to every discord server
+    if not std_winners:
+        std_winners_string = '\n<a:worrycry:525209793405648896> no basic winners...  <a:worrycry:525209793405648896>'
+    if not prem_winners:
+        prem_winners_string = '\n<a:worrycry:525209793405648896> no premium winners...  <a:worrycry:525209793405648896>'
+
+    global_announcement = "▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁\n" \
+                                + ":shopping_cart: __**SHOP ANNOUNCEMENT**__ " + ":shopping_cart:" \
+                                + "_" + str(date.today()) + "_" \
+                                + "\nDaily shop has been reset! Check out **=shop**!\n" \
+                                + "▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁\n" \
+                                + "<a:worrycash:525200274340577290> __**LOTTERY ANNOUNCEMENT**__" \
+                                + " <a:worrycash:525200274340577290> _" + str(date.today()) + "_" \
+                                + "\nToday's winning number is... **" \
+                                + str(win_number) + "**\n\n__The lucky **basic** winners:__  " \
+                                + std_winners_string + "\n__The lucky **premium** winners:__  " \
+                                + prem_winners_string
 
     # for each server the bot is in, post the lottery results in the lottery channel
     for server in client.servers:
-        # create boolean for each server, to dictate whether or not the 'lottery' channel was located
+        # create boolean for each server, to dictate whether or not the 'lottery' channel could be located
         channel_found = 0
-
-        while channel_found == 0:
-            for channel in server.channels:
+        for channel in server.channels:
+            try:
                 if channel.name == 'lottery':
                     channel_found = 1
-                    if std_winners or prem_winners:
-                        if not std_winners:
-                            std_winners_string = '**N/A**'
-                        elif not prem_winners:
-                            prem_winners_string = '**N/A**'
-                        await client.send_message(channel, "▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁\n"
-                                                           + ":shopping_cart: __**SHOP ANNOUNCEMENT**__ " + ":shopping_cart:"
-                                                           + "_" + str(date.today()) + "_"
-                                                           + "\nDaily shop has been reset! Check out **=shop**!\n"
-                                                           + "▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁\n"
-                                                           + "<a:worrycash:525200274340577290> __**LOTTERY ANNOUNCEMENT**__"
-                                                           + " <a:worrycash:525200274340577290> _" + str(date.today()) + "_"
-                                                           + "\nToday's winning number is... **"
-                                                           + str(win_number) + "**\nThe lucky basic winners: \n"
-                                                           + std_winners_string + "\nThe lucky premium winners: \n"
-                                                           + prem_winners_string)
-                    elif not std_winners or prem_winners:
-                        std_winners_string = '\n<a:worrycry:525209793405648896> _No winners today..._' \
-                                             '  <a:worrycry:525209793405648896>'
-                        await client.send_message(channel, "▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁\n"
-                                                           + ":shopping_cart: __**SHOP ANNOUNCEMENT**__ " + ":shopping_cart:"
-                                                           + "_" + str(date.today()) + "_"
-                                                           + "\nDaily shop has been reset! Check out **=shop**!\n"
-                                                           + "▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁\n"
-                                                           + "<a:worrycash:525200274340577290> __**LOTTERY ANNOUNCEMENT**__"
-                                                           + " <a:worrycash:525200274340577290> _" + str(date.today()) + "_"
-                                                           + std_winners_string)
+                    await client.send_message(channel, global_announcement)
+            except:
+                pass
 
-            # if there were no channels found with the name 'lottery'.....
-            # make the channel, then restart the loop to iterate through the channels and send results in the new channel
-            if channel_found == 0:
-                try:
-                    await client.create_channel(server, 'lottery', type=discord.ChannelType.text)
-                except:
-                    # if the bot failed to make the channel, simply move on and assume the channel exists
-                    channel_found = 1
+        # if there were no channels found with the name 'lottery'.....
+        # make the channel, then send the results
+        if channel_found == 0:
+            try:
+                channel = await client.create_channel(server, 'lottery', type=discord.ChannelType.text)
+                await client.send_message(channel, global_announcement)
+            except:
+                # if the bot failed to make the channel, simply move on
+                pass
 
 
     ''' PERFORM DAILY TOURNAMENT MAINTENANCE NOW! '''
     for server in client.servers:
         server_fighters_ids = db.get_server_tourney_members(server.id)
+        # only do anything else if the server has more than 1 entry
         # need more than 1 fighter entry to have a tournament
         if len(server_fighters_ids) > 1:
             total_stats_pool = 0
@@ -181,17 +174,19 @@ async def on_ready():
             # second place will count as a win in records
             second_place.update_user_records(0, 1, prize2)
 
+            # prepare string for local server tourney announcement
+            local_server_announcement = '▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁\n' \
+                                        ':crossed_swords: __**TOURNEY ANNOUNCEMENT**__ :crossed_swords: _' \
+                                        + str(date.today()) + '_\n\n**:trophy: 1st place: ** ' + '<@' \
+                                        + server_winners[0] + '> :trophy:  __Prize__: **$' + str(prize1) \
+                                        + '**\n' + \
+                                        '**:trophy: 2nd place:** ' + '<@' + server_winners[1] \
+                                        + '> :trophy:  __Prize__: **$' + str(prize2) + '**\n'
+
             # find the channel in the server and state the results
             for channel in server.channels:
                 if channel.name == 'lottery':
-                    await client.send_message(channel, '▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁\n'
-                                                       ':crossed_swords: __**TOURNEY ANNOUNCEMENT**__ :crossed_swords: _'
-                                                       + str(date.today()) + '_\n\n**:trophy: 1st place: ** ' + '<@'
-                                                       + server_winners[0] + '> :trophy:  __Prize__: **$' + str(prize1)
-                                                       + '**\n' +
-                                                       '**:trophy: 2nd place:** ' + '<@' + server_winners[1]
-                                                       + '> :trophy:  __Prize__: **$' + str(prize2) + '**\n')
-
+                    await client.send_message(channel, local_server_announcement)
                     counter = 3
                     # if there were more than 2 fighters, list the honorable mentions
                     if len(server_fighters_ids) > 2:
