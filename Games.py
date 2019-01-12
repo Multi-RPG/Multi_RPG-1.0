@@ -107,7 +107,9 @@ class Games:
 
         # the victim will only lose the prize, not the bonus prize
         prize = int(victim_level * 8.6)
-        bonus_prize = int(robber_level * 24.4)
+        if prize > int(robber_level * 8.6):
+            prize = int(robber_level * 8.6)
+        bonus_prize = int(robber_level * 26.3)
 
         # balancing mechanic, don't let victims lose any more money when they have less money than -50x their level
         if not victim_money < (victim_level * -50):
