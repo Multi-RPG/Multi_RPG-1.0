@@ -1,0 +1,13 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+
+
+db_and_words/
+tokens/
+a_shop_script.py
+daily.py
+Dibs.py
+custom_memes/
+
+
+
