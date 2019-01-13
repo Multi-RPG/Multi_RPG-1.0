@@ -92,7 +92,7 @@ async def helper(context):
 
 
 # Commands error handling
-''''@client.event
+@client.event
 async def on_command_error(error, context):
     if isinstance(error, commands.CommandOnCooldown):
         # error.retry_after returns float, need to cast to integer without decimals
@@ -107,7 +107,7 @@ async def on_command_error(error, context):
     elif isinstance(error, commands.CheckFailure):
         return await client.send_message(context.message.channel, " No account found."
                                                                   "\nUse **=create** to make one.")
-'''
+
 if __name__ == "__main__":
     for extension in ["Games", "Utilities", "Memes", "Account", "Lottery", "Shop"]:
         try:
