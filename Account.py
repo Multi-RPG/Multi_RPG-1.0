@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import re
 import asyncio
+import discord
 from discord.ext import commands
 from Users import Users
 
@@ -30,7 +31,10 @@ class Account:
             await self.client.say('<:worrymag1:531214786646507540> You **already** have an account registered!')
             return
 
-        await self.client.say(context.message.author.mention + new_user.add_user())
+        em = discord.Embed(title="", colour=0x607d4a)
+        em.add_field(name=context.message.author.name, value=new_user.add_user(), inline=True)
+        em.set_thumbnail(url=context.message.author.avatar_url)
+        await self.client.say(embed=em)
 
 
     @has_account()
@@ -43,15 +47,27 @@ class Account:
             # use regex to extract only numbers to get their discord ID,
             # ex: <@348195501025394688> to 348195501025394688
             # create user instance with their target's discord ID, check database for their money field
-            user = Users(re.findall("\d+", args[0])[0])
-            await self.client.say(context.message.author.mention +
-                                  " That user's :moneybag: balance: " + user.get_user_money())
+            target_id = re.findall("\d+", args[0])[0]
+            target = Users(target_id)
+
+            discord_member_target = context.message.server.get_member(target_id)
+            target_avatar_url = discord_member_target.avatar_url
+
+            em = discord.Embed(title="", colour=0x607d4a)
+            em.add_field(name=discord_member_target.name, value="**:moneybag: ** " + target.get_user_money(), inline=True)
+            em.set_thumbnail(url=target_avatar_url)
+
+            await self.client.send_message(context.message.channel, context.message.author.mention, embed=em)
         # if they passed no parameter, get their own money
         except:
             # create user instance with their discord ID, check database for their money field
             user = Users(context.message.author.id)
-            await self.client.say(context.message.author.mention +
-                                  " :moneybag: balance: " + user.get_user_money())
+
+            em = discord.Embed(title="", colour=0x607d4a)
+            em.add_field(name=context.message.author.name, value="**:moneybag: ** " + user.get_user_money(), inline=True)
+            em.set_thumbnail(url=context.message.author.avatar_url)
+
+            await self.client.send_message(context.message.channel, context.message.author.mention, embed=em)
 
         # delete original message to reduce spam
         await self.client.delete_message(context.message)
@@ -66,15 +82,27 @@ class Account:
             # use regex to extract only numbers to get their discord ID,
             # ex: <@348195501025394688> to 348195501025394688
             # create user instance with their target's discord ID, check database for their level field
-            user = Users(re.findall("\d+", args[0])[0])
-            await self.client.say(context.message.author.mention +
-                                  " That user's level: " + user.get_user_level())
+            target_id = re.findall("\d+", args[0])[0]
+            target = Users(target_id)
+
+            discord_member_target = context.message.server.get_member(target_id)
+            target_avatar_url = discord_member_target.avatar_url
+
+            em = discord.Embed(title="", colour=0x607d4a)
+            em.add_field(name=discord_member_target.name, value="**Level** " + target.get_user_level(), inline=True)
+            em.set_thumbnail(url=target_avatar_url)
+
+            await self.client.send_message(context.message.channel, context.message.author.mention, embed=em)
         # if they passed no parameter, get their own level
         except:
             # create user instance with their discord ID, check database for their level field
             user = Users(context.message.author.id)
-            await self.client.say(context.message.author.mention +
-                                  " Your level: " + user.get_user_level())
+
+            em = discord.Embed(title="", colour=0x607d4a)
+            em.add_field(name=context.message.author.name, value="**Level** " + user.get_user_level(), inline=True)
+            em.set_thumbnail(url=context.message.author.avatar_url)
+
+            await self.client.send_message(context.message.channel, context.message.author.mention, embed=em)
 
         # delete original message to reduce spam
         await self.client.delete_message(context.message)
@@ -111,31 +139,51 @@ class Account:
                 return
 
             # pass the donation amount, pass the receiver user object, and pass the receiver's string name
-            msg = donator.donate_money(int(amnt), receiver, receiver_string)
-            await self.client.say(msg)
+
+            msg = context.message.author.mention + ' ' + donator.donate_money(int(amnt), receiver, receiver_string)
+            em = discord.Embed(title="", colour=0x607d4a)
+            em.add_field(name="DONATION ALERT", value=msg, inline=True)
+            em.set_thumbnail(url="https://cdn.discordapp.com/emojis/526815183553822721.png?v=1")
+            await self.client.say(embed=em)
+            await self.client.delete_message(context.message)
         except:
             await self.client.say(context.message.author.mention +
                                   '```ml\nuse =give like so: **=give @user X**    -- X being amnt of money to give```')
 
     @has_account()
     @commands.cooldown(1, 5, commands.BucketType.user)
-    @commands.command(name='stats', aliases=['battles', 'BRECORDS', 'STATS'], pass_context=True)
-    async def battlerecords(self, context, *args):
+    @commands.command(name='stats',
+                      aliases=['battles', 'BRECORDS', 'STATS', 'profile', 'PROFILE', 'gear', 'GEAR'], pass_context=True)
+    async def profile_stats(self, context, *args):
         # this 'try' will process if they want to check another person's battle records
         # it will only process if they passed that user as an argument
         try:
             # use regex to extract only numbers to get their discord ID,
             # ex: <@348195501025394688> to 348195501025394688
             # create user instance with their target's discord ID, check database for their money field
-            user = Users(re.findall("\d+", args[0])[0])
-            await self.client.say(context.message.author.mention + " _Target's battle stats..._"
-                                  + user.get_user_battle_stats())
+            target_id = re.findall("\d+", args[0])[0]
+            target = Users(target_id)
 
-        # if they passed no parameter, get their own records
+            discord_member_target = context.message.server.get_member(target_id)
+            target_avatar_url = discord_member_target.avatar_url
+
+            em = discord.Embed(title="", colour=0x607d4a)
+            em.add_field(name=discord_member_target.name, value=target.get_user_stats(), inline=True)
+            em.set_thumbnail(url=target_avatar_url)
+
+            await self.client.send_message(context.message.channel, context.message.author.mention, embed=em)
+
+
+        # if they passed no parameter, or user was not found, get their own records
         except:
             # create user instance with their discord ID, check database for their level field
             user = Users(context.message.author.id)
-            await self.client.say(context.message.author.mention + user.get_user_battle_stats())
+
+            em = discord.Embed(title="", colour=0x607d4a)
+            em.add_field(name=context.message.author.name, value=user.get_user_stats(), inline=True)
+            em.set_thumbnail(url=context.message.author.avatar_url)
+
+            await self.client.send_message(context.message.channel, context.message.author.mention, embed=em)
 
     @has_account()
     @commands.cooldown(1, 5, commands.BucketType.user)
@@ -169,19 +217,33 @@ class Account:
 
         # passed conditional, so they have enough money to level up
         # confirm if they really want to level-up
-        await self.client.say(context.message.author.mention + '\nAccount balance: ' + user.get_user_money()
-                                                             + '\nLevel **' + str(user_level + 1)
-                                                             + '** requires: **$' + str(level_up_cost)
-                                                             + '**\n** **\nDo you want to level-up?'
-                                                             + ' Type **confirm** to confirm.')
+        msg = '\nAccount balance: ' + user.get_user_money() \
+              + '\nLevel **' + str(user_level + 1) \
+              + '** requires: **$' + str(level_up_cost) \
+              + '**\n** **\nDo you want to level-up?' \
+              + ' Type **confirm** to confirm.'
+
+        em = discord.Embed(title="", colour=0x607d4a)
+        em.add_field(name=context.message.author.name, value=msg, inline=True)
+        em.set_thumbnail(url=context.message.author.avatar_url)
+
+        await self.client.send_message(context.message.channel, context.message.author.mention, embed=em)
+
 
         # wait for user's input
         confirm = await self.client.wait_for_message(author=context.message.author, timeout=60)
         if confirm.clean_content.upper() == 'CONFIRM':
+            # check if they tried to exploit the code by spending all their money before confirming
+            if user.get_user_money(0) < level_up_cost:
+                await self.client.say(context.message.author.mention + " You spent money before confirming...")
+                return
             # deduct the level-up cost from their account
             user.update_user_money(level_up_cost*-1)
             # increase level by 1 and print new level
-            await self.client.say(context.message.author.mention + user.update_user_level())
+            em = discord.Embed(title="", colour=0x607d4a)
+            em.add_field(name=context.message.author.name, value=user.update_user_level(), inline=True)
+            em.set_thumbnail(url=context.message.author.avatar_url)
+            await self.client.say(embed=em)
         else:
             await self.client.say(context.message.author.mention + ' Cancelled level-up.')
 
@@ -197,8 +259,13 @@ class Account:
         user_level = user.get_user_level(0) # get int version of level, SEE USERS.PY
         dailyreward = user_level * 60
 
-        await self.client.say('<a:worryswipe:525755450218643496> Daily **$' + str(dailyreward) +
-                              '** received! <a:worryswipe:525755450218643496>\n' + user.update_user_money(dailyreward))
+        msg = '<a:worryswipe:525755450218643496> Daily **$' + str(dailyreward) \
+              + '** received! <a:worryswipe:525755450218643496>\n' + user.update_user_money(dailyreward)
+
+        em = discord.Embed(title="", colour=0x607d4a)
+        em.add_field(name=context.message.author.name, value=msg, inline=True)
+        em.set_thumbnail(url=context.message.author.avatar_url)
+        await self.client.say(embed=em)
               
 def setup(client):
     client.add_cog(Account(client))

@@ -2,6 +2,7 @@
 import random
 import asyncio
 import re
+import discord
 from discord.ext import commands
 from Users import Users
 from random import choices
@@ -93,11 +94,18 @@ class Games:
 
             bail = int(robber_level * 5.3)
             robber.update_user_money(bail * -1)
-            await self.client.say('<a:policesiren2:490326123549556746> :oncoming_police_car: '
-                                  '<a:policesiren2:490326123549556746>\n'
-                                  '<a:monkacop:490323719063863306>         <a:monkacop:490323719063863306>\n**'
-                                  '' + str(target) + '** dodged and the police shot you in the process.\n'
-                                  'You spent **$' + str(bail) + '** to bail out of jail.')
+
+            msg = '<a:policesiren2:490326123549556746> :oncoming_police_car: ' \
+                  '<a:policesiren2:490326123549556746>\n<a:monkacop:490323719063863306>' \
+                  '\u200B \u200B \u200B \u200B \u200B \u200B \u200B \u200B \u200B \u200B' \
+                  '<a:monkacop:490323719063863306>\n**' + str(target) + '** dodged and the police shot you in the process.\n' \
+                  'You spent **$' + str(bail) + '** to bail out of jail.'
+
+            em = discord.Embed(title="", colour=0x607d4a)
+            em.add_field(name=context.message.author.name, value=msg, inline=True)
+            em.set_thumbnail(url="https://cdn.discordapp.com/emojis/490326123549556746.gif?v=1")
+
+            await self.client.say(embed=em)
             return
 
         # we passed the dodge check, so reward thief with prize and bonus prize
@@ -117,9 +125,14 @@ class Games:
             victim.update_user_money(prize * -1)
         # reward robber with prize and bonus prize
         robber.update_user_money(prize + bonus_prize)
-        await self.client.say('**Success!** <:poggers:490322361891946496> '
-                              'You robbed **$' + str(prize) + '** (+**$' + str(bonus_prize)
-                              + '**) from **' + str(target) + '**')
+        msg = '**Success!** <:poggers:490322361891946496> ' \
+              'You robbed **$' + str(prize) + '** (+**$' + str(bonus_prize) \
+              + '**) from **' + str(target) + '**'
+
+        em = discord.Embed(title="", colour=0x607d4a)
+        em.add_field(name=context.message.author.name, value=msg, inline=True)
+        em.set_thumbnail(url="https://cdn.discordapp.com/emojis/419506568728543263.gif?v=1")
+        await self.client.say(embed=em)
 
     '''TOURNAMENT BATTLE FUNCTION'''
     @has_account()
@@ -130,8 +143,15 @@ class Games:
         # create instance of user who wants to enter the daily, server-specific colosseum tournament
         fighter = Users(context.message.author.id)
         # update their tourney_server_id entry to be the server they executed the command on
-        await self.client.say(
-            fighter.update_user_tourney_server_id(context.message.server.name, context.message.server.id))
+        msg = fighter.update_user_tourney_server_id(context.message.server.name, context.message.server.id)
+
+
+        em = discord.Embed(title="", colour=0x607d4a)
+        em.add_field(name=context.message.author.name, value=msg, inline=True)
+        em.set_thumbnail(url=context.message.server.icon_url)
+        await self.client.delete_message(context.message)
+        await self.client.say(embed=em)
+
 
     '''1v1 BATTLE FUNCTION'''
     @has_account()
@@ -174,8 +194,8 @@ class Games:
                 return
 
             # give target the prompt to ask if they will accept the challenge
-            await self.client.say(target + ', you were challenged for **$' + str(bet) +
-                                  '**\n:crossed_swords: Type **yes** to accept this battle. :crossed_swords: ')
+            alert_msg = await self.client.say(target + ', you were challenged for **$' + str(bet) +
+                                              '**\n:crossed_swords: Type **yes** to accept this battle. :crossed_swords: ')
 
             # made this check function with the help of discord API documentation
             # it will be called below to check if the confirmation response to fight is from fighter2
@@ -185,11 +205,17 @@ class Games:
             # (try to) wait for a battle acceptance from other user
             try:
                 confirm = await self.client.wait_for_message(timeout=60, check=fighter2check)
+                await self.client.delete_message(alert_msg)
                 if confirm.clean_content.upper() == 'YES':
                     await self.client.delete_message(confirm)
                     # have to use 2 messages to enlarge the emojis
-                    await self.client.say('**Commencing battle!** Fight will conclude in 10 seconds...')
-                    await self.client.say('<a:worryfight1:493220414206509056> <a:worryfight2:493220431738699786>')
+                    msg = context.message.author.mention + ' vs ' + args[0] + ' for **$' + str(bet) \
+                          + '**\nFight will conclude in 10 seconds...'
+                    em = discord.Embed(title="", colour=0x607d4a)
+                    em.add_field(name="DUEL ALERT", value=msg, inline=True)
+                    em.set_thumbnail(url="https://cdn.discordapp.com/emojis/493220414206509056.gif?v=1")
+
+                    await self.client.say(embed=em)
                     await asyncio.sleep(10)
 
                     # get the stats of each fighter
@@ -249,6 +275,7 @@ class Games:
                                   '```ml\nuse =fight like so: "=fight @user X"  -- X being amount to bet```')
 
     '''FLIP COIN FUNCTION'''
+    @commands.cooldown(1, 8, commands.BucketType.user)
     @commands.command(name='flip', description='Flip a coin to earn social status.',
                       brief='can use "=flip" or "=flip X", with X being heads or tails',
                       aliases=['f', 'flpi', 'FLIP', 'F'], pass_context=True)
@@ -269,6 +296,9 @@ class Games:
         except:
             pass
 
+        gif = await self.client.say("https://media1.tenor.com/images/938e1fc4fcf2e136855fd0e83b1e8a5f/tenor.gif?itemid=5017733")
+        await asyncio.sleep(3)
+        await self.client.delete_message(gif)
 
         # check if they specified a guess of heads or tails
         # process if they won or not

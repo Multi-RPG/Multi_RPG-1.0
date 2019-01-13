@@ -18,7 +18,7 @@ else:
     print("\n","Discord bot token not found at: ",bot_token_path,"... Please correct file path in Main.py file.")
     sys.exit()
 
-client = commands.Bot(command_prefix=["=", "%"])
+client = commands.Bot(command_prefix=["!", "%"])
 client.remove_command('help')
 
 @client.event
@@ -49,14 +49,13 @@ async def helper(context):
           '  =id             use "=id" to view your personal discord ID\n' \
           'Account:\n' \
           '  =create         use "=create" to make a account\n' \
-          '  =delete         use "=delete" to delete your account\n' \
           '  =daily          use "=daily" for free money equal to 60x your level\n' \
           '  =shop           use "=shop" to view the daily shop items\n' \
           '  =buy            use "=buy X" to purchase shop item  -- X being item #\n' \
           '  =levelup        use "=levelup" to level up your account\n' \
           '                  (this results in higher profits & battle successes)\n\n' \
+          '  =profile        use "=profile" or "=profile @user" to print battle & gear stats\n' \
           '  =level          use "=level" or "=level @user" to print account level\n' \
-          '  =stats          use "=stats" or "=stats @user" to print battle & gear stats\n' \
           '  =money          use "=money" or "=money @user" to print bank balance\n' \
           '  =give           use "=give @user X" -- X being money to give a user\n```'
     msg2 = '```ml\n' \
@@ -93,7 +92,7 @@ async def helper(context):
 
 
 # Commands error handling
-@client.event
+''''@client.event
 async def on_command_error(error, context):
     if isinstance(error, commands.CommandOnCooldown):
         # error.retry_after returns float, need to cast to integer without decimals
@@ -108,7 +107,7 @@ async def on_command_error(error, context):
     elif isinstance(error, commands.CheckFailure):
         return await client.send_message(context.message.channel, " No account found."
                                                                   "\nUse **=create** to make one.")
-
+'''
 if __name__ == "__main__":
     for extension in ["Games", "Utilities", "Memes", "Account", "Lottery", "Shop"]:
         try:

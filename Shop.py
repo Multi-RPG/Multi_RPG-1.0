@@ -108,8 +108,8 @@ class Shop:
         # because the user should not be able to downgrade
         error_msg = "<:worrymag1:531214786646507540> Your current equipped item is already **better or equal** to that! " \
                     "<:worrymag1:531214786646507540>"
-        # retrieve the first four values [0-3] returned from get_user_battle_stats and store them into variables
-        user_weapon_lvl, user_helmet_lvl, user_chest_lvl, user_boots_lvl = user.get_user_battle_stats(0)[0:4]
+        # retrieve the first four values [0-3] returned from get_user_stats and store them into variables
+        user_weapon_lvl, user_helmet_lvl, user_chest_lvl, user_boots_lvl = user.get_user_stats(0)[0:4]
         # compare user's item level against specified item's level, based off item type the user is trying to purchase
         if item_type == 'weapon':
             if user_weapon_lvl >= item_lvl:
