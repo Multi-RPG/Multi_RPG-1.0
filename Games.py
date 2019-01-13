@@ -102,7 +102,7 @@ class Games:
                   'You spent **$' + str(bail) + '** to bail out of jail.'
 
             em = discord.Embed(title="", colour=0x607d4a)
-            em.add_field(name=context.message.author.name, value=msg, inline=True)
+            em.add_field(name=context.message.author.name + "'s rob", value=msg, inline=True)
             em.set_thumbnail(url="https://cdn.discordapp.com/emojis/490326123549556746.gif?v=1")
 
             await self.client.say(embed=em)
@@ -130,7 +130,7 @@ class Games:
               + '**) from **' + str(target) + '**'
 
         em = discord.Embed(title="", colour=0x607d4a)
-        em.add_field(name=context.message.author.name, value=msg, inline=True)
+        em.add_field(name=context.message.author.name + "'s rob", value=msg, inline=True)
         em.set_thumbnail(url="https://cdn.discordapp.com/emojis/419506568728543263.gif?v=1")
         await self.client.say(embed=em)
 
