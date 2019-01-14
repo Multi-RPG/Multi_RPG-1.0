@@ -51,7 +51,7 @@ async def on_ready():
         sys.exit()
 
     # parse through each section in the items in the .ini file
-    # each item has a 14% chance to be inserted into the daily shop
+    # each item has a 17% chance to be inserted into the daily shop
     for item in config.sections():
         if 17 >= random.randint(1, 100) >= 1:
             item_name = config.get(item, 'name')

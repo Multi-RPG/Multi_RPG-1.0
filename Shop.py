@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import asyncio
 import discord
+import math
 from discord.ext import commands
 from Users import Users
 from Database import Database
@@ -67,22 +68,27 @@ class Shop:
         for item in formatted_items[0:5]:
             page1_str += item
 
+        # each page has max of 5 items, so get the total amount of pages our shop message will have
+        total_pages = int(math.ceil(len(formatted_items) / 5.0))
+
         # embed first set of 5 items, send the message, and reset the string variable for next message
         em = discord.Embed(title="", colour=0x607d4a)
-        em.add_field(name="Daily Shop", value=page1_str, inline=True)
+        # get the current page/total_page and add it to the embedded page's title
+        field_name = "Shop (Page {}/{})".format(str(1), str(total_pages))
+        em.add_field(name=field_name, value=page1_str, inline=True)
         em.set_thumbnail(url="https://cdn.discordapp.com/emojis/525164940231704577.gif?size=64")
         # send the first page of items in a message
         msg = await self.client.say(embed=em)
 
         # if there is more than 5 items, we need more than 1 page.
         if len(formatted_items) > 5:
-            page_str = ''
             # add a right arrow emoji to the first page's message, and wait for the author to click it
             await self.client.add_reaction(message=msg, emoji='➡')
             res = await self.client.wait_for_reaction(message=msg, emoji=['⬅', '➡'], timeout=20, user=context.message.author)
             # counter will represent the last item number on current page
             # it will be used as indexes of formatted_items[] for changing pages
             counter = 5
+            current_page_number = 1
             # while a reaction is provided and not timed out
             while res:
                 # delete the previous page message
@@ -92,36 +98,45 @@ class Shop:
 
                 # if user reacted to go to next page
                 if res.reaction.emoji == '➡':
+                    # going forward 1 page, so add 1 to current page number
+                    current_page_number += 1
                     # set the new indexes to next 5 items indexes, store the new range into a string
                     for item in formatted_items[counter:counter+5]:
                         page_str += item
                     # clear the embed fields for the new page of items, add the new one, and send it
                     em.clear_fields()
-                    em.add_field(name="Daily Shop", value=page_str, inline=True)
+                    # get the current page/total_page and add it to the embedded page's title
+                    field_name = "Shop (Page {}/{})".format(str(current_page_number), str(total_pages))
+                    em.add_field(name=field_name, value=page_str, inline=True)
                     msg = await self.client.say(embed=em)
 
                     # add 5 to the counter to indicate new index
                     counter += 5
                     # add emoji to go to previous page if desired
                     await self.client.add_reaction(message=msg, emoji='⬅')
-                    # if the new index is less than the total item count, that means there is a next page
-                    if len(formatted_items) > counter:
+                    # if the current page number isn't the page count, there is a next page
+                    if not current_page_number == total_pages:
                         await self.client.add_reaction(message=msg, emoji='➡')
+
 
                 # if user reacted to go to previous page
                 elif res.reaction.emoji == '⬅':
+                    # going back 1 page, so subtract 1 from current page number
+                    current_page_number -= 1
                     # set the new indexes to previous 5 items indexes, store the new range into a string
                     for item in formatted_items[counter-10:counter-5]:
                         page_str += item
                     # clear the embed fields for the new page of items, add the new one, and send it
                     em.clear_fields()
-                    em.add_field(name="Daily Shop", value=page_str, inline=True)
+                    # get the current page/total_page and add it to the embedded page's title
+                    field_name = "Shop (Page {}/{})".format(str(current_page_number), str(total_pages))
+                    em.add_field(name=field_name, value=page_str, inline=True)
                     msg = await self.client.say(embed=em)
 
                     # subtract 5 from the counter to indicate new index
                     counter -= 5
-                    # if the new index is greater than 5, that means there is a previous page
-                    if counter > 5:
+                    # if current page number is not page 1, there is a previous page
+                    if not current_page_number == 1:
                         await self.client.add_reaction(message=msg, emoji='⬅')
                     # add emoji to go to next page if desired
                     await self.client.add_reaction(message=msg, emoji='➡')
@@ -130,6 +145,8 @@ class Shop:
                 res = await self.client.wait_for_reaction(message=msg, emoji=['⬅', '➡'], timeout=20,
                                                           user=context.message.author)
 
+        await asyncio.sleep(30)
+        await self.client.delete_message(msg)
 
 
     @has_account()
