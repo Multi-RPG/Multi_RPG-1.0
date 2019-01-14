@@ -71,7 +71,7 @@ class Shop:
         # each page has max of 5 items, so get the total amount of pages our shop message will have
         total_pages = int(math.ceil(len(formatted_items) / 5.0))
 
-        # embed first set of 5 items, send the message, and reset the string variable for next message
+        # embed first set of 5 items, send the message
         em = discord.Embed(title="", colour=0x607d4a)
         # get the current page/total_page and add it to the embedded page's title
         field_name = "Shop (Page {}/{})".format(str(1), str(total_pages))
