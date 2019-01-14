@@ -18,7 +18,7 @@ else:
     print("\n","Discord bot token not found at: ",bot_token_path,"... Please correct file path in Main.py file.")
     sys.exit()
 
-client = commands.Bot(command_prefix=["!", "%"])
+client = commands.Bot(command_prefix=["=", "%"])
 client.remove_command('help')
 
 @client.event

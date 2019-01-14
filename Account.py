@@ -32,7 +32,7 @@ class Account:
             return
 
         em = discord.Embed(title="", colour=0x607d4a)
-        em.add_field(name=context.message.author.name, value=new_user.add_user(), inline=True)
+        em.add_field(name=context.message.author.display_name, value=new_user.add_user(), inline=True)
         em.set_thumbnail(url=context.message.author.avatar_url)
         await self.client.say(embed=em)
 
@@ -50,12 +50,14 @@ class Account:
             target_id = re.findall("\d+", args[0])[0]
             target = Users(target_id)
 
+            # get_member() returns the "member" object that matches an id provided
             discord_member_target = context.message.server.get_member(target_id)
-            target_avatar_url = discord_member_target.avatar_url
 
+            # embed the money retrieved from get_user_money(), set thumbnail to 64x64 version of target's id
             em = discord.Embed(title="", colour=0x607d4a)
-            em.add_field(name=discord_member_target.name, value="**:moneybag: ** " + target.get_user_money(), inline=True)
-            em.set_thumbnail(url=target_avatar_url)
+            em.add_field(name=discord_member_target.display_name, value="**:moneybag: ** " + target.get_user_money(), inline=True)
+            thumb_url = "https://cdn.discordapp.com/avatars/{0.id}/{0.avatar}.webp?size=64".format(discord_member_target)
+            em.set_thumbnail(url=thumb_url)
 
             await self.client.send_message(context.message.channel, context.message.author.mention, embed=em)
         # if they passed no parameter, get their own money
@@ -63,9 +65,11 @@ class Account:
             # create user instance with their discord ID, check database for their money field
             user = Users(context.message.author.id)
 
+            # embed the money retrieved from get_user_money(), set thumbnail to 64x64 version of user's id
             em = discord.Embed(title="", colour=0x607d4a)
-            em.add_field(name=context.message.author.name, value="**:moneybag: ** " + user.get_user_money(), inline=True)
-            em.set_thumbnail(url=context.message.author.avatar_url)
+            em.add_field(name=context.message.author.display_name, value="**:moneybag: ** " + user.get_user_money(), inline=True)
+            thumb_url = "https://cdn.discordapp.com/avatars/{0.id}/{0.avatar}.webp?size=64".format(context.message.author)
+            em.set_thumbnail(url=thumb_url)
 
             await self.client.send_message(context.message.channel, context.message.author.mention, embed=em)
 
@@ -85,12 +89,14 @@ class Account:
             target_id = re.findall("\d+", args[0])[0]
             target = Users(target_id)
 
+            # get_member() returns the "member" object that matches an id provided
             discord_member_target = context.message.server.get_member(target_id)
-            target_avatar_url = discord_member_target.avatar_url
 
+            # embed the level retrieved from get_user_level(), set thumbnail to 64x64 version of target's id
             em = discord.Embed(title="", colour=0x607d4a)
-            em.add_field(name=discord_member_target.name, value="**Level** " + target.get_user_level(), inline=True)
-            em.set_thumbnail(url=target_avatar_url)
+            em.add_field(name=discord_member_target.display_name, value="**Level** " + target.get_user_level(), inline=True)
+            thumb_url = "https://cdn.discordapp.com/avatars/{0.id}/{0.avatar}.webp?size=64".format(discord_member_target)
+            em.set_thumbnail(url=thumb_url)
 
             await self.client.send_message(context.message.channel, context.message.author.mention, embed=em)
         # if they passed no parameter, get their own level
@@ -98,9 +104,11 @@ class Account:
             # create user instance with their discord ID, check database for their level field
             user = Users(context.message.author.id)
 
+            # embed the level retrieved from get_user_level(), set thumbnail to 64x64 version of user's id
             em = discord.Embed(title="", colour=0x607d4a)
-            em.add_field(name=context.message.author.name, value="**Level** " + user.get_user_level(), inline=True)
-            em.set_thumbnail(url=context.message.author.avatar_url)
+            em.add_field(name=context.message.author.display_name, value="**Level** " + user.get_user_level(), inline=True)
+            thumb_url = "https://cdn.discordapp.com/avatars/{0.id}/{0.avatar}.webp?size=64".format(context.message.author)
+            em.set_thumbnail(url=thumb_url)
 
             await self.client.send_message(context.message.channel, context.message.author.mention, embed=em)
 
@@ -139,11 +147,11 @@ class Account:
                 return
 
             # pass the donation amount, pass the receiver user object, and pass the receiver's string name
-
             msg = context.message.author.mention + ' ' + donator.donate_money(int(amnt), receiver, receiver_string)
+            # embed the donation message, put a heartwarming emoji size 64x64 as the thumbnail
             em = discord.Embed(title="", colour=0x607d4a)
             em.add_field(name="DONATION ALERT", value=msg, inline=True)
-            em.set_thumbnail(url="https://cdn.discordapp.com/emojis/526815183553822721.png?v=1")
+            em.set_thumbnail(url="https://cdn.discordapp.com/emojis/526815183553822721.webp?size=64")
             await self.client.say(embed=em)
             await self.client.delete_message(context.message)
         except:
@@ -164,11 +172,13 @@ class Account:
             target_id = re.findall("\d+", args[0])[0]
             target = Users(target_id)
 
+            # get_member() returns the "member" object that matches an id provided
             discord_member_target = context.message.server.get_member(target_id)
             target_avatar_url = discord_member_target.avatar_url
 
+            # embed the statistics retrieved from get_user_stats(), set thumbnail to target's id
             em = discord.Embed(title="", colour=0x607d4a)
-            em.add_field(name=discord_member_target.name, value=target.get_user_stats(), inline=True)
+            em.add_field(name=discord_member_target.display_name, value=target.get_user_stats(), inline=True)
             em.set_thumbnail(url=target_avatar_url)
 
             await self.client.send_message(context.message.channel, context.message.author.mention, embed=em)
@@ -179,8 +189,9 @@ class Account:
             # create user instance with their discord ID, check database for their level field
             user = Users(context.message.author.id)
 
+            # embed the statistics retrieved from get_user_stats(), set thumbnail to user's id
             em = discord.Embed(title="", colour=0x607d4a)
-            em.add_field(name=context.message.author.name, value=user.get_user_stats(), inline=True)
+            em.add_field(name=context.message.author.display_name, value=user.get_user_stats(), inline=True)
             em.set_thumbnail(url=context.message.author.avatar_url)
 
             await self.client.send_message(context.message.channel, context.message.author.mention, embed=em)
@@ -223,9 +234,10 @@ class Account:
               + '**\n** **\nDo you want to level-up?' \
               + ' Type **confirm** to confirm.'
 
-        em = discord.Embed(title="", colour=0x607d4a)
-        em.add_field(name=context.message.author.name, value=msg, inline=True)
-        em.set_thumbnail(url=context.message.author.avatar_url)
+        # embed the confirmation prompt, set thumbnail to user's id of max size
+        em = discord.Embed(description=msg, colour=0x607d4a)
+        thumb_url = "https://cdn.discordapp.com/avatars/{0.id}/{0.avatar}.webp?size=1024".format(context.message.author)
+        em.set_thumbnail(url=thumb_url)
 
         await self.client.send_message(context.message.channel, context.message.author.mention, embed=em)
 
@@ -239,10 +251,13 @@ class Account:
                 return
             # deduct the level-up cost from their account
             user.update_user_money(level_up_cost*-1)
+            # embed the confirmation message, set thumbnail to user's id of size 64x64
             # increase level by 1 and print new level
             em = discord.Embed(title="", colour=0x607d4a)
-            em.add_field(name=context.message.author.name, value=user.update_user_level(), inline=True)
-            em.set_thumbnail(url=context.message.author.avatar_url)
+            em.add_field(name=context.message.author.display_name, value=user.update_user_level(), inline=True)
+            thumb_url = "https://cdn.discordapp.com/avatars/{0.id}/{0.avatar}.webp?size=64".format(
+                context.message.author)
+            em.set_thumbnail(url=thumb_url)
             await self.client.say(embed=em)
         else:
             await self.client.say(context.message.author.mention + ' Cancelled level-up.')
@@ -262,8 +277,9 @@ class Account:
         msg = '<a:worryswipe:525755450218643496> Daily **$' + str(dailyreward) \
               + '** received! <a:worryswipe:525755450218643496>\n' + user.update_user_money(dailyreward)
 
+        # embed the confirmation message, set thumbnail to user's id
         em = discord.Embed(title="", colour=0x607d4a)
-        em.add_field(name=context.message.author.name, value=msg, inline=True)
+        em.add_field(name=context.message.author.display_name, value=msg, inline=True)
         em.set_thumbnail(url=context.message.author.avatar_url)
         await self.client.say(embed=em)
               

@@ -52,11 +52,12 @@ class Games:
         # if they specified a rob target, change the random target to their specified target
         if args:
             try:
-                # retrieve rob target
-                target = args[0]
                 # use regex to extract only the user-id from the user targeted
-                victim_id = int(re.findall("\d+", target)[0])
+                victim_id = re.findall("\d+", args[0])[0]
                 victim = Users(victim_id)
+
+                # get_member() returns the "member" object that matches an id provided
+                target = context.message.server.get_member(victim_id)
                 # higher fail chance, 35%, if they want to specify a rob target
                 fail_chance = 35
                 # if the target doesn't have an account, change fail chance back to 30% and the target will reroll next loop
@@ -71,11 +72,14 @@ class Games:
         # while the user to rob is yourself, re-roll the target
         # while the user to rob does not have an account in the database, re-roll the target
         # while the user to rob is not close to your level, re-roll the target
-        while victim_id == context.message.author.id or victim.find_user() == 0 or level_difference > 4:
-            # only try 60 members in the user's server
+        while victim_id == context.message.author.id or victim.find_user() == 0 or level_difference > 2:
+            # if re-rolled the target 60 times, stop accounting for level difference
+            if counter == 60:
+                level_difference = 0
+            # only try 120 members in the user's server
             # otherwise if the user was the sole player with an account in the discord server, infinite while loop
             # this part is inefficient, but only way I can think of right now with discord's functionality
-            if counter == 60:
+            if counter == 120:
                 await self.client.say('No users found to rob...')
                 return
             target = random.choice(list(context.message.server.members))
@@ -84,8 +88,10 @@ class Games:
             victim = Users(target.id)
             victim_id = target.id
             counter += 1
-            if victim.find_user() == 1:
-                level_difference = abs(robber.get_user_level(0) - victim.get_user_level(0))
+            # only account for level difference the first 60 target re-rolls
+            if counter < 60:
+                if victim.find_user() == 1:
+                    level_difference = abs(robber.get_user_level(0) - victim.get_user_level(0))
 
         # calculate random integer 1-100
         # if the result is within 1 through fail chance, they failed the rob
@@ -98,13 +104,12 @@ class Games:
             msg = '<a:policesiren2:490326123549556746> :oncoming_police_car: ' \
                   '<a:policesiren2:490326123549556746>\n<a:monkacop:490323719063863306>' \
                   '\u200B \u200B \u200B \u200B \u200B \u200B \u200B \u200B \u200B \u200B' \
-                  '<a:monkacop:490323719063863306>\n**' + str(target) + '** dodged and the police shot you in the process.\n' \
+                  '<a:monkacop:490323719063863306>\n**' + str(target.display_name) + '** dodged and the police shot you in the process.\n' \
                   'You spent **$' + str(bail) + '** to bail out of jail.'
 
-            em = discord.Embed(title="", colour=0x607d4a)
-            em.add_field(name=context.message.author.name + "'s rob", value=msg, inline=True)
-            em.set_thumbnail(url="https://cdn.discordapp.com/emojis/490326123549556746.gif?v=1")
-
+            # embed the rob failure message, set thumbnail to 80x80 of a "police siren" gif
+            em = discord.Embed(description=msg, colour=0x607d4a)
+            em.set_thumbnail(url="https://cdn.discordapp.com/emojis/490326123549556746.gif?size=80")
             await self.client.say(embed=em)
             return
 
@@ -126,12 +131,12 @@ class Games:
         # reward robber with prize and bonus prize
         robber.update_user_money(prize + bonus_prize)
         msg = '**Success!** <:poggers:490322361891946496> ' \
-              'You robbed **$' + str(prize) + '** (+**$' + str(bonus_prize) \
-              + '**) from **' + str(target) + '**'
+              '\nRobbed **$' + str(prize) + '** (+**$' + str(bonus_prize) \
+              + '**) from **' + str(target.display_name) + '**'
 
-        em = discord.Embed(title="", colour=0x607d4a)
-        em.add_field(name=context.message.author.name + "'s rob", value=msg, inline=True)
-        em.set_thumbnail(url="https://cdn.discordapp.com/emojis/419506568728543263.gif?v=1")
+        # embed the rob confirmation message, set thumbnail to 40x40 of a "ninja" gif
+        em = discord.Embed(description=msg, colour=0x607d4a)
+        em.set_thumbnail(url="https://cdn.discordapp.com/emojis/419506568728543263.gif?size=40")
         await self.client.say(embed=em)
 
     '''TOURNAMENT BATTLE FUNCTION'''
@@ -145,17 +150,16 @@ class Games:
         # update their tourney_server_id entry to be the server they executed the command on
         msg = fighter.update_user_tourney_server_id(context.message.server.name, context.message.server.id)
 
-
-        em = discord.Embed(title="", colour=0x607d4a)
-        em.add_field(name=context.message.author.name, value=msg, inline=True)
-        em.set_thumbnail(url=context.message.server.icon_url)
-        await self.client.delete_message(context.message)
+        # embed the tourney registration confirmation message, set thumbnail to 40x40 of the respective server's icon
+        em = discord.Embed(description=msg, colour=0x607d4a)
+        thumb_url = "https://cdn.discordapp.com/icons/{0.id}/{0.icon}.webp?size=40".format(context.message.server)
+        em.set_thumbnail(url=thumb_url)
         await self.client.say(embed=em)
 
 
     '''1v1 BATTLE FUNCTION'''
     @has_account()
-    @commands.cooldown(1, 10, commands.BucketType.user)
+    @commands.cooldown(1, 30, commands.BucketType.user)
     @commands.command(name='fight', description='Battle another user in your server',
                       brief='can use "fight @user X --X being amount to bet"',
                       aliases=['battle', 'BATTLE', 'FIGHT', 'duel', 'DUEL'], pass_context=True)
@@ -211,9 +215,10 @@ class Games:
                     # have to use 2 messages to enlarge the emojis
                     msg = context.message.author.mention + ' vs ' + args[0] + ' for **$' + str(bet) \
                           + '**\nFight will conclude in 10 seconds...'
+                    # embed the duel alert message, set thumbnail to a "nunchuck frog" gif of size 64x64
                     em = discord.Embed(title="", colour=0x607d4a)
                     em.add_field(name="DUEL ALERT", value=msg, inline=True)
-                    em.set_thumbnail(url="https://cdn.discordapp.com/emojis/493220414206509056.gif?v=1")
+                    em.set_thumbnail(url="https://cdn.discordapp.com/emojis/493220414206509056.gif?size=64")
 
                     await self.client.say(embed=em)
                     await asyncio.sleep(10)
@@ -241,8 +246,12 @@ class Games:
                     # check who the winner was returned as
                     # update account balances respectively
                     if winner == 1:
-                        await self.client.say(context.message.author.mention + ' won **$' + str(bet)
-                                              + '** by defeating ' + target)
+                        msg = context.message.author.mention + ' won **$' + str(bet) \
+                              + '** by defeating ' + target
+                        # embed the duel results message
+                        em = discord.Embed(description=msg, colour=0x607d4a)
+                        await self.client.say(embed=em)
+
                         fighter1.update_user_money(bet)
                         # update winner's battle records... battles_won + 1 and total_winnings + X
                         fighter1.update_user_records(0, 1, bet)
@@ -251,8 +260,11 @@ class Games:
                         # update loser's battle records... battles_lost + 1
                         fighter2.update_user_records(1, 0, 0)
                     elif winner == 2:
-                        await self.client.say(target + ' won **$' + str(bet) +
-                                              '** by defeating ' + context.message.author.mention)
+                        msg = target + ' won **$' + str(bet) + '** by defeating ' + context.message.author.mention
+                        # embed the duel results message
+                        em = discord.Embed(description=msg, colour=0x607d4a)
+                        await self.client.say(embed=em)
+
                         fighter1.update_user_money(bet * -1)
                         # update loser's battle records... battles_lost + 1
                         fighter1.update_user_records(1, 0, 0)
@@ -290,8 +302,11 @@ class Games:
             bet = int(args[1])
             # pass 0 to return integer version of money, see USERS.PY function
             if bet > user.get_user_money(0) or bet < 1:
-                await self.client.say("You don't have enough money for that bet..."
-                                      " <a:pepehands:485869482602922021> " + context.message.author.mention)
+                error_msg = await self.client.say("You don't have enough money for that bet..."
+                                                  " <a:pepehands:485869482602922021> " + context.message.author.mention)
+                await asyncio.sleep(6)
+                await self.client.delete_message(error_msg)
+
                 return
         except:
             pass
@@ -316,7 +331,9 @@ class Games:
                     msg = '<:heads:486705184370589718> Result is **Tails**! You win! <a:worryHype:487059927731273739>'
                     win = 1
             else:
-                await self.client.say('Did you mean heads or tails? Use **=flip heads** or **=flip tails** next time.')
+                error_msg = await self.client.say('Did you mean heads or tails? Try **=flip heads** or **=flip tails**.')
+                await asyncio.sleep(6)
+                await self.client.delete_message(error_msg)
                 return
         except:
             # no arguments provided at all. so just give a result
@@ -324,25 +341,34 @@ class Games:
                 msg = '<:heads:486705167643967508> Result is **Heads**!'
             else:
                 msg = '<:heads:486705184370589718> Result is **Tails**!'
-        await self.client.say(msg + ' ' + context.message.author.mention)
 
         # if they specified a "guess" and "bet" that was valid, check if they won
         # note this will only pass through if "bet" was assigned through the earlier try/catch
         try:
             if win == 1:
                 # triple user's bet if they win, add to account
-                msg = user.update_user_money(bet)
+                msg2 = '\n' + user.update_user_money(bet)
             else:
                 # remove user's bet from their account if they lose
-                msg = user.update_user_money(bet * -1)
+                msg2 = '\n' + user.update_user_money(bet * -1)
                 # if they have $0 after that flip, give a donation dollar to discourage account re-creation
                 # pass in 0 for get_user_money to return the money as integer, SEE USERS.PY
                 if user.get_user_money(0) == 0:
-                    msg += "\n** **\n_Mission failed. We'll get 'em next time. Take this **$1**._"
-                    msg += "\n" + user.update_user_money(1)
-            await self.client.say(msg)
+                    msg2 += "\n** **\n_Mission failed. We'll get 'em next time. Take this **$1**._"
+                    msg2 += "\n" + user.update_user_money(1)
         except:
             return
+
+        try:
+            # embed the flip results message, set thumbnail to a "nunchuck frog" gif of size 64x64
+            em = discord.Embed(description=msg + msg2, colour=0x607d4a)
+            await self.client.say(context.message.author.mention, embed=em)
+        except:
+            # embed the flip results message, set thumbnail to a "nunchuck frog" gif of size 64x64
+            em = discord.Embed(description=msg, colour=0x607d4a)
+            await self.client.say(context.message.author.mention, embed=em)
+
+
 
 
     '''HANGMAN main function'''
@@ -416,12 +442,16 @@ class Games:
                     await self.client.delete_message(pick_result_msg)
                     await self.client.delete_message(underscore_seq_msg)
                     await self.client.delete_message(guessed_list_msg)
-                await self.client.say(hangmen[wrong_guesses] + '**Correct word pick** <a:worryHype:487059927731273739>' +
-                                      'You **won** the game!! <a:worryHype:487059927731273739> Correct word was:'
-                                      ' **' + correct_word.upper() + '** ' + context.message.author.mention)
+                await self.client.say(hangmen[wrong_guesses])
+                # prepare win message string & embed it
+                win_msg = '**Correct word pick** <a:worryHype:487059927731273739> ' + ' Correct word was: ' + \
+                          '**' + correct_word.upper() + '**\n'
                 # add WINNINGS to user's bank account now
                 user = Users(context.message.author.id)
-                await self.client.say(user.update_user_money(user.get_user_level(0) * 9))
+                prize = user.get_user_level(0) * 9
+                win_msg += "Won **$" + str(prize) + "**... " + user.update_user_money(prize)
+                em = discord.Embed(description=win_msg, colour=0x607d4a)
+                await self.client.say(context.message.author.mention, embed=em)
                 return
 
             if guess_msg.clean_content.upper() in ['STOP', 'CANCEL']:
@@ -455,12 +485,17 @@ class Games:
                     await self.client.delete_message(pick_result_msg)
                     await self.client.delete_message(underscore_seq_msg)
                     await self.client.delete_message(guessed_list_msg)
-                await self.client.say(hangmen[wrong_guesses] + 'You **won** the game!!' +
-                                      ' <a:worryHype:487059927731273739> Correct word was: ' +
-                                      '**' + correct_word.upper() + '** ' + context.message.author.mention)
+                await self.client.say(hangmen[wrong_guesses])
+                # prepare win message string & embed it
+                win_msg = 'You **won** the game!!' + \
+                          ' <a:worryHype:487059927731273739> Correct word was: ' + \
+                          '**' + correct_word.upper() + '**\n'
                 # add WINNINGS to user's bank account now
                 user = Users(context.message.author.id)
-                await self.client.say(user.update_user_money(user.get_user_level(0) * 9))
+                prize = user.get_user_level(0) * 9
+                win_msg += "Won **$" + str(prize) + "**... " + user.update_user_money(prize)
+                em = discord.Embed(description=win_msg, colour=0x607d4a)
+                await self.client.say(context.message.author.mention, embed=em)
                 return
 
 
@@ -493,9 +528,11 @@ class Games:
             elif wrong_guesses == 6:
                 await self.client.delete_message(cat_msg)
                 await self.client.delete_message(pick_result_msg)
-                await self.client.say(hangmen[6] + '\nYou were **hanged**! <a:pepehands:485869482602922021>' +
-                                      ' The word was: ' +
-                                      '**' + correct_word + '**\n' + context.message.author.mention)
+                await self.client.say(hangmen[6])
+                losing_msg = '\nYou were **hanged**! <a:pepehands:485869482602922021> ' + \
+                             'The word was: ' + '**' + correct_word + '**\n'
+                em = discord.Embed(description=losing_msg, colour=0x607d4a)
+                await self.client.say(context.message.author.mention, embed=em)
                 return
 
             # print underscores/letters, our main interface

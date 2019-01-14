@@ -160,5 +160,5 @@ class Users:
         hm_db.connect()
 
         hm_db.update_lottery_guess(ticket_guess, ticket_active)
-        return "Thanks! You are ticket ID: **" + self.id + "**\n <a:pepehack:525159339007148032> " \
-               "Entering your ticket guess in our database now <a:pepehack:525159339007148032>"
+        return "Thanks! Processed ticket ID: **" + self.id + "**\n " \
+               + "Results will be live by :alarm_clock: **7 AM PST!**"
