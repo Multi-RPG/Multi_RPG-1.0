@@ -191,10 +191,10 @@ async def on_ready():
             # find the channel in the server and state the results
             for channel in server.channels:
                 if channel.name == 'lottery':
-                    # counter to represent placings- losers list will start at 3rd place
-                    counter = 3
                     # if there were more than 2 fighters, make an "honorable mentions" string to append to announcement
                     if len(server_fighters_ids) > 2:
+                        # counter to represent placings- losers list will start at 3rd place
+                        counter = 3
                         loser_string = '\n__Honorable mentions__\n'
                         for loser in server_winners[2:]:
                             user = Users(server_winners[counter-1])
