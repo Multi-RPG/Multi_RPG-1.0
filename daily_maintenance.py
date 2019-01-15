@@ -91,17 +91,20 @@ async def on_ready():
     if not prem_winners:
         prem_winners_string = '\n<a:worrycry:525209793405648896> no premium winners...  <a:worrycry:525209793405648896>'
 
-    global_announcement = "▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁\n" \
-                          + ":shopping_cart: __**SHOP ANNOUNCEMENT**__ " + ":shopping_cart:" \
-                          + "_" + str(date.today()) + "_" \
-                          + "\nDaily shop has been reset! Check out **=shop**!\n" \
-                          + "▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁\n" \
-                          + "<a:worrycash:525200274340577290> __**LOTTERY ANNOUNCEMENT**__" \
-                          + " <a:worrycash:525200274340577290> _" + str(date.today()) + "_" \
-                          + "\nToday's winning number is... **" \
-                          + str(win_number) + "**\n\n__The lucky **basic** winners:__  " \
-                          + std_winners_string + "\n__The lucky **premium** winners:__  " \
-                          + prem_winners_string
+    global_announcement1 = "__**SHOP ANNOUNCEMENT**__ \u200B \u200B" \
+                           + "_" + str(date.today()) + "_" \
+                           + "\n:shopping_cart: \u200B Daily shop just reset... Check out **=shop**!\n"
+    global_announcement2 = "__**LOTTERY ANNOUNCEMENT**__ \u200B \u200B_" + str(date.today()) + "_" \
+                           + "\nToday's winning number is... **" \
+                           + str(win_number) + "**\n\n__The lucky **basic** winners:__  " \
+                           + std_winners_string + "\n__The lucky **premium** winners:__  " \
+                           + prem_winners_string
+
+    # embed shop announcement and lottery announcement, and set thumbnails of a shopping cart and "money rain frog" gif
+    em = discord.Embed(description=global_announcement1, colour=0x607d4a)
+    em.set_thumbnail(url="https://i.imgur.com/rS6tXmD.gif")
+    em2 = discord.Embed(description=global_announcement2, colour=0x607d4a)
+    em2.set_thumbnail(url="https://cdn.discordapp.com/emojis/525200274340577290.gif?size=64")
 
     # for each server the bot is in, post the lottery results in the lottery channel
     for server in client.servers:
@@ -111,7 +114,8 @@ async def on_ready():
             try:
                 if channel.name == 'lottery':
                     channel_found = 1
-                    await client.send_message(channel, global_announcement)
+                    await client.send_message(channel, embed=em)
+                    await client.send_message(channel, embed=em2)
             except:
                 pass
 
@@ -120,7 +124,7 @@ async def on_ready():
         if channel_found == 0:
             try:
                 channel = await client.create_channel(server, 'lottery', type=discord.ChannelType.text)
-                await client.send_message(channel, global_announcement)
+                await client.send_message(channel, embed=em)
             except:
                 # if the bot failed to make the channel, simply move on
                 pass
@@ -175,9 +179,8 @@ async def on_ready():
             second_place.update_user_records(0, 1, prize2)
 
             # prepare string for local server tourney announcement
-            local_server_announcement = '▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁\n' \
-                                        ':crossed_swords: __**TOURNEY ANNOUNCEMENT**__ :crossed_swords: _' \
-                                        + str(date.today()) + '_\n\n**:trophy: 1st place: ** ' + '<@' \
+            local_server_announcement = '__**TOURNEY ANNOUNCEMENT**__ \u200B \u200B_' + str(date.today())\
+                                        + '_\n\n**:trophy: 1st place: ** ' + '<@' \
                                         + server_winners[0] + '> :trophy:  __Prize__: **$' + str(prize1) \
                                         + '**\n' + \
                                         '**:trophy: 2nd place:** ' + '<@' + server_winners[1] \
@@ -186,21 +189,32 @@ async def on_ready():
             # find the channel in the server and state the results
             for channel in server.channels:
                 if channel.name == 'lottery':
-                    await client.send_message(channel, local_server_announcement)
+                    # counter to represent placings- losers list will start at 3rd place
                     counter = 3
-                    # if there were more than 2 fighters, list the honorable mentions
+                    # if there were more than 2 fighters, make an "honorable mentions" string to append to announcement
                     if len(server_fighters_ids) > 2:
                         loser_string = '\n__Honorable mentions__\n'
                         for loser in server_winners[2:]:
                             user = Users(server_winners[counter-1])
                             user.update_user_records(1, 0, 0)
                             if counter == 3:
-                                loser_string += ('**' + str(counter) +'rd place: <@' + loser + '>**\n')
+                                loser_string += ('**' + str(counter) + 'rd place: <@' + loser + '>**\n')
                             else:
-                                loser_string += ('**' + str(counter) +'th place: <@' + loser + '>**\n')
+                                loser_string += ('**' + str(counter) + 'th place: <@' + loser + '>**\n')
                             counter += 1
+                        local_server_announcement += loser_string
 
-                        await client.send_message(channel, loser_string)
+                        # embed combined announcement, with emoji of 64x64 "nunchuck frog", then send it
+                        em = discord.Embed(description=local_server_announcement, colour=0x607d4a)
+                        em.set_thumbnail(url="https://cdn.discordapp.com/emojis/493220414206509056.gif?size=64")
+                        await client.send_message(channel, embed=em)
+
+                    # else if only 2 entries in the server's tournament, just send first and second place results
+                    elif len(server_fighters_ids) == 2:
+                        # embed announcement, with emoji of 64x64 "nunchuck frog", then send it
+                        em = discord.Embed(description=local_server_announcement, colour=0x607d4a)
+                        em.set_thumbnail(url="https://cdn.discordapp.com/emojis/493220414206509056.gif?size=64")
+                        await client.send_message(channel, embed=em)
 
 
     # reset tournament entries after every server's tournament is processed

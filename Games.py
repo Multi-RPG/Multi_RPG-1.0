@@ -45,7 +45,7 @@ class Games:
         victim_id = target.id
         counter = 1
 
-        # if randomly chosen victim has an account, and robber specified NO target, account for any level difference
+        # if randomly chosen victim has an account, and robber specified NO target, account for a level difference
         if not args and victim.find_user() == 1:
             level_difference = (robber.get_user_level(0) - victim.get_user_level(0))
 
@@ -69,9 +69,9 @@ class Games:
             except:
                 pass
 
-        # while the user to rob is yourself, re-roll the target
+        # while the user to rob is the robber, re-roll the target
         # while the user to rob does not have an account in the database, re-roll the target
-        # while the user to rob is not close to your level, re-roll the target
+        # while the user to rob is more than 2 levels lower than the robber, re-roll target
         while victim_id == context.message.author.id or victim.find_user() == 0 or level_difference > 2:
             # if re-rolled the target 60 times, stop accounting for level difference
             if counter == 60:
@@ -91,7 +91,7 @@ class Games:
             # only account for level difference the first 60 target re-rolls
             if counter < 60:
                 if victim.find_user() == 1:
-                    level_difference = abs(robber.get_user_level(0) - victim.get_user_level(0))
+                    level_difference = robber.get_user_level(0) - victim.get_user_level(0)
 
         # calculate random integer 1-100
         # if the result is within 1 through fail chance, they failed the rob
