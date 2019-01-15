@@ -91,6 +91,8 @@ async def on_ready():
     if not prem_winners:
         prem_winners_string = '\n<a:worrycry:525209793405648896> no premium winners...  <a:worrycry:525209793405648896>'
 
+    # split shop & lottery announcements into 2 strings
+    # have to insert encode \u200B for spaces when using discord encoding
     global_announcement1 = "__**SHOP ANNOUNCEMENT**__ \u200B \u200B" \
                            + "_" + str(date.today()) + "_" \
                            + "\n:shopping_cart: \u200B Daily shop just reset... Check out **=shop**!\n"
@@ -179,11 +181,11 @@ async def on_ready():
             second_place.update_user_records(0, 1, prize2)
 
             # prepare string for local server tourney announcement
+            # have to insert encode \u200B for spaces when using discord encoding
             local_server_announcement = '__**TOURNEY ANNOUNCEMENT**__ \u200B \u200B_' + str(date.today())\
                                         + '_\n\n**:trophy: 1st place: ** ' + '<@' \
                                         + server_winners[0] + '> :trophy:  __Prize__: **$' + str(prize1) \
-                                        + '**\n' + \
-                                        '**:trophy: 2nd place:** ' + '<@' + server_winners[1] \
+                                        + '**\n' + '**:trophy: 2nd place:** ' + '<@' + server_winners[1] \
                                         + '> :trophy:  __Prize__: **$' + str(prize2) + '**\n'
 
             # find the channel in the server and state the results
