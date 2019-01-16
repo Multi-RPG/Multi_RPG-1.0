@@ -307,7 +307,7 @@ class Account:
         user = Users(context.message.author.id)
         # get the user's current level
         user_level = user.get_user_level(0) # get int version of level, SEE USERS.PY
-        dailyreward = user_level * 45
+        dailyreward = user_level * 50
 
         msg = '<a:worryswipe:525755450218643496> Daily **$' + str(dailyreward) \
               + '** received! <a:worryswipe:525755450218643496>\n' + user.update_user_money(dailyreward)

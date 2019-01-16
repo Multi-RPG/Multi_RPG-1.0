@@ -38,7 +38,7 @@ async def helper(context):
           'Account:\n' \
           '  =create         use "=create" to make a account\n' \
           '  =daily          use "=daily" for free money equal to 60x your level\n' \
-          '  =daily2         use "=daily2" for free money equal to 45x your level\n' \
+          '  =daily2         use "=daily2" for free money equal to 50x your level\n' \
           '  =shop           use "=shop" to view the daily shop items\n' \
           '  =buy            use "=buy X" to purchase shop item  -- X being item #\n' \
           '  =levelup        use "=levelup" to level up your account\n' \
