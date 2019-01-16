@@ -3,11 +3,23 @@ import discord
 import configparser
 import sys
 import datetime
+import logging
 from discord.ext import commands
 from pathlib import Path
 
+# set our bot's prefix and remove the default help command
 client = commands.Bot(command_prefix=["=", "%"])
 client.remove_command('help')
+
+# set up logging for command errors
+formatter = logging.Formatter('%(asctime)s %(levelname)s %(message)s')
+handler = logging.FileHandler('logs/commands_errors.txt')
+handler.setFormatter(formatter)
+
+commands_logger = logging.getLogger('commands_logger')
+commands_logger.setLevel(logging.INFO)
+commands_logger.addHandler(handler)
+
 
 @client.event
 async def on_ready():
@@ -35,6 +47,7 @@ async def helper(context):
           '  =code           use "=code" to view this bot\'s source code\n' \
           '  =invite         use "=invite" to view the bot\'s invitation link\n' \
           '  =id             use "=id" to view your personal discord ID\n' \
+          '  =remindme       use "=remindme "message" X  -- X being the timer\n' \
           'Account:\n' \
           '  =create         use "=create" to make a account\n' \
           '  =daily          use "=daily" for free money equal to 60x your level\n' \
@@ -91,7 +104,8 @@ async def on_command_error(error, context):
         await client.send_message(context.message.channel, content=' You are on cooldown: ' + time)
 
     elif isinstance(error, commands.CommandNotFound):
-        return
+        commands_logger.info(str(error) +
+                             "\nInitiated by: {}, ID: {}".format(context.message.author.name, context.message.author.id))
 
     # we use command checks when checking if user has account in our database or not
     elif isinstance(error, commands.CheckFailure):
@@ -103,6 +117,9 @@ async def on_command_error(error, context):
             return await client.send_message(context.message.channel, embed=em)
         else:
             return await client.send_message(context.message.channel, " No account found.\nUse **=create** to make one.")
+    else:
+        commands_logger.info(str(error) +
+                             "\nInitiated by: {}, ID: {}".format(context.message.author.name, context.message.author.id))
 
 if __name__ == "__main__":
     for extension in ["Games", "Utilities", "Memes", "Account", "Lottery", "Shop", "DiscordBotsOrgApi"]:

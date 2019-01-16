@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 import discord
+import asyncio
+import re
 from discord.ext import commands
 
 class Utilities:
@@ -24,6 +26,69 @@ class Utilities:
             await self.client.purge_from(context.message.channel, limit=1)
             await self.client.say('Cleared 1 message... '
                                   'Use **=clear X** to clear a higher, specified amount.')
+
+    @commands.cooldown(1, 6, commands.BucketType.user)
+    @commands.command(name='remind', description='Reminds you by timer.',
+                      brief='=remindme "reminder" "time"',
+                      aliases=['remindme', 'ALARM', 'timer', 'alarm,', 'REMIND', 'REMINDME'], pass_context=True)
+    async def remindme(self, context, *args):
+        error_str = '```ml\nUse =remindme "message" X     -- X being timer (Ex: 20s, 50m, 3hr)```'
+        # confirm the user passed 2 arguments: 1 for reminder message, 1 for time
+        if len(args) == 2:
+            time = args[1]
+            unit = ''
+            # if a negative sign in the user's second parameter...
+            if "-" in args[1]:
+                error_msg = await self.client.say('Timer can not be negative...')
+                await asyncio.sleep(10)
+                await self.client.delete_message(error_msg)
+                return
+            # if "s" in their time parameter, simply set seconds to "s" after retrieving the integer
+            if "s" in args[1]:
+                unit = 'seconds'
+                time = int(re.findall("\d+", time)[0])
+                seconds = 1 * time
+            # if "m" in their time parameter, set seconds to 60 * parameter after retrieving the integer
+            elif "m" in args[1]:
+                unit = 'minutes'
+                time = int(re.findall("\d+", time)[0])
+                seconds = 60 * time
+            # if "h" in their time parameter, set seconds to 3600 * parameter after retrieving the integer
+            elif "h" in args[1]:
+                unit = 'hours'
+                time = int(re.findall("\d+", time)[0])
+                seconds = 3600 * time
+            # if none of the above units of time were found, send an error message
+            else:
+                error_msg = await self.client.say("Use a **valid** unit of time (Ex: _20s_, _50m_, _3hr_)")
+                await asyncio.sleep(15)
+                await self.client.delete_message(error_msg)
+                return
+        # if 2 arguments weren't passed
+        else:
+            error_msg = await self.client.say(error_str)
+            await asyncio.sleep(15)
+            await self.client.delete_message(error_msg)
+            return
+
+        # try to convert the reminder message to string
+        try:
+            msg = str(args[0])
+        # if it didn't work, send an error message
+        except:
+            error_msg = await self.client.say(error_str)
+            await asyncio.sleep(15)
+            await self.client.delete_message(error_msg)
+            return
+
+        # embed the link, set thumbnail, send reminder confirmation, then wait X seconds
+        em = discord.Embed(title="Remindme registered",
+                           description="Will remind you in {} {}".format(time, unit), colour=0x607d4a)
+        em.set_thumbnail(url="https://i.imgur.com/1HdQNaz.gif")
+        await self.client.say(embed=em)
+
+        await asyncio.sleep(seconds)
+        await self.client.say(context.message.author.mention + ' **Reminder:** ' + msg)
 
     @commands.cooldown(1, 5, commands.BucketType.user)
     @commands.command(name='id', aliases=['myid', 'ID'], pass_context=True)
