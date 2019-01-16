@@ -33,28 +33,43 @@ class Utilities:
                       aliases=['remindme', 'ALARM', 'timer', 'alarm,', 'REMIND', 'REMINDME'], pass_context=True)
     async def remindme(self, context, *args):
         error_str = '```ml\nUse =remindme "message" X     -- X being timer (Ex: 20s, 50m, 3hr)```'
-        # confirm the user passed 2 arguments: 1 for reminder message, 1 for time
-        if len(args) == 2:
-            time = args[1]
-            unit = ''
-            # if a negative sign in the user's second parameter...
-            if "-" in args[1]:
+        msg = ''
+        unit = ''
+
+        # try to process the arguments
+        try:
+            # if the command was processed with iphone mobile quotes “ ”
+            if '“' or '”' in args:
+                # compile all arguments together, (except the last one, which will be time)
+                for argument in args[0:len(args)-1]:
+                    msg = msg + argument + ' '
+                # strip mobile's weird double quotes from the new string
+                msg = str(msg.replace('“', '').replace('”', ''))
+                # the last argument will be time
+                time = args[len(args) - 1]
+            # else no iphone quotation marks found, proceed as normal
+            else:
+                msg = str(args[0])
+                time = args[1]
+
+            # if a negative sign in the user's time parameter...
+            if "-" in time:
                 error_msg = await self.client.say('Timer can not be negative...')
                 await asyncio.sleep(10)
                 await self.client.delete_message(error_msg)
                 return
             # if "s" in their time parameter, simply set seconds to "s" after retrieving the integer
-            if "s" in args[1]:
+            if "s" in time:
                 unit = 'second(s)'
                 time = int(re.findall("\d+", time)[0])
                 seconds = 1 * time
             # if "m" in their time parameter, set seconds to 60 * parameter after retrieving the integer
-            elif "m" in args[1]:
+            elif "m" in time:
                 unit = 'minute(s)'
                 time = int(re.findall("\d+", time)[0])
                 seconds = 60 * time
             # if "h" in their time parameter, set seconds to 3600 * parameter after retrieving the integer
-            elif "h" in args[1]:
+            elif "h" in time:
                 unit = 'hour(s)'
                 time = int(re.findall("\d+", time)[0])
                 seconds = 3600 * time
@@ -64,17 +79,7 @@ class Utilities:
                 await asyncio.sleep(15)
                 await self.client.delete_message(error_msg)
                 return
-        # if 2 arguments weren't passed
-        else:
-            error_msg = await self.client.say(error_str)
-            await asyncio.sleep(15)
-            await self.client.delete_message(error_msg)
-            return
-
-        # try to convert the reminder message to string
-        try:
-            msg = str(args[0])
-        # if it didn't work, send an error message
+        # if arguments weren't passed in correctly
         except:
             error_msg = await self.client.say(error_str)
             await asyncio.sleep(15)
