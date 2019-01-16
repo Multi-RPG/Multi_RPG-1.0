@@ -45,17 +45,17 @@ class Utilities:
                 return
             # if "s" in their time parameter, simply set seconds to "s" after retrieving the integer
             if "s" in args[1]:
-                unit = 'seconds'
+                unit = 'second(s)'
                 time = int(re.findall("\d+", time)[0])
                 seconds = 1 * time
             # if "m" in their time parameter, set seconds to 60 * parameter after retrieving the integer
             elif "m" in args[1]:
-                unit = 'minutes'
+                unit = 'minute(s)'
                 time = int(re.findall("\d+", time)[0])
                 seconds = 60 * time
             # if "h" in their time parameter, set seconds to 3600 * parameter after retrieving the integer
             elif "h" in args[1]:
-                unit = 'hours'
+                unit = 'hour(s)'
                 time = int(re.findall("\d+", time)[0])
                 seconds = 3600 * time
             # if none of the above units of time were found, send an error message
