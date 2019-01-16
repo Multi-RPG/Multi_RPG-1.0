@@ -29,7 +29,7 @@ class Utilities:
 
     @commands.cooldown(1, 6, commands.BucketType.user)
     @commands.command(name='remind', description='Reminds you by timer.',
-                      brief='=remindme "reminder" "time"',
+                      brief='=remindme "message" X',
                       aliases=['remindme', 'ALARM', 'timer', 'alarm,', 'REMIND', 'REMINDME'], pass_context=True)
     async def remindme(self, context, *args):
         error_str = '```ml\nUse =remindme "message" X     -- X being timer (Ex: 20s, 50m, 3hr)```'
