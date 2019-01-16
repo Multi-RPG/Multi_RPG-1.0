@@ -98,7 +98,7 @@ class Games:
         if fail_chance >= random.randint(1, 100) >= 1:
             robber_level = robber.get_user_level(0)
 
-            bail = int(robber_level * 10.8)
+            bail = int(robber_level * 10.4)
             robber.update_user_money(bail * -1)
 
             msg = '<a:policesiren2:490326123549556746> :oncoming_police_car: ' \
@@ -122,7 +122,7 @@ class Games:
         prize = int(victim_level * 9.4)
         if prize > int(robber_level * 9.4):
             prize = int(robber_level * 9.4)
-        bonus_prize = int(robber_level * 28.3)
+        bonus_prize = int(robber_level * 29.3)
 
         # balancing mechanic, don't let victims lose any more money when they have less money than -50x their level
         if not victim_money < (victim_level * -50):
