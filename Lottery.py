@@ -87,7 +87,7 @@ class Lottery:
     async def enter_lottery2(self, context):
         # create instance of the user entering the lotto
         entry = Users(context.message.author.id)
-        entry_fee = entry.get_user_level(0) * 13
+        entry_fee = entry.get_user_level(0) * 10
         # if they already purchased a premium ticket, don’t let them overwrite it by mistake by purchasing another one
         if entry.get_user_ticket_status() == 2:
             error_msg = await self.client.say('**ERROR!** You have already entered and paid your **$'

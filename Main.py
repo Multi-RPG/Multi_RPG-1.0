@@ -37,8 +37,8 @@ async def helper(context):
           '  =id             use "=id" to view your personal discord ID\n' \
           'Account:\n' \
           '  =create         use "=create" to make a account\n' \
-          '  =daily          use "=daily" for free money equal to 40x your level\n' \
-          '  =daily2         use "=daily2" for free money equal to 40x your level\n' \
+          '  =daily          use "=daily" for free money equal to 60x your level\n' \
+          '  =daily2         use "=daily2" for free money equal to 45x your level\n' \
           '  =shop           use "=shop" to view the daily shop items\n' \
           '  =buy            use "=buy X" to purchase shop item  -- X being item #\n' \
           '  =levelup        use "=levelup" to level up your account\n' \
@@ -49,12 +49,12 @@ async def helper(context):
           '  =give           use "=give @user X" -- X being money to give a user\n```'
     msg2 = '```ml\n' \
           'Games For Money:\n' \
-          '  =lotto          use "=lotto" for a 1/5 chance to win 80x your level each day\n' \
+          '  =lotto          use "=lotto" for a 1/5 chance to win 100x your level each day\n' \
           '  =lotto2         use "=lotto2" for a 1/5 chance to win 170x your level each day\n' \
           '  =tourney        use "=tourney" to compete in a server-based, daily FFA tournament\n' \
           '                  NOTE: this event takes item level & user level into calculation\n' \
           '                  NOTE: this event requires AT LEAST 2 entries from your server\n' \
-          '                  NOTE: the reward is 170x your level for first, 90x for second\n' \
+          '                  NOTE: the reward is 170x your level for first, 100x for second\n' \
           '  =rob            use "=rob" for a 7/10 chance to mug a random player\n' \
           '  =rob            use "=rob @user" for a 6.5/10 chance to mug a specified player\n' \
           '  =fight          use "=fight @user X" -- X being money to bet\n' \

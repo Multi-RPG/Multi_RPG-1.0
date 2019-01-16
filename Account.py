@@ -221,10 +221,10 @@ class Account:
         # calculate the cost of their next level-up
         user_level = user.get_user_level(0) # get int version of level, SEE USERS.PY
         # level up cost algorithm, inspired by D&D algorithm
-        level_up_cost = int(300 * ((user_level + 1)**1.5) - (300 * user_level))
+        level_up_cost = int(300 * ((user_level + 1)**1.7) - (300 * user_level))
 
-        if user_level == 13:
-            self.client.say('You are already level 13, the max level!')
+        if user_level == 15:
+            self.client.say('You are already level 15, the max level!')
             return
 
         # check if they have enough money for a level-up
@@ -287,7 +287,7 @@ class Account:
         # get the user's current level
         # calculate the cost of their next level-up
         user_level = user.get_user_level(0) # get int version of level, SEE USERS.PY
-        dailyreward = user_level * 40
+        dailyreward = user_level * 60
 
         msg = '<a:worryswipe:525755450218643496> Daily **$' + str(dailyreward) \
               + '** received! <a:worryswipe:525755450218643496>\n' + user.update_user_money(dailyreward)
@@ -307,7 +307,7 @@ class Account:
         user = Users(context.message.author.id)
         # get the user's current level
         user_level = user.get_user_level(0) # get int version of level, SEE USERS.PY
-        dailyreward = user_level * 40
+        dailyreward = user_level * 45
 
         msg = '<a:worryswipe:525755450218643496> Daily **$' + str(dailyreward) \
               + '** received! <a:worryswipe:525755450218643496>\n' + user.update_user_money(dailyreward)

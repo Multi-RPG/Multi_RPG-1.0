@@ -73,7 +73,7 @@ async def on_ready():
     for winner in std_winners:
         # create instance of each basic ticket user who won, and update their money
         user = Users(winner)
-        user.update_user_money(user.get_user_level(0) * 80)
+        user.update_user_money(user.get_user_level(0) * 100)
         # alter each item on list to discord @ format and concatenate into 1 string to ping winners below
         std_winners_string += ('\n**TICKET ID:** ' + winner + ' <@' + winner + '>')
         

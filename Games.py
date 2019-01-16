@@ -72,7 +72,7 @@ class Games:
         # while the user to rob is the robber, re-roll the target
         # while the user to rob does not have an account in the database, re-roll the target
         # while the user to rob is more than 2 levels lower than the robber, re-roll target
-        while victim_id == context.message.author.id or victim.find_user() == 0 or level_difference > 2:
+        while victim_id == context.message.author.id or victim.find_user() == 0 or level_difference > 3:
             # if re-rolled the target 60 times, stop accounting for level difference
             if counter == 60:
                 level_difference = 0
@@ -98,7 +98,7 @@ class Games:
         if fail_chance >= random.randint(1, 100) >= 1:
             robber_level = robber.get_user_level(0)
 
-            bail = int(robber_level * 5.3)
+            bail = int(robber_level * 10.8)
             robber.update_user_money(bail * -1)
 
             msg = '<a:policesiren2:490326123549556746> :oncoming_police_car: ' \
@@ -119,10 +119,10 @@ class Games:
         robber_level = robber.get_user_level(0)
 
         # the victim will only lose the prize, not the bonus prize
-        prize = int(victim_level * 8.6)
-        if prize > int(robber_level * 8.6):
-            prize = int(robber_level * 8.6)
-        bonus_prize = int(robber_level * 26.3)
+        prize = int(victim_level * 9.4)
+        if prize > int(robber_level * 9.4):
+            prize = int(robber_level * 9.4)
+        bonus_prize = int(robber_level * 28.3)
 
         # balancing mechanic, don't let victims lose any more money when they have less money than -50x their level
         if not victim_money < (victim_level * -50):
@@ -448,7 +448,7 @@ class Games:
                           '**' + correct_word.upper() + '**\n'
                 # add WINNINGS to user's bank account now
                 user = Users(context.message.author.id)
-                prize = user.get_user_level(0) * 7
+                prize = user.get_user_level(0) * 8
                 win_msg += "Won **$" + str(prize) + "**... " + user.update_user_money(prize)
                 em = discord.Embed(description=win_msg, colour=0x607d4a)
                 await self.client.say(context.message.author.mention, embed=em)
@@ -492,7 +492,7 @@ class Games:
                           '**' + correct_word.upper() + '**\n'
                 # add WINNINGS to user's bank account now
                 user = Users(context.message.author.id)
-                prize = user.get_user_level(0) * 7
+                prize = user.get_user_level(0) * 8
                 win_msg += "Won **$" + str(prize) + "**... " + user.update_user_money(prize)
                 em = discord.Embed(description=win_msg, colour=0x607d4a)
                 await self.client.say(context.message.author.mention, embed=em)
