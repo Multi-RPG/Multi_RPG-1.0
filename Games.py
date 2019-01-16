@@ -448,7 +448,7 @@ class Games:
                           '**' + correct_word.upper() + '**\n'
                 # add WINNINGS to user's bank account now
                 user = Users(context.message.author.id)
-                prize = user.get_user_level(0) * 9
+                prize = user.get_user_level(0) * 7
                 win_msg += "Won **$" + str(prize) + "**... " + user.update_user_money(prize)
                 em = discord.Embed(description=win_msg, colour=0x607d4a)
                 await self.client.say(context.message.author.mention, embed=em)
@@ -492,7 +492,7 @@ class Games:
                           '**' + correct_word.upper() + '**\n'
                 # add WINNINGS to user's bank account now
                 user = Users(context.message.author.id)
-                prize = user.get_user_level(0) * 9
+                prize = user.get_user_level(0) * 7
                 win_msg += "Won **$" + str(prize) + "**... " + user.update_user_money(prize)
                 em = discord.Embed(description=win_msg, colour=0x607d4a)
                 await self.client.say(context.message.author.mention, embed=em)

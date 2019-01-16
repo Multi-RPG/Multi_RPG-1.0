@@ -1,0 +1,40 @@
+13:12:53,769 root INFO Running Multi-RPG
+13:12:53,770 discord.client INFO logging in using static token
+13:12:53,970 discord.gateway INFO Created websocket connected to wss://gateway.discord.gg?encoding=json&v=6
+13:12:53,972 discord.gateway INFO sent the identify payload to create the websocket
+13:12:58,229 discord.state INFO processed a chunk for 1000 members.
+13:12:58,267 discord.state INFO processed a chunk for 1000 members.
+13:12:58,297 discord.state INFO processed a chunk for 1000 members.
+13:12:58,327 discord.state INFO processed a chunk for 1000 members.
+13:12:58,357 discord.state INFO processed a chunk for 1000 members.
+13:12:58,385 discord.state INFO processed a chunk for 1000 members.
+13:12:58,416 discord.state INFO processed a chunk for 1000 members.
+13:12:58,450 discord.state INFO processed a chunk for 1000 members.
+13:12:58,480 discord.state INFO processed a chunk for 1000 members.
+13:12:58,508 discord.state INFO processed a chunk for 1000 members.
+13:12:58,534 discord.state INFO processed a chunk for 1000 members.
+13:12:58,564 discord.state INFO processed a chunk for 1000 members.
+13:12:58,591 discord.state INFO processed a chunk for 1000 members.
+13:12:58,620 discord.state INFO processed a chunk for 1000 members.
+13:12:58,646 discord.state INFO processed a chunk for 1000 members.
+13:12:58,680 discord.state INFO processed a chunk for 1000 members.
+13:12:58,708 discord.state INFO processed a chunk for 1000 members.
+13:12:58,780 discord.state INFO processed a chunk for 1000 members.
+13:12:58,820 discord.state INFO processed a chunk for 1000 members.
+13:12:58,851 discord.state INFO processed a chunk for 1000 members.
+13:12:58,880 discord.state INFO processed a chunk for 1000 members.
+13:12:58,909 discord.state INFO processed a chunk for 1000 members.
+13:12:58,946 discord.state INFO processed a chunk for 1000 members.
+13:12:58,971 discord.state INFO processed a chunk for 1000 members.
+13:12:58,999 discord.state INFO processed a chunk for 1000 members.
+13:12:59,28 discord.state INFO processed a chunk for 1000 members.
+13:12:59,54 discord.state INFO processed a chunk for 1000 members.
+13:12:59,85 discord.state INFO processed a chunk for 1000 members.
+13:12:59,112 discord.state INFO processed a chunk for 1000 members.
+13:12:59,143 discord.state INFO processed a chunk for 1000 members.
+13:12:59,169 discord.state INFO processed a chunk for 1000 members.
+13:12:59,201 discord.state INFO processed a chunk for 1000 members.
+13:12:59,234 discord.state INFO processed a chunk for 1000 members.
+13:12:59,257 discord.state INFO processed a chunk for 853 members.
+13:12:59,262 bot INFO Attempting to post server count
+13:12:59,443 bot INFO Posted server count (9)

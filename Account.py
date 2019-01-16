@@ -3,6 +3,7 @@ import re
 import asyncio
 import discord
 from discord.ext import commands
+from DiscordBotsOrgApi import DiscordBotsOrgAPI
 from Users import Users
 
 # short decorator function declaration, confirm that command user has an account in database
@@ -10,6 +11,20 @@ def has_account():
     def predicate(ctx):
         user = Users(ctx.message.author.id)
         if user.find_user() == 0:
+            return False
+        else:
+            return True
+
+    return commands.check(predicate)
+
+# short decorator function declaration, confirm that command user has voted for the bot on discordbots.org
+def has_voted():
+    def predicate(ctx):
+        # create object of discordbotsapi to make use of the api
+        checker = DiscordBotsOrgAPI()
+        # check if the user attempting to use this command has voted for the bot within 24 hours
+        # if they have not voted recently, let the error handler in Main.py give the proper error message
+        if checker.check_upvote(ctx.message.author.id) == 0:
             return False
         else:
             return True
@@ -262,7 +277,7 @@ class Account:
         else:
             await self.client.say(context.message.author.mention + ' Cancelled level-up.')
 
-            
+
     @has_account()
     @commands.cooldown(1, 86400, commands.BucketType.user)
     @commands.command(name='daily', aliases=['DAILY', 'dailygamble'], pass_context=True)
@@ -272,7 +287,7 @@ class Account:
         # get the user's current level
         # calculate the cost of their next level-up
         user_level = user.get_user_level(0) # get int version of level, SEE USERS.PY
-        dailyreward = user_level * 60
+        dailyreward = user_level * 40
 
         msg = '<a:worryswipe:525755450218643496> Daily **$' + str(dailyreward) \
               + '** received! <a:worryswipe:525755450218643496>\n' + user.update_user_money(dailyreward)
@@ -282,6 +297,26 @@ class Account:
         em.add_field(name=context.message.author.display_name, value=msg, inline=True)
         em.set_thumbnail(url=context.message.author.avatar_url)
         await self.client.say(embed=em)
-              
+
+    @has_voted()
+    @has_account()
+    @commands.cooldown(1, 86400, commands.BucketType.user)
+    @commands.command(name='daily2', aliases=['DAILY2', 'bonus', 'votebonus'], pass_context=True)
+    async def daily2(self, context):
+        # create instance of user who earned their vote bonus
+        user = Users(context.message.author.id)
+        # get the user's current level
+        user_level = user.get_user_level(0) # get int version of level, SEE USERS.PY
+        dailyreward = user_level * 40
+
+        msg = '<a:worryswipe:525755450218643496> Daily **$' + str(dailyreward) \
+              + '** received! <a:worryswipe:525755450218643496>\n' + user.update_user_money(dailyreward)
+
+        # embed the confirmation message, set thumbnail to user's id
+        em = discord.Embed(title="", colour=0x607d4a)
+        em.add_field(name="Thanks for voting, {}!".format(context.message.author.display_name), value=msg, inline=True)
+        em.set_thumbnail(url=context.message.author.avatar_url)
+        await self.client.say(embed=em)
+
 def setup(client):
     client.add_cog(Account(client))
