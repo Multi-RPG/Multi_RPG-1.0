@@ -118,7 +118,8 @@ async def on_command_error(error, context):
         else:
             return await client.send_message(context.message.channel, " No account found.\nUse **=create** to make one.")
     else:
-        commands_logger.info(str(error) +
+        commands_logger.info(str(error) + " in command: " + str(context.command) +
+                             "\nUser tried: " + str(context.message.clean_content) +
                              "\nInitiated by: {}, ID: {}".format(context.message.author.name, context.message.author.id))
 
 if __name__ == "__main__":

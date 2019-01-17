@@ -357,14 +357,14 @@ class Games:
                     msg2 += "\n** **\n_Mission failed. We'll get 'em next time. Take this **$1**._"
                     msg2 += "\n" + user.update_user_money(1)
         except:
-            return
+            pass
 
         try:
-            # embed the flip results message, set thumbnail to a "nunchuck frog" gif of size 64x64
+            # embed the flip results message with money won and send
             em = discord.Embed(description=msg + msg2, colour=0x607d4a)
             await self.client.say(context.message.author.mention, embed=em)
         except:
-            # embed the flip results message, set thumbnail to a "nunchuck frog" gif of size 64x64
+            # embed the flip results message and send
             em = discord.Embed(description=msg, colour=0x607d4a)
             await self.client.say(context.message.author.mention, embed=em)
 
