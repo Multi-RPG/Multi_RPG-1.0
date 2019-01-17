@@ -4,7 +4,7 @@
 A discord bot, written in python, with several utility/meme generators/RPG elements and a feature-rich hangman game.
 
 ## Run requirements:
-1. Needs python 3.6+ with sqlite3, pillow, requests, discord, and numpy packages installed (use python3 -m pip install X)
+1. Needs python 3.6+ with sqlite3, pillow, requests, discord, numpy, and dbl packages installed (use python3 -m pip install X)
 2. .ini config files with Bot and ImgFlip account data in "tokens/"
 
 ## Usage:
