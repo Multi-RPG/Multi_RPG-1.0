@@ -14,7 +14,7 @@ foo@bar:~$ python3 ./Main.py
 ```
 ### Windows
 ```console
-C:\Users\jsmith> python Dibs.py
+C:\Users\jsmith> python Main.py
 ```
 
 Note: In this repository, paths are currently setup to run in a windows environment. Adjustment will need to be made for running on Unix.
