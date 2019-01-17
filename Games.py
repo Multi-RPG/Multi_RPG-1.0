@@ -287,7 +287,7 @@ class Games:
                                   '```ml\nuse =fight like so: "=fight @user X"  -- X being amount to bet```')
 
     '''FLIP COIN FUNCTION'''
-    @commands.cooldown(1, 8, commands.BucketType.user)
+    @commands.cooldown(1, 6, commands.BucketType.user)
     @commands.command(name='flip', description='Flip a coin to earn social status.',
                       brief='can use "=flip" or "=flip X", with X being heads or tails',
                       aliases=['f', 'flpi', 'FLIP', 'F'], pass_context=True)

@@ -52,6 +52,19 @@ class Utilities:
                 msg = str(args[0])
                 time = args[1]
 
+            # prevent users from using @everyone or @here tag to exploit the bot to tag those groups in the message
+            if "@everyone" in msg:
+                msg = str(msg.replace('@everyone', 'Everyone!'))
+            if "@here" in msg:
+                msg = str(msg.replace('@here', 'Here!'))
+            # prevent users from using links in remindme's message
+            if "http" in msg:
+                error_msg = await self.client.say(context.message.author.mention + ' No links permitted!')
+                await asyncio.sleep(6)
+                await self.client.delete_message(error_msg)
+                return
+
+
             # if a negative sign in the user's time parameter...
             if "-" in time:
                 error_msg = await self.client.say('Timer can not be negative...')
