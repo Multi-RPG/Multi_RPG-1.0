@@ -103,15 +103,20 @@ async def helper(context):
                 aliases=['announcements', 'ANNOUNCEMENTS', 'TOGGLE', 'toggleannouncements', 'TOGGLEANNOUNCEMENTS'],
                 pass_context=True)
 async def announcements_toggle(context):
+    # connect to database through our custom Database module
     db = Database(0)
     db.connect()
 
+    # if the server id does not exist in our database, insert it
     if db.find_server(context.message.server.id) == 0:
         db.insert_server(context.message.server.id)
 
+    # if the user has admin privileges, permit them to toggle the daily server announcements
     if context.message.author.server_permissions.administrator:
+        # flip the status and retrieve the new announcements status
         new_status = db.toggle_server_announcements(context.message.server.id)
 
+        # if the new status is off, they just toggled off the announcements
         if new_status == 0:
             result_str = '<a:worrycry:525209793405648896> Turned **off** daily server announcements' \
                          ' <a:worrycry:525209793405648896>\nAwards will still be distributed daily.'
@@ -120,6 +125,7 @@ async def announcements_toggle(context):
             thumb_url = "https://cdn.discordapp.com/icons/{0.id}/{0.icon}.webp?size=40".format(context.message.server)
             em.set_thumbnail(url=thumb_url)
             await client.send_message(context.message.channel, embed=em)
+        # if the new status is on, they just toggled on announcements
         else:
             result_str = '<a:worryblow:535914005244411904> Turned **on** daily server announcements!' \
                          ' <a:worryblow:535914005244411904>'
@@ -128,6 +134,7 @@ async def announcements_toggle(context):
             thumb_url = "https://cdn.discordapp.com/icons/{0.id}/{0.icon}.webp?size=32".format(context.message.server)
             em.set_thumbnail(url=thumb_url)
             await client.send_message(context.message.channel, embed=em)
+    # else inform the user they lack sufficient privileges
     else:
         await client.send_message(context.message.channel, 'You need a local server administrator to do that!')
 
