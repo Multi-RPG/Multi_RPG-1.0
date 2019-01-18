@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import discord
+import asyncio
 import configparser
 import sys
 import datetime
@@ -74,7 +75,7 @@ async def helper(context):
           '  =flip           use "=flip" or "=flip X" or "=flip X Y" \n' \
           '                  -- X being heads or tails guess\n' \
           '                  -- Y being amount to bet\n\n' \
-          '  =hangman        use "=hangman" or "=hangman X", -- X being a category # \n' \
+          '  =hangman        use "=hangman" or "=hangman X", -- X being a category number \n' \
           '                  use "=hm cats" for category numbers\n' \
           '                  use "stop" or "cancel" to stop game\n' \
           '                  NOTE: the reward is 8x your level\n' \
@@ -104,13 +105,17 @@ async def on_command_error(error, context):
         await client.send_message(context.message.channel, content=' You are on cooldown: ' + time)
 
     elif isinstance(error, commands.CommandNotFound):
+        error_msg = await client.send_message(context.message.channel, "Command not found...")
+        await asyncio.sleep(10)
+        await client.delete_message(context.message)
+        await client.delete_message(error_msg)
         commands_logger.info(str(error) +
                              "\nInitiated by: {}, ID: {}".format(context.message.author.name, context.message.author.id))
 
     # we use command checks when checking if user has account in our database or not
     elif isinstance(error, commands.CheckFailure):
         if "daily2" in str(error):
-            error_msg = "Failed! You have not voted within the last 24 hours." \
+            error_msg = "Failed! You have not voted within the last 12 hours." \
                         "\nhttps://discordbots.org/bot/486349031224639488/vote"
             em = discord.Embed(title=context.message.author.display_name, description=error_msg, colour=0x607d4a)
             em.set_thumbnail(url="https://cdn.discordapp.com/emojis/440598341877891083.png?size=64")

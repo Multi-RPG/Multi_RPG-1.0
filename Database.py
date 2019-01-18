@@ -27,7 +27,7 @@ class Database:
         cur.execute(sql, (self.id, 0, 0, 0))
 
         sql = "INSERT INTO Lottery(ticket_id, ticket_guess, ticket_active) VALUES(?, ?, ?)"
-        cur.execute(sql, (self.id, 99999999, 0))
+        cur.execute(sql, (self.id, 0, 0))
 
         # print users table to console after inserts
         cur.execute("select * from Users")

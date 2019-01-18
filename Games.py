@@ -395,8 +395,11 @@ class Games:
                                                                                           '7. US States\n'
                                                                                           '8. Sports & Hobbies```')
                 return
-            correct_word, category, underscore_sequence = pick_word(int(args[0]))
-
+            try:
+                correct_word, category, underscore_sequence = pick_word(int(args[0]))
+            except:
+                await self.client.say('Use a category number! (**Ex for Beach**: =hm 5)')
+                return
         # if no category was specified in argument by user...
         else:
             # pick random category 1-8
