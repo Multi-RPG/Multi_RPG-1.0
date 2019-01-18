@@ -95,4 +95,12 @@ sqlite> CREATE TABLE Shop(
 
 ...> price int
 
-);
+...> );
+
+sqlite> CREATE TABLE Servers (
+
+...> server_id varchar(255) NOT NULL PRIMARY KEY,
+	
+...> announcements int
+
+...> );
