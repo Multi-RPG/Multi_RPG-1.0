@@ -110,6 +110,13 @@ async def on_ready():
 
     # for each server the bot is in, post the lottery results in the lottery channel
     for server in client.servers:
+        # try to get the server's announcement status
+        # if they turned off announcements, skip to next loop iteration
+        try:
+            if db.get_server_announcements_status(server.id) == 0:
+                continue
+        except:
+            pass
         # create boolean for each server, to dictate whether or not the 'lottery' channel could be located
         channel_found = 0
         for channel in server.channels:
@@ -190,6 +197,13 @@ async def on_ready():
 
             # find the channel in the server and state the results
             for channel in server.channels:
+                # try to get the server's announcement status
+                # if they turned off announcements, skip to next loop iteration
+                try:
+                    if db.get_server_announcements_status(server.id) == 0:
+                        continue
+                except:
+                    pass
                 if channel.name == 'lottery':
                     # if there were more than 2 fighters, make an "honorable mentions" string to append to announcement
                     if len(server_fighters_ids) > 2:

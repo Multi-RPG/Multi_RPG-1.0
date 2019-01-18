@@ -197,6 +197,13 @@ class Database:
         print(row)
         return row
         # see if a row exists in the fetch results, if not, they don't have an account
+
+    def get_server_announcements_status(self, server_id):
+        cur = self.connection.cursor()
+        sql = "SELECT announcements FROM SERVERS WHERE server_id = ?"
+        cur.execute(sql, (server_id,))
+        row = cur.fetchone()
+        return int(row[0])
     
     def daily_all(self):
         cur = self.connection.cursor()
@@ -204,7 +211,7 @@ class Database:
         
         # for every user, reward X * level
         for row in cur.execute('SELECT * FROM Users'):
-            sql = "UPDATE Users SET money = money + (500*level) WHERE user_id = ?"
+            sql = "UPDATE Users SET money = money + (60*level) WHERE user_id = ?"
             id = row[0]
             cur2.execute(sql, (id,))
         self.connection.commit()
