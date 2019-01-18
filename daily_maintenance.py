@@ -134,6 +134,7 @@ async def on_ready():
             try:
                 channel = await client.create_channel(server, 'lottery', type=discord.ChannelType.text)
                 await client.send_message(channel, embed=em)
+                await client.send_message(channel, embed=em2)
             except:
                 # if the bot failed to make the channel, simply move on
                 pass
