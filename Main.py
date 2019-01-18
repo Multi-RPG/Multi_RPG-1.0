@@ -156,7 +156,7 @@ async def on_command_error(error, context):
         commands_logger.info(str(error) +
                              "\nInitiated by: {}, ID: {}".format(context.message.author.name, context.message.author.id))
 
-    # we use command checks when checking if user has account in our database or not
+    # we use command checks when checking if user voted within 12 hours or if user has account in our database
     elif isinstance(error, commands.CheckFailure):
         if "daily2" in str(error):
             error_msg = "Failed! You have not voted within the last 12 hours." \
