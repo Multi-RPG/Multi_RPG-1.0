@@ -7,6 +7,7 @@ import datetime
 import logging
 from discord.ext import commands
 from pathlib import Path
+from Database import Database
 
 # set our bot's prefix and remove the default help command
 client = commands.Bot(command_prefix=["=", "%"])
@@ -90,9 +91,45 @@ async def helper(context):
           '  =leftexit       =leftexit "left" "right" "car"\n' \
           '  =trumporder     =trumporder "order"\n' \
           '  =reasonstolive  =reasonstolive "reasons"\n' \
-          '  =bookfacts      =bookfacts "facts"```'
+          '  =bookfacts      =bookfacts "facts"\n\n' \
+          'Server Toggles:  \n' \
+          '  =toggleannouncements    use "=toggle" to turn off/on the daily announcements for your server\n' \
+          '                          NOTE: this command requires Administrator privilege for your server```'
+
     await client.send_message(context.message.author, msg)
     await client.send_message(context.message.author, msg2)
+
+@client.command(name='toggle', description='=toggle to toggle daily announcements', brief='toggle server announcements',
+                aliases=['announcements', 'ANNOUNCEMENTS', 'TOGGLE', 'toggleannouncements', 'TOGGLEANNOUNCEMENTS'],
+                pass_context=True)
+async def announcements_toggle(context):
+    db = Database(0)
+    db.connect()
+
+    if db.find_server(context.message.server.id) == 0:
+        db.insert_server(context.message.server.id)
+
+    if context.message.author.server_permissions.administrator:
+        new_status = db.toggle_server_announcements(context.message.server.id)
+
+        if new_status == 0:
+            result_str = '<a:worrycry:525209793405648896> Turned **off** daily server announcements' \
+                         ' <a:worrycry:525209793405648896>\nAwards will still be distributed daily.'
+            # embed the confirmation into a message and send
+            em = discord.Embed(description=result_str, colour=0x607d4a)
+            thumb_url = "https://cdn.discordapp.com/icons/{0.id}/{0.icon}.webp?size=40".format(context.message.server)
+            em.set_thumbnail(url=thumb_url)
+            await client.send_message(context.message.channel, embed=em)
+        else:
+            result_str = '<a:worryblow:535914005244411904> Turned **on** daily server announcements!' \
+                         ' <a:worryblow:535914005244411904>'
+            # embed the confirmation into a message and send
+            em = discord.Embed(description=result_str, colour=0x607d4a)
+            thumb_url = "https://cdn.discordapp.com/icons/{0.id}/{0.icon}.webp?size=32".format(context.message.server)
+            em.set_thumbnail(url=thumb_url)
+            await client.send_message(context.message.channel, embed=em)
+    else:
+        await client.send_message(context.message.channel, 'You need a local server administrator to do that!')
 
 
 # Commands error handling

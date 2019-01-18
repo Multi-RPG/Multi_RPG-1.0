@@ -14,7 +14,7 @@ class Database:
             return self.connection
         except Error as e:
             print(e)
-        
+
     def insert_acct(self):
         cur = self.connection.cursor()
 
@@ -38,6 +38,22 @@ class Database:
 
         self.connection.commit()
         return self.get_money()
+
+    def insert_server(self, server_id):
+        cur = self.connection.cursor()
+
+        # register the server id in the database, set announcements to 1 (to indicate announcements are active)
+        sql = "Insert into SERVERS(server_id, announcements) VALUES(?, ?)"
+        cur.execute(sql, (server_id, 1))
+
+        # print servers table after insert
+        cur.execute("select * from Servers")
+        rows = cur.fetchall()
+        print("\nServers after insert: \n")
+        for row in rows:
+            print(row)
+
+        self.connection.commit()
 
     def insert_shop_item(self, name, type, level, price):
         cur = self.connection.cursor()
@@ -70,18 +86,20 @@ class Database:
         except:
             return 0
 
-    def delete_acct(self):
+    def find_server(self, server_id):
         cur = self.connection.cursor()
 
-        sql = "DELETE FROM Users WHERE user_id = ?"
-        cur.execute(sql, (self.id,))
-        cur.execute("select * from Users")
-        rows = cur.fetchall()
-        print("\nUsers after delete: \n")
-        for row in rows:
-            print(row)
-
-        self.connection.commit()
+        sql = "SELECT * from SERVERS WHERE server_id = ?"
+        cur.execute(sql, (server_id,))
+        row = cur.fetchone()
+        # see if a row exists in the fetch results, if not, the server isn't registered yet
+        try:
+            if row[0] == "":
+                pass
+            # the above if statement didn't throw error, so the server is registered
+            return 1
+        except:
+            return 0
 
     def get_money(self):
         cur = self.connection.cursor()
@@ -318,6 +336,25 @@ class Database:
             print(row)
 
         self.connection.commit()
+
+    # flips a server's announcements binary value
+    def toggle_server_announcements(self, server_id):
+        cur = self.connection.cursor()
+
+        sql = "UPDATE SERVERS SET announcements = 1 - announcements WHERE server_id = ?"
+        cur.execute(sql, (server_id,))
+        self.connection.commit()
+
+        sql = "SELECT announcements FROM Servers WHERE server_id = ?"
+        cur.execute(sql, (server_id,))
+
+        row = cur.fetchone()
+        if int(row[0]) == 1:
+            return 1
+        else:
+            return 0
+
+
 
 
     def reset_lottery(self):
