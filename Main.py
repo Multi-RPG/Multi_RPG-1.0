@@ -175,7 +175,7 @@ async def on_command_error(error, context):
                                                                  context.message.author.id))
 
     # special cases
-    # if permissions/access is indicated from discord's response string, private message the user
+    # if permissions/access error is indicated from discord's response string, private message the user
     if "Permissions" in str(error):
         await client.send_message(context.message.author, "I couldn't talk to you in there!\n"
                                                           "I am likely missing **permissions**"
