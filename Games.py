@@ -82,7 +82,7 @@ class Games:
             if counter == 120:
                 # no users were found to rob if we hit 120 in the counter
                 # calculate random integer 1-100
-                # if the result is within 1 through fail chance, they failed the rob
+                # if the result is within 1 through fail chance, they failed the rob, so take bail money and return
                 if fail_chance >= random.randint(1, 100) >= 1:
                     robber_level = robber.get_user_level(0)
 
