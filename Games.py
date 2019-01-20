@@ -134,8 +134,8 @@ class Games:
             msg = '<a:policesiren2:490326123549556746> :oncoming_police_car: ' \
                   '<a:policesiren2:490326123549556746>\n<a:monkacop:490323719063863306>' \
                   '\u200B \u200B \u200B \u200B \u200B \u200B \u200B \u200B \u200B \u200B' \
-                  '<a:monkacop:490323719063863306>\n**' + str(target.display_name) + '** dodged and the police shot you in the process.\n' \
-                  'You spent **$' + str(bail) + '** to bail out of jail.'
+                  '<a:monkacop:490323719063863306>\n**' + str(target.display_name) + '**' \
+                  ' dodged and the police shot you in the process.\nYou spent **$' + str(bail) + '** to bail out of jail.'
 
             # embed the rob failure message, set thumbnail to 80x80 of a "police siren" gif
             em = discord.Embed(description=msg, colour=0x607d4a)
@@ -149,10 +149,17 @@ class Games:
         robber_level = robber.get_user_level(0)
 
         # the victim will only lose the prize, not the bonus prize
+        bonus_prize = int(robber_level * 29.3)
+
+        # the prize will begin by scaling by victim's level
         prize = int(victim_level * 9.4)
+        # if prize greater than the robber's maximum prize amount, decrease the standard prize to compensate
         if prize > int(robber_level * 9.4):
             prize = int(robber_level * 9.4)
-        bonus_prize = int(robber_level * 29.3)
+        # if prize less than the robber's maximum prize amount, increase the bonus prize to compensate
+        if prize < int(robber_level * 9.4):
+            bonus_prize += int(robber_level * 9.4 - prize)
+
 
         # balancing mechanic, don't let victims lose any more money when they have less money than -50x their level
         if not victim_money < (victim_level * -50):
