@@ -61,6 +61,31 @@ class Games:
                     await self.client.say(context.message.author.mention +
                                           " Your rob target doesn't have an account."
                                           "\n**Rerolling** rob target now!")
+                if robber.get_user_peace_status() == 1:
+                    fail_chance = 30
+                    await self.client.say(context.message.author.mention +
+                                          ' You are in :dove: **peace mode** :dove: and cannot use =rob @user.'
+                                          '\n**Rerolling** rob target now!')
+
+                    # pick a random user in the server to rob
+                    # target variable will function as the victim user's "english" name
+                    target = random.choice(list(context.message.server.members))
+                    # make an instance of the target
+                    victim = Users(target.id)
+                    victim_id = target.id
+                elif victim.get_user_peace_status() == 1:
+                    fail_chance = 30
+                    await self.client.say(context.message.author.mention +
+                                          ' That target is in :dove: **peace mode** :dove: and exempt to =rob @user.'
+                                          '\n**Rerolling** rob target now!')
+
+                    # pick a random user in the server to rob
+                    # target variable will function as the victim user's "english" name
+                    target = random.choice(list(context.message.server.members))
+                    # make an instance of the target
+                    victim = Users(target.id)
+                    victim_id = target.id
+
             except:
                 pass
 

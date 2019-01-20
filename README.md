@@ -27,7 +27,11 @@ sqlite> CREATE TABLE Users(
 
 ...> level int,
 
-...> money int
+...> money int,
+
+...> peace int,
+
+...> peace_cd int
 
 ...> );
 

@@ -53,6 +53,18 @@ class Users:
         elif string == 1:
             return "**" + str(hm_db.get_level()) + "**"
 
+    def get_user_peace_status(self):
+        hm_db = Database(self.id)
+        hm_db.connect()
+
+        return hm_db.get_peace_status()
+
+    def get_user_peace_cooldown(self):
+        hm_db = Database(self.id)
+        hm_db.connect()
+
+        return hm_db.get_peace_cooldown()
+
     # returns integer of user's weapon + helmet + chest + boots levels' total
     def get_user_item_score(self):
         hm_db = Database(self.id)
@@ -121,6 +133,20 @@ class Users:
         hm_db.connect()
         return "\n<:worrysign10:531221748964786188> New level: **" + str(hm_db.update_level()) +\
                "** <:worrysign10:531221748964786188>"
+
+    # enables the peace status to "1", so users cannot =rob @target a user
+    def toggle_user_peace_status(self):
+        hm_db = Database(self.id)
+        hm_db.connect()
+
+        return hm_db.toggle_peace_status()
+
+    # enables the peace cooldown to "1", so user cannot exit peace mode until reset
+    def update_user_peace_cooldown(self):
+        hm_db = Database(self.id)
+        hm_db.connect()
+
+        return hm_db.update_peace_cooldown()
 
     def update_user_battle_gear(self, gear_type, level):
         hm_db = Database(self.id)

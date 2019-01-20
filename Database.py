@@ -117,6 +117,22 @@ class Database:
         row = cur.fetchone()
         return row[0]
 
+    def get_peace_status(self):
+        cur = self.connection.cursor()
+
+        sql = "SELECT peace FROM Users WHERE user_id = ?"
+        cur.execute(sql, (self.id,))
+        row = cur.fetchone()
+        return row[0]
+
+    def get_peace_cooldown(self):
+        cur = self.connection.cursor()
+
+        sql = "SELECT peace_cd FROM Users WHERE user_id = ?"
+        cur.execute(sql, (self.id,))
+        row = cur.fetchone()
+        return row[0]
+
     def get_battle_stats(self):
         cur = self.connection.cursor()
 
@@ -245,6 +261,36 @@ class Database:
         self.connection.commit()
         return self.get_level()
 
+    # enables the peace status to "1", so users cannot =rob @target a user
+    def toggle_peace_status(self):
+        cur = self.connection.cursor()
+
+        sql = "UPDATE Users SET peace = 1 - peace WHERE user_id = ?"
+        cur.execute(sql, (self.id,))
+        cur.execute("select * from Users")
+        rows = cur.fetchall()
+        print("\nUsers table after peace update: \n")
+        for row in rows:
+            print(row)
+
+        self.connection.commit()
+        return self.get_peace_status()
+
+    # enables the peace cooldown to "1", so user cannot exit peace mode until reset
+    def update_peace_cooldown(self):
+        cur = self.connection.cursor()
+
+        sql = "UPDATE Users SET peace_cd = 1 WHERE user_id = ?"
+        cur.execute(sql, (self.id,))
+        cur.execute("select * from Users")
+        rows = cur.fetchall()
+        print("\nUsers table after peace update: \n")
+        for row in rows:
+            print(row)
+
+        self.connection.commit()
+        return self.get_peace_status()
+
     def update_battle_weapon(self, weapon_level):
         cur = self.connection.cursor()
 
@@ -361,7 +407,12 @@ class Database:
         else:
             return 0
 
-
+    def reset_peace_cooldowns(self):
+        cur = self.connection.cursor()
+        # set all to inactive, and change all ticket guesses to outside of our defined bounds
+        sql = "UPDATE USERS SET peace_cd = 0"
+        cur.execute(sql)
+        self.connection.commit()
 
 
     def reset_lottery(self):

@@ -64,6 +64,9 @@ class Account:
             # create user instance with their target's discord ID, check database for their money field
             target_id = re.findall("\d+", args[0])[0]
             target = Users(target_id)
+            if target.find_user() == 0:
+                await self.client.say('Target does not have account.')
+                return
 
             # get_member() returns the "member" object that matches an id provided
             discord_member_target = context.message.server.get_member(target_id)
@@ -103,6 +106,9 @@ class Account:
             # create user instance with their target's discord ID, check database for their level field
             target_id = re.findall("\d+", args[0])[0]
             target = Users(target_id)
+            if target.find_user() == 0:
+                await self.client.say('Target does not have account.')
+                return
 
             # get_member() returns the "member" object that matches an id provided
             discord_member_target = context.message.server.get_member(target_id)
@@ -186,6 +192,9 @@ class Account:
             # create user instance with their target's discord ID, check database for their money field
             target_id = re.findall("\d+", args[0])[0]
             target = Users(target_id)
+            if target.find_user() == 0:
+                await self.client.say('Target does not have account.')
+                return
 
             # get_member() returns the "member" object that matches an id provided
             discord_member_target = context.message.server.get_member(target_id)
@@ -323,6 +332,82 @@ class Account:
         em.add_field(name="Thanks for voting, {}!".format(context.message.author.display_name), value=msg, inline=True)
         em.set_thumbnail(url=context.message.author.avatar_url)
         await self.client.say(embed=em)
+
+    @has_account()
+    @commands.cooldown(1, 5, commands.BucketType.user)
+    @commands.command(name='toggle', aliases=['togglepeace', 'TOGGLEPEACE', 'peace', 'PEACE',], pass_context=True)
+    async def toggle_peace(self, context):
+        # create instance of user who wants to get their daily money
+        user = Users(context.message.author.id)
+        user_peace_status = user.get_user_peace_status()
+        user_peace_cooldown = user.get_user_peace_cooldown()
+        if user_peace_status == 0 and user_peace_cooldown == 0:
+            msg = ':dove: Would you like to enable peace status? :dove:\n\nType **confirm** to enter peace mode\n' \
+                  'Type **cancel** to cancel\n\n' \
+                  '_Note: \u200B \u200B \u200B This makes you exempt from users who use =rob @user' \
+                  '\nNote2: \u200B In exchange, you will not be able to =rob @user' \
+                  '\nNote3: You can still use =rob or be robbed randomly from =rob_'
+            # embed the confirmation message, set thumbnail to user's id
+            em = discord.Embed(title="", colour=0x607d4a)
+            em.add_field(name=context.message.author.display_name, value=msg,
+                         inline=True)
+            em.set_thumbnail(url=context.message.author.avatar_url)
+            await self.client.say(embed=em)
+
+            # wait for a "confirm" response from the user to process the peace toggle
+            # if it is not "confirm", cancel toggle
+            response = await self.client.wait_for_message(author=context.message.author, timeout=20)
+            if response.clean_content.upper() == 'CONFIRM':
+                user.toggle_user_peace_status()
+                user.update_user_peace_cooldown()
+                confirmation = ":dove: You are now **in peace** status :dove:" \
+                               "\n\nYou are **unable** to turn it off until Monday at 7 AM PST!"
+
+                # embed the confirmation string, add the user's avatar to it, and send it
+                em = discord.Embed(title="", colour=0x607d4a)
+                em.add_field(name=context.message.author.display_name, value=confirmation, inline=True)
+                em.set_thumbnail(url=context.message.author.avatar_url)
+                await self.client.say(embed=em)
+                return
+            else:
+                await self.client.say(context.message.author.mention + ' Cancelled peace toggle-on!')
+                return
+
+        elif user_peace_status == 1 and user_peace_cooldown == 0:
+            msg = ':dove: You are currently **in peace** status and **able** to turn it off :dove:'  \
+                  '\n\nType **confirm** to turn off peace mode\nType **cancel** to cancel\n\n' \
+                  '_Note: This will enable users to use =rob @user on you_'
+            # embed the confirmation message, set thumbnail to user's id
+            em = discord.Embed(description=msg, colour=0x607d4a)
+            em.set_thumbnail(url=context.message.author.avatar_url)
+            await self.client.say(embed=em)
+
+            # wait for a "confirm" response from the user to process the peace toggle
+            # if it is not "confirm", cancel toggle
+            response = await self.client.wait_for_message(author=context.message.author, timeout=20)
+            if response.clean_content.upper() == 'CONFIRM':
+                user.toggle_user_peace_status()
+                confirmation = ":dove: You are now **out of peace** status :dove:\n\n_Note: =rob @user is now available_"
+
+                # embed the confirmation string, add the user's avatar to it, and send it
+                em = discord.Embed(title="", colour=0x607d4a)
+                em.add_field(name=context.message.author.display_name, value=confirmation, inline=True)
+                em.set_thumbnail(url=context.message.author.avatar_url)
+                await self.client.say(embed=em)
+                return
+            else:
+                await self.client.say(context.message.author.mention + ' Cancelled peace toggle-off!')
+                return
+
+        elif user_peace_cooldown == 1:
+            msg = ':dove: You are currently **in peace** status :dove:' \
+                  '\nYou are **unable** to turn it off until Monday at 7 AM PST!'
+            # embed the confirmation message, set thumbnail to user's id
+            em = discord.Embed(description=msg, colour=0x607d4a)
+            em.set_thumbnail(url="https://cdn.discordapp.com/emojis/440598341877891083.png?size=40")
+            await self.client.say(embed=em)
+            return
+
 
 def setup(client):
     client.add_cog(Account(client))

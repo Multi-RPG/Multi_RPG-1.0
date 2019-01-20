@@ -40,7 +40,7 @@ async def on_message(message):
     # need this statement for bot to recognize commands
     await client.process_commands(message)
 
-@client.command(name='help', description='command information', brief='commands', aliases=['h'], pass_context=True)
+@client.command(name='help', description='command information', brief='commands', aliases=['h','HELP'], pass_context=True)
 async def helper(context):
     # using discord's "ml" language coloring scheme for the encoded help message
     msg = '```ml\n' \
@@ -91,16 +91,23 @@ async def helper(context):
           '  =leftexit       =leftexit "left" "right" "car"\n' \
           '  =trumporder     =trumporder "order"\n' \
           '  =reasonstolive  =reasonstolive "reasons"\n' \
-          '  =bookfacts      =bookfacts "facts"\n\n' \
+          '  =bookfacts      =bookfacts "facts"\n\n```'
+    msg3 = '```ml\n' \
           'Server Toggles:  \n' \
-          '  =toggleannouncements    use "=toggle" to turn off/on the daily announcements for your server\n' \
-          '                          NOTE: this command requires Administrator privilege for your server```'
+          '  =toggleannouncements    use "=toggleannouncements" to toggle the daily announcements for your server\n' \
+          '                          NOTE: this command requires Administrator privilege for your server\n' \
+          'User Toggles:  \n' \
+          '  =togglepeace            use "=togglepeace" to toggle rob target peace mode for yourself \n' \
+          '                          NOTE: this toggle disables =rob @user for yourself and people targetting you\n' \
+          '                          NOTE: peace mode has a cooldown that only resets once every week on Monday```'
 
     await client.send_message(context.message.author, msg)
     await client.send_message(context.message.author, msg2)
+    await client.send_message(context.message.author, msg3)
 
-@client.command(name='toggle', description='=toggle to toggle daily announcements', brief='toggle server announcements',
-                aliases=['announcements', 'ANNOUNCEMENTS', 'TOGGLE', 'toggleannouncements', 'TOGGLEANNOUNCEMENTS'],
+@client.command(name='toggleannouncements', description='use to toggle daily announcements',
+                brief='toggle server announcements',
+                aliases=['announcements', 'ANNOUNCEMENTS', 'TOGGLE', 'TOGGLEANNOUNCEMENTS'],
                 pass_context=True)
 async def announcements_toggle(context):
     # connect to database through our custom Database module
