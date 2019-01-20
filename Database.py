@@ -407,6 +407,7 @@ class Database:
         else:
             return 0
 
+    # this will only be called in weekly maintenance script
     def reset_peace_cooldowns(self):
         cur = self.connection.cursor()
         # set all to inactive, and change all ticket guesses to outside of our defined bounds
