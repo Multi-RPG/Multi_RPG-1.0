@@ -28,7 +28,7 @@ class Games:
 
     '''ROB FUNCTION'''
     @has_account()
-    @commands.cooldown(1, 3600, commands.BucketType.user)
+    @commands.cooldown(1, 1, commands.BucketType.user)
     @commands.command(name='rob', description='Steal money from others', brief='can use =steal',
                       aliases=['thief', 'thieve', 'ROB', 'steal', 'mug'], pass_context=True)
     async def rob(self, context, *args):
@@ -80,8 +80,38 @@ class Games:
             # otherwise if the user was the sole player with an account in the discord server, infinite while loop
             # this part is inefficient, but only way I can think of right now with discord's functionality
             if counter == 120:
-                await self.client.say('No users found to rob...')
-                return
+                # no users were found to rob if we hit 120 in the counter
+                # calculate random integer 1-100
+                # if the result is within 1 through fail chance, they failed the rob
+                if fail_chance >= random.randint(1, 100) >= 1:
+                    robber_level = robber.get_user_level(0)
+
+                    bail = int(robber_level * 8.4)
+                    robber.update_user_money(bail * -1)
+
+                    msg = '<a:policesiren2:490326123549556746> :oncoming_police_car: ' \
+                          '<a:policesiren2:490326123549556746>\n<a:monkacop:490323719063863306>' \
+                          '\u200B \u200B \u200B \u200B \u200B \u200B \u200B \u200B \u200B \u200B' \
+                          '<a:monkacop:490323719063863306>\n' + 'Police shot you in the process.\n' \
+                          'You spent **$' + str(bail) + '** to bail out of jail.'
+
+                    # embed the rob failure message, set thumbnail to 80x80 of a "police siren" gif
+                    em = discord.Embed(description=msg, colour=0x607d4a)
+                    em.set_thumbnail(url="https://cdn.discordapp.com/emojis/490326123549556746.gif?size=80")
+                    await self.client.say(embed=em)
+                    return
+                else:
+                    # if they passed the fail test, give the user a small prize and return
+                    bonus_prize = int(robber.get_user_level(0) * 29.3)
+                    robber.update_user_money(bonus_prize)
+                    msg = '**No users found to rob...** ' \
+                          '\nOn the way back to your basement, you found **$' + str(bonus_prize) + '** ' + \
+                          '<:poggers:490322361891946496>'
+                    # embed the rob confirmation message, set thumbnail to 40x40 of a "ninja" gif
+                    em = discord.Embed(description=msg, colour=0x607d4a)
+                    em.set_thumbnail(url="https://cdn.discordapp.com/emojis/419506568728543263.gif?size=40")
+                    await self.client.say(embed=em)
+                    return
             target = random.choice(list(context.message.server.members))
             # create a new instance of victim each loop
             # in order to check if the reroll has an account in database

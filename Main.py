@@ -163,13 +163,29 @@ async def on_command_error(error, context):
                         "\nhttps://discordbots.org/bot/486349031224639488/vote"
             em = discord.Embed(title=context.message.author.display_name, description=error_msg, colour=0x607d4a)
             em.set_thumbnail(url="https://cdn.discordapp.com/emojis/440598341877891083.png?size=64")
-            return await client.send_message(context.message.channel, embed=em)
+            await client.send_message(context.message.channel, embed=em)
         else:
-            return await client.send_message(context.message.channel, " No account found.\nUse **=create** to make one.")
+            await client.send_message(context.message.channel, " No account found.\nUse **=create** to make one.")
+
+    # if the error fell in none of the above, log the error in our commands_errors.txt file
     else:
         commands_logger.info(str(error) + " in command: " + str(context.command) +
                              "\nUser tried: " + str(context.message.clean_content) +
-                             "\nInitiated by: {}, ID: {}".format(context.message.author.name, context.message.author.id))
+                             "\nInitiated by: {}, ID: {}".format(context.message.author.name,
+                                                                 context.message.author.id))
+
+    # special cases
+    # if permissions/access is indicated from discord's response string, private message the user
+    if "Permissions" in str(error):
+        await client.send_message(context.message.author, "I couldn't talk to you in there!\n"
+                                                          "I am likely missing **permissions**"
+                                                          " to communicate in that channel.")
+        await client.send_message(context.message.channel, str(error))
+    elif "Access" in str(error):
+        await client.send_message(context.message.author, "I couldn't talk to you in there!\n"
+                                                          "I am likely missing **access** to that channel.")
+        await client.send_message(context.message.channel, str(error))
+
 
 if __name__ == "__main__":
     for extension in ["Games", "Utilities", "Memes", "Account", "Lottery", "Shop", "DiscordBotsOrgApi"]:
