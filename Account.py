@@ -344,9 +344,10 @@ class Account:
         if user_peace_status == 0 and user_peace_cooldown == 0:
             msg = ':dove: Would you like to enable peace status? :dove:\n\nType **confirm** to enter peace mode\n' \
                   'Type **cancel** to cancel\n\n' \
-                  '_Note: \u200B \u200B \u200B This makes you exempt from users who use =rob @user' \
+                  '_Note: \u200B \u200B \u200B This makes you exempt from users who use =rob @user ' \
                   '\nNote2: \u200B In exchange, you will not be able to =rob @user' \
-                  '\nNote3: You can still use =rob or be robbed randomly from =rob_'
+                  '\nNote3: You can still use =rob or be robbed randomly from =rob' \
+                  '\nNote4: If enabled, cannot exit peace mode until Monday at 7am_'
             # embed the confirmation message, set thumbnail to user's id
             em = discord.Embed(title="", colour=0x607d4a)
             em.add_field(name=context.message.author.display_name, value=msg,
