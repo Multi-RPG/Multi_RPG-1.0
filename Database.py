@@ -18,9 +18,9 @@ class Database:
     def insert_acct(self):
         cur = self.connection.cursor()
 
-        # new user will start off with level 1, and $50
-        sql = "INSERT INTO Users(user_id, level, money) VALUES(?, ?, ?)"
-        cur.execute(sql, (self.id, 1, 50))
+        # new user will start off with level 1, $50, peace status disabled, and peace cooldown disabled
+        sql = "INSERT INTO Users(user_id, level, money, peace, peace_cd) VALUES(?, ?, ?, ?, ?)"
+        cur.execute(sql, (self.id, 1, 50, 0, 0))
 
         # new user will start off with 0 battles lost, 0 battles won, and 0 total winnings
         sql = "INSERT INTO Battles(fighter_id, battles_lost, battles_won, total_winnings) VALUES(?, ?, ?, ?)"
