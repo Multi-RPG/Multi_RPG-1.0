@@ -107,6 +107,10 @@ async def on_ready():
     em.set_thumbnail(url="https://i.imgur.com/rS6tXmD.gif")
     em2 = discord.Embed(description=global_announcement2, colour=0x607d4a)
     em2.set_thumbnail(url="https://cdn.discordapp.com/emojis/525200274340577290.gif?size=64")
+    global_announcement3 = "__**PATCH ANNOUNCEMENT**__\nPatch **2.6** is here! New **=ranks** command for leaderboards!"
+    em3 = discord.Embed(description=global_announcement3, colour=0x607d4a)
+    em3.set_thumbnail(url="http://i66.tinypic.com/25g7akg.jpg")
+
 
     # for each server the bot is in, post the lottery results in the lottery channel
     for server in client.servers:
@@ -125,6 +129,7 @@ async def on_ready():
                     channel_found = 1
                     await client.send_message(channel, embed=em)
                     await client.send_message(channel, embed=em2)
+                    await client.send_message(channel, embed=em3)
             except:
                 pass
 
@@ -232,6 +237,8 @@ async def on_ready():
                         em = discord.Embed(description=local_server_announcement, colour=0x607d4a)
                         em.set_thumbnail(url="https://cdn.discordapp.com/emojis/493220414206509056.gif?size=64")
                         await client.send_message(channel, embed=em)
+
+
 
 
     # reset tournament entries after every server's tournament is processed
