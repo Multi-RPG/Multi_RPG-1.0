@@ -39,7 +39,8 @@ class Users:
             return hm_db.get_money()
         # if we want the full bold discord-formatted string sequence of money
         elif string == 1:
-            return "**$" + str(hm_db.get_money()) + "**"
+            # format money for commas and bold
+            return "**$" + str("{:,}".format(hm_db.get_money())) + "**"
 
     # pass 0 to 'string' to return integer version of user's level EX: 3, default is string, EX: "**3**"
     def get_user_level(self, string=1):
@@ -86,8 +87,10 @@ class Users:
             # assign each variable from the sql query
             weapon_level, helmet_level, chest_level, boots_level,\
             battles_lost, battles_won, total_winnings = hm_db.get_battle_stats()
+            total_winnings = "{:,}".format(total_winnings)
             user_level = hm_db.get_level()
-            user_money = hm_db.get_money()
+            # format money with commas
+            user_money = "{:,}".format(hm_db.get_money())
 
             # add full bold discord-format to each variable
             item_score = '**' + str(weapon_level + helmet_level + chest_level + boots_level) + '**'
@@ -121,6 +124,13 @@ class Users:
         hm_db = Database(self.id)
         hm_db.connect()
         return hm_db.get_ticket_status()
+
+    def get_user_ranks(self):
+        hm_db = Database(self.id)
+        hm_db.connect()
+        rankings = hm_db.get_ranks()
+
+        return rankings
 
     # this function calls the Database function to add amount to bank account
     def update_user_money(self, amount):

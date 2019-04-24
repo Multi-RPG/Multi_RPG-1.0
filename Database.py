@@ -144,6 +144,16 @@ class Database:
         # now we can just use array indexes to get each field
         return row[0], row[1], row[2], row[3], row[4], row[5], row[6]
 
+    def get_ranks(self):
+        cur = self.connection.cursor()
+        sql = "SELECT * FROM BATTLES ORDER BY total_winnings DESC LIMIT 16"
+
+        cur.execute(sql)
+        rows = cur.fetchall()
+        for row in rows:
+            print(row)
+        return rows
+
     def get_item_score(self):
         cur = self.connection.cursor()
 

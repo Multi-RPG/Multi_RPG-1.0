@@ -409,6 +409,57 @@ class Account:
             await self.client.say(embed=em)
             return
 
+    @has_account()
+    @commands.cooldown(1, 10, commands.BucketType.user)
+    @commands.command(name='rankings', aliases=['ranks', 'leaderboards', 'lb'], pass_context=True)
+    async def ranks(self, context):
+        # create instance of user who wants to view rankings
+        user = Users(context.message.author.id)
+        # retrieve top 15 ranked players
+        rankings = user.get_user_ranks()
+        # declare variables we will use as columns for the leaderboards
+        name_field_column = ""
+        win_loss_column = ""
+        # set counter to properly display rank numbers
+        counter = 1
+
+        # iterate through the top 15 ranked players and retrieve their specific stats
+        for rank in rankings:
+            # initiate each ranked player
+            user = Users(str(rank[0]))
+
+            # store their stats in temporary variables
+            weapon_level, helmet_level, chest_level, boots_level, \
+            battles_lost, battles_won, total_winnings = user.get_user_stats(0)
+            # format money for commas
+            total_winnings = "{:,}".format(total_winnings)
+            # try to retrieve user's level, if failed, skip to next iteration
+            try:
+                user_level = user.get_user_level(0)
+            except:
+                continue
+
+            # get the "member" discord object in order to retrieve the user's current discord name
+            discordmember = await self.client.get_user_info(rank[0])
+            ranker_name = str(discordmember.name)
+            # remove everything except alphanumerics from the user's current discord name
+            ranker_name = re.sub(r'\W+', '', ranker_name)
+
+            # format the 2 columns for the leaderboards
+            name_field_column += str(counter) + '. '\
+                                 + ranker_name[:15] + ' \u200B \u200B (_lvl: ' + str(user_level) + '_ ) \u200B \u200B \n'
+            win_loss_column += '$' + str(total_winnings) + '/' + str(battles_won) + '/' + str(battles_lost) + '\n'
+            counter += 1
+
+
+        # embed the ranking columns
+        em = discord.Embed(title="", colour=0x607d4a)
+        em.add_field(name="Top 15 Fighters", value=name_field_column, inline=True)
+        em.add_field(name="Winnings/W/L", value=win_loss_column, inline=True)
+        # set embedded thumbnail to an upwards trend chart
+        em.set_thumbnail(url="https://cdn.shopify.com/s/files/1/0185/5092/products/objects-0104_800x.png?v=1369543363")
+        await self.client.say(embed=em)
+
 
 def setup(client):
     client.add_cog(Account(client))
