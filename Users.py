@@ -115,7 +115,7 @@ class Users:
                     '\n<:chest5:532255708679503873> Chest: \u200B \u200B \u200B \u200B \u200B \u200B \u200B' + chest_level +
                     '\n<:boots1:532252814953676807> Boots: \u200B \u200B \u200B \u200B \u200B \u200B \u200B' + boots_level +
                     '\n__Total__:\u200B \u200B \u200B' + item_score +
-                    '\n\n**COMBAT RECORDS:**'
+                    '\n\n**TOURNAMENT RECORDS:**'
                     '\n:crossed_swords:\u200B \u200B lost: \u200B \u200B' + battles_lost +
                     '\n:crossed_swords:\u200B \u200B won: ' + battles_won +
                     '\n__Total winnings__: ' + total_winnings)
