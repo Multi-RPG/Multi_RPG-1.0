@@ -101,13 +101,13 @@ async def on_ready():
                            + str(win_number) + "**\n\n__The lucky **basic** winners:__  " \
                            + std_winners_string + "\n__The lucky **premium** winners:__  " \
                            + prem_winners_string
+    global_announcement3 = "__**PATCH ANNOUNCEMENT**__\nPatch **2.6** is here! New **=ranks** command for leaderboards!"
 
     # embed shop announcement and lottery announcement, and set thumbnails of a shopping cart and "money rain frog" gif
     em = discord.Embed(description=global_announcement1, colour=0x607d4a)
     em.set_thumbnail(url="https://i.imgur.com/rS6tXmD.gif")
     em2 = discord.Embed(description=global_announcement2, colour=0x607d4a)
     em2.set_thumbnail(url="https://cdn.discordapp.com/emojis/525200274340577290.gif?size=64")
-    global_announcement3 = "__**PATCH ANNOUNCEMENT**__\nPatch **2.6** is here! New **=ranks** command for leaderboards!"
     em3 = discord.Embed(description=global_announcement3, colour=0x607d4a)
     em3.set_thumbnail(url="http://i66.tinypic.com/25g7akg.jpg")
 
