@@ -58,6 +58,7 @@ async def helper(context):
           '  =buy            use "=buy X" to purchase shop item  -- X being item #\n' \
           '  =levelup        use "=levelup" to level up your account\n' \
           '                  (this results in higher profits & battle successes)\n\n' \
+          '  =ranks          use "=ranks" or "=leaderboards" to view top 15 battlers\n' \
           '  =profile        use "=profile" or "=profile @user" to print battle & gear stats\n' \
           '  =level          use "=level" or "=level @user" to print account level\n' \
           '  =money          use "=money" or "=money @user" to print bank balance\n' \
