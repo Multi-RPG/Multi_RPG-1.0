@@ -147,56 +147,56 @@ async def announcements_toggle(context):
         await client.send_message(context.message.channel, 'You need a local server administrator to do that!')
 
 
-# Commands error handling
-@client.event
-async def on_command_error(error, context):
-    if isinstance(error, commands.CommandOnCooldown):
-        # error.retry_after returns float, need to cast to integer without decimals
-        # now convert to proper HH:MM:SS format and print the cooldown
-        time = str(datetime.timedelta(seconds=int(error.retry_after)))
-        await client.send_message(context.message.channel, content=' You are on cooldown: ' + time)
-
-    elif isinstance(error, commands.CommandNotFound):
-        error_msg = await client.send_message(context.message.channel, "Command not found...")
-        await asyncio.sleep(10)
-        await client.delete_message(context.message)
-        await client.delete_message(error_msg)
-        commands_logger.info(str(error) +
-                             "\nInitiated by: {}, ID: {}".format(context.message.author.name, context.message.author.id))
-
-    # we use command checks when checking if user voted within 12 hours or if user has account in our database
-    elif isinstance(error, commands.CheckFailure):
-        if "daily2" in str(error):
-            error_msg = "Failed! You have not voted within the last 12 hours." \
-                        "\nhttps://discordbots.org/bot/486349031224639488/vote"
-            em = discord.Embed(title=context.message.author.display_name, description=error_msg, colour=0x607d4a)
-            em.set_thumbnail(url="https://cdn.discordapp.com/emojis/440598341877891083.png?size=64")
-            await client.send_message(context.message.channel, embed=em)
-        else:
-            await client.send_message(context.message.channel, " No account found.\nUse **=create** to make one.")
-
-    # if the error fell in none of the above, log the error in our commands_errors.txt file
-    else:
-        commands_logger.info(str(error) + " in command: " + str(context.command) +
-                             "\nUser tried: " + str(context.message.clean_content) +
-                             "\nInitiated by: {}, ID: {}".format(context.message.author.name,
-                                                                 context.message.author.id))
-
-    # special cases
-    # if permissions/access error is indicated from discord's response string, private message the user
-    if "Permissions" in str(error):
-        await client.send_message(context.message.author, "I couldn't talk to you in there!\n"
-                                                          "I am likely missing **permissions**"
-                                                          " to communicate in that channel.")
-        await client.send_message(context.message.channel, str(error))
-    elif "Access" in str(error):
-        await client.send_message(context.message.author, "I couldn't talk to you in there!\n"
-                                                          "I am likely missing **access** to that channel.")
-        await client.send_message(context.message.channel, str(error))
+# # Commands error handling
+# @client.event
+# async def on_command_error(error, context):
+#     if isinstance(error, commands.CommandOnCooldown):
+#         # error.retry_after returns float, need to cast to integer without decimals
+#         # now convert to proper HH:MM:SS format and print the cooldown
+#         time = str(datetime.timedelta(seconds=int(error.retry_after)))
+#         await client.send_message(context.message.channel, content=' You are on cooldown: ' + time)
+#
+#     elif isinstance(error, commands.CommandNotFound):
+#         error_msg = await client.send_message(context.message.channel, "Command not found...")
+#         await asyncio.sleep(10)
+#         await client.delete_message(context.message)
+#         await client.delete_message(error_msg)
+#         commands_logger.info(str(error) +
+#                              "\nInitiated by: {}, ID: {}".format(context.message.author.name, context.message.author.id))
+#
+#     # we use command checks when checking if user voted within 12 hours or if user has account in our database
+#     elif isinstance(error, commands.CheckFailure):
+#         if "daily2" in str(error):
+#             error_msg = "Failed! You have not voted within the last 12 hours." \
+#                         "\nhttps://discordbots.org/bot/486349031224639488/vote"
+#             em = discord.Embed(title=context.message.author.display_name, description=error_msg, colour=0x607d4a)
+#             em.set_thumbnail(url="https://cdn.discordapp.com/emojis/440598341877891083.png?size=64")
+#             await client.send_message(context.message.channel, embed=em)
+#         else:
+#             await client.send_message(context.message.channel, " No account found.\nUse **=create** to make one.")
+#
+#     # if the error fell in none of the above, log the error in our commands_errors.txt file
+#     else:
+#         commands_logger.info(str(error) + " in command: " + str(context.command) +
+#                              "\nUser tried: " + str(context.message.clean_content) +
+#                              "\nInitiated by: {}, ID: {}".format(context.message.author.name,
+#                                                                  context.message.author.id))
+#
+#     # special cases
+#     # if permissions/access error is indicated from discord's response string, private message the user
+#     if "Permissions" in str(error):
+#         await client.send_message(context.message.author, "I couldn't talk to you in there!\n"
+#                                                           "I am likely missing **permissions**"
+#                                                           " to communicate in that channel.")
+#         await client.send_message(context.message.channel, str(error))
+#     elif "Access" in str(error):
+#         await client.send_message(context.message.author, "I couldn't talk to you in there!\n"
+#                                                           "I am likely missing **access** to that channel.")
+#         await client.send_message(context.message.channel, str(error))
 
 
 if __name__ == "__main__":
-    for extension in ["Games", "Utilities", "Memes", "Account", "Lottery", "Shop", "DiscordBotsOrgApi"]:
+    for extension in ["Games", "Utilities", "Memes", "Account", "Lottery", "Shop", "Pets", "DiscordBotsOrgApi"]:
         try:
             client.load_extension(extension)
         except Exception as e:

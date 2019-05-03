@@ -13,6 +13,14 @@ class Users:
         hm_db.connect()
         return " Made account!\nYour starting :moneybag: balance: **$" + str(hm_db.insert_acct()) + "**"
 
+    def add_pet(self, pet_name):
+        hm_db = Database(self.id)
+        hm_db.connect()
+        hm_db.insert_pet(pet_name)
+        return " Adopted **" + pet_name + "**!\n\nYou can: \n1. Use **=feed** to level them up\n" \
+                                          "2. Use **=hunt** for rewards\n" \
+                                          "3. Use **=pet** to check their status"
+
     def find_user(self):
         hm_db = Database(self.id)
         hm_db.connect()
@@ -50,9 +58,39 @@ class Users:
         # if we want integer form of level
         if string == 0:
             return hm_db.get_level()
-        # if we want the full bold discord-formatted string sequence of money
+        # if we want the full bold discord-formatted string sequence of user level
         elif string == 1:
             return "**" + str(hm_db.get_level()) + "**"
+
+    def get_user_pet_name(self, string=1):
+        hm_db = Database(self.id)
+        hm_db.connect()
+        return hm_db.get_pet_name()
+
+    # pass 0 to 'string' to return integer version of user's pet xp EX: 3, default is string, EX: "**3**"
+    def get_user_pet_xp(self, string=1):
+        hm_db = Database(self.id)
+        hm_db.connect()
+
+        # if we want integer form of pet level
+        if string == 0:
+            return hm_db.get_pet_xp()
+        # if we want the full bold discord-formatted string sequence of user's pet xp
+        elif string == 1:
+            return "**" + str(hm_db.get_pet_xp()) + "**"
+
+    # pass 0 to 'string' to return integer version of user's pet level EX: 3, default is string, EX: "**3**"
+    def get_user_pet_level(self, string=1):
+        hm_db = Database(self.id)
+        hm_db.connect()
+
+        # if we want integer form of pet level
+        if string == 0:
+            return hm_db.get_pet_level()
+        # if we want the full bold discord-formatted string sequence of user's pet level
+        elif string == 1:
+            return "**" + str(hm_db.get_pet_level()) + "**"
+
 
     def get_user_peace_status(self):
         hm_db = Database(self.id)
@@ -143,6 +181,18 @@ class Users:
         hm_db.connect()
         return "\n<:worrysign10:531221748964786188> New level: **" + str(hm_db.update_level()) +\
                "** <:worrysign10:531221748964786188>"
+
+    def update_user_pet_xp(self):
+        hm_db = Database(self.id)
+        hm_db.connect()
+
+        return hm_db.update_pet_xp()
+
+    def update_user_pet_level(self):
+        hm_db = Database(self.id)
+        hm_db.connect()
+
+        return hm_db.update_pet_level()
 
     # enables the peace status to "1", so users cannot =rob @target a user
     def toggle_user_peace_status(self):

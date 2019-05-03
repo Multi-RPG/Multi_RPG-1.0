@@ -39,6 +39,24 @@ class Database:
         self.connection.commit()
         return self.get_money()
 
+    def insert_pet(self, pet_name):
+        cur = self.connection.cursor()
+
+        # insert new pet into the database with the pet name provided as parameter
+        # pets will start at level 1 and with 0 xp (experience points)
+        # user's discord ID will serve as the pet_id
+        sql = "INSERT INTO Pets(pet_id, pet_name, pet_xp, pet_level) VALUES(?, ?, ?, ?)"
+        cur.execute(sql, (self.id, pet_name, 0, 1))
+
+        # print pets table to console after inserts
+        cur.execute("select * from Pets")
+        rows = cur.fetchall()
+        print("\nPets after insert: \n")
+        for row in rows:
+            print(row)
+
+        self.connection.commit()
+
     def insert_server(self, server_id):
         cur = self.connection.cursor()
 
@@ -113,6 +131,30 @@ class Database:
         cur = self.connection.cursor()
 
         sql = "SELECT level FROM Users WHERE user_id = ?"
+        cur.execute(sql, (self.id,))
+        row = cur.fetchone()
+        return row[0]
+
+    def get_pet_name(self):
+        cur = self.connection.cursor()
+
+        sql = "SELECT pet_name FROM Pets WHERE pet_id = ?"
+        cur.execute(sql, (self.id,))
+        row = cur.fetchone()
+        return row[0]
+
+    def get_pet_xp(self):
+        cur = self.connection.cursor()
+
+        sql = "SELECT pet_xp FROM Pets WHERE pet_id = ?"
+        cur.execute(sql, (self.id,))
+        row = cur.fetchone()
+        return row[0]
+
+    def get_pet_level(self):
+        cur = self.connection.cursor()
+
+        sql = "SELECT pet_level FROM Pets WHERE pet_id = ?"
         cur.execute(sql, (self.id,))
         row = cur.fetchone()
         return row[0]
@@ -270,6 +312,40 @@ class Database:
 
         self.connection.commit()
         return self.get_level()
+
+    def update_pet_xp(self):
+        cur = self.connection.cursor()
+
+        # each feed will update the pet'x xp by 50
+        sql = "UPDATE Pets SET pet_xp = pet_xp + 50 WHERE pet_id = ?"
+        cur.execute(sql, (self.id,))
+        cur.execute("select * from Pets")
+        rows = cur.fetchall()
+        print("\nPets table after XP update: \n")
+        for row in rows:
+            print(row)
+
+        self.connection.commit()
+        return self.get_pet_xp()
+
+    def update_pet_level(self):
+        cur = self.connection.cursor()
+
+        # update pet level + 1
+        sql = "UPDATE Pets SET pet_level = pet_level + 1 WHERE pet_id = ?"
+        cur.execute(sql, (self.id,))
+        # reset XP to 0
+        sql = "UPDATE Pets SET pet_xp = 0 WHERE pet_id = ?"
+        cur.execute(sql, (self.id,))
+        cur.execute("select * from Pets")
+        rows = cur.fetchall()
+        print("\nPets table after level update: \n")
+        for row in rows:
+            print(row)
+
+        self.connection.commit()
+        return self.get_pet_level()
+
 
     # enables the peace status to "1", so users cannot =rob @target a user
     def toggle_peace_status(self):
