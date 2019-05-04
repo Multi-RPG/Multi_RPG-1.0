@@ -193,9 +193,10 @@ class Pets:
             # retrieve the index of the lowest point item they possess
             index_smallest = list.index(min(list))
 
-            # if the user already has level 11 gear pieces of all types, give them money reward and return
-            if list[index_smallest] == 11:
-                reward_msg = "**" + pet_name + "** failed to hunt gear. You're already gear capped!" \
+            # if the user has at least level 10 gear pieces of all types, give them money reward and return
+            if list[index_smallest] == 10:
+                reward_msg = "**" + pet_name + "** failed to hunt gear. Level 10 gear is the limit for hunt upgrades." \
+                                               "\nCheck =shop for level 11 and level 12 items." \
                                                "\nBut, they located a :moneybag: on their journey!"
                 # get int version of level and multiply it by 35 for the money reward
                 reward = pet_owner.get_user_level(0) * 35
