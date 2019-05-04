@@ -92,7 +92,7 @@ class Pets:
         # retrieve integer of pet's current level
         pet_level = pet_owner.get_user_pet_level(0)
 
-        # calculate the current level up requirement for the user's pet
+        # calculate the current XP level up requirement for the user's pet
         level_up_cost = int(300 * ((pet_level + 1) ** 1.18) - (300 * pet_level))
         if new_pet_xp >= level_up_cost:
             new_pet_level = pet_owner.update_user_pet_level()
@@ -248,8 +248,8 @@ class Pets:
         # retrieve integer of pet's current level
         pet_level = pet_owner.get_user_pet_level(0)
 
-        # calculate the current level up requirement for the user's pet
-        level_up_cost = int(300 * ((pet_level + 1) ** 1.20) - (300 * pet_level))
+        # calculate the current XP level up requirement for the user's pet
+        level_up_cost = int(300 * ((pet_level + 1) ** 1.18) - (300 * pet_level))
 
         if pet_level == 1:
             pet_avatar = "https://cdn.discordapp.com/emojis/563872560308289536.png?v=1"
