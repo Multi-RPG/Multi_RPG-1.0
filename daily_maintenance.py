@@ -229,14 +229,20 @@ async def on_ready():
                         # embed combined announcement, with emoji of 64x64 "nunchuck frog", then send it
                         em = discord.Embed(description=local_server_announcement, colour=0x607d4a)
                         em.set_thumbnail(url="https://cdn.discordapp.com/emojis/493220414206509056.gif?size=64")
-                        await client.send_message(channel, embed=em)
+                        try:
+                            await client.send_message(channel, embed=em)
+                        except:
+                            pass
 
                     # else if only 2 entries in the server's tournament, just send first and second place results
                     elif len(server_fighters_ids) == 2:
                         # embed announcement, with emoji of 64x64 "nunchuck frog", then send it
                         em = discord.Embed(description=local_server_announcement, colour=0x607d4a)
                         em.set_thumbnail(url="https://cdn.discordapp.com/emojis/493220414206509056.gif?size=64")
-                        await client.send_message(channel, embed=em)
+                        try:
+                            await client.send_message(channel, embed=em)
+                        except:
+                            pass
 
 
 
