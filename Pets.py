@@ -253,18 +253,25 @@ class Pets:
 
         if pet_level == 1:
             pet_avatar = "https://cdn.discordapp.com/emojis/563872560308289536.png?v=1"
+            hunt_gear_chance = "10%"
         elif pet_level == 2:
             pet_avatar = "https://cdn.discordapp.com/emojis/491930617823494147.png?v=1"
+            hunt_gear_chance = "13%"
         elif pet_level == 3:
             pet_avatar = "https://cdn.discordapp.com/emojis/400690504104148992.png?v=1"
+            hunt_gear_chance = "15%"
         elif pet_level == 4:
             pet_avatar = "https://cdn.discordapp.com/emojis/400681095009533962.png?v=1"
+            hunt_gear_chance = "17%"
         else:
             pet_avatar = "https://cdn.discordapp.com/emojis/422845006232027147.png?v=1"
+            hunt_gear_chance = "20%"
 
         pet_details = "**" + pet_name + "** (Pet Profile) " \
-                                                     "\n\n\n**Level: **" + str(pet_level) + \
-                                                     "\n**XP:** " + str(pet_xp) + "/" + str(level_up_cost)
+                                                     "\n\n**XP:** " + str(pet_xp) + "/" + str(level_up_cost) + \
+                                                     "\n**Level:** " + str(pet_level) + \
+                                                     "\n\n_Chance for gear upgrade while hunting: " + \
+                                                      hunt_gear_chance + "_"
 
         # embed pet's details into a message
         em = discord.Embed(description=pet_details, colour=0x607d4a)
