@@ -167,8 +167,8 @@ class Pets:
         if loot == 1:
             reward_msg = "**" + pet_name + "** was unable to hunt any gear upgrades in the woods..." \
                                            "\nBut, they located a :moneybag: on their journey!"
-            # get int version of level and multiply it by 40 for the money reward
-            reward = pet_owner.get_user_level(0) * 40
+            # get int version of level and multiply it by 35 for the money reward
+            reward = pet_owner.get_user_level(0) * 35
             pet_owner.update_user_money(reward)
 
             reward_msg += "\n\n<a:worryswipe:525755450218643496> " \
@@ -234,7 +234,7 @@ class Pets:
     '''PET PROFILE PAGE FUNCTION'''
     @has_account()
     @has_pet()
-    @commands.cooldown(1, 10, commands.BucketType.user)
+    @commands.cooldown(1, 5, commands.BucketType.user)
     @commands.command(name='pet', description='check your pet status', brief='can use =pet',
                       aliases=['PET', 'Pet'], pass_context=True)
     async def pet_profile(self, context):

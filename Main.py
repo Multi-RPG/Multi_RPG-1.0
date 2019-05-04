@@ -81,26 +81,31 @@ async def helper(context):
           '                  use "=hm cats" for category numbers\n' \
           '                  use "stop" or "cancel" to stop game\n' \
           '                  NOTE: the reward is 8x your level\n' \
-          'Meme Maker:  \n' \
-          '  =custom         =custom to create a custom Twitter-style meme \n' \
-          '  =changemymind   =changemymind "opinion" \n' \
-          '  =pigeon         =pigeon "boy" "butterfly" "is this a pidgeon?" \n' \
-          '  =boyfriend      =boyfriend "new girl" "distracted boyfriend" "girlfriend"\n' \
-          '  =brain          =brain "stage1" "stage2" "stage3" "stage4"\n' \
-          '  =twobuttons     =twobuttons "option 1" "option2"\n' \
-          '  =slapbutton     =slapbutton "cause" "reaction"\n' \
-          '  =leftexit       =leftexit "left" "right" "car"\n' \
-          '  =trumporder     =trumporder "order"\n' \
-          '  =reasonstolive  =reasonstolive "reasons"\n' \
-          '  =bookfacts      =bookfacts "facts"\n\n```'
+          'Pets:\n' \
+          '  =adopt          use "=adopt" to adopt your own pet to reap more rewards\n' \
+          '  =feed           use "=feed" to gain pet XP, to earn better chance for rewards\n' \
+          '  =hunt           use "=hunt" to either gain gold or a gear upgrade\n' \
+          '  =pet            use "=pet" to display statistics for your pet```'
     msg3 = '```ml\n' \
-          'Server Toggles:  \n' \
-          '  =toggleannouncements    use "=toggleannouncements" to toggle the daily announcements for your server\n' \
-          '                          NOTE: this command requires Administrator privilege for your server\n' \
-          'User Toggles:  \n' \
-          '  =togglepeace            use "=togglepeace" to toggle rob target peace mode for yourself \n' \
-          '                          NOTE: this toggle disables =rob @user for yourself and people targetting you\n' \
-          '                          NOTE: peace mode has a cooldown that only resets once every week on Monday```'
+           'Meme Maker:  \n' \
+           '  =custom         =custom to create a custom Twitter-style meme \n' \
+           '  =changemymind   =changemymind "opinion" \n' \
+           '  =pigeon         =pigeon "boy" "butterfly" "is this a pidgeon?" \n' \
+           '  =boyfriend      =boyfriend "new girl" "distracted boyfriend" "girlfriend"\n' \
+           '  =brain          =brain "stage1" "stage2" "stage3" "stage4"\n' \
+           '  =twobuttons     =twobuttons "option 1" "option2"\n' \
+           '  =slapbutton     =slapbutton "cause" "reaction"\n' \
+           '  =leftexit       =leftexit "left" "right" "car"\n' \
+           '  =trumporder     =trumporder "order"\n' \
+           '  =reasonstolive  =reasonstolive "reasons"\n' \
+           '  =bookfacts      =bookfacts "facts"\n\n\n' \
+           'Server Toggles:  \n' \
+           '  =toggleannouncements    use "=toggleannouncements" to toggle the daily announcements for your server\n' \
+           '                          NOTE: this command requires Administrator privilege for your server\n' \
+           'User Toggles:  \n' \
+           '  =togglepeace            use "=togglepeace" to toggle rob target peace mode for yourself \n' \
+           '                          NOTE: this toggle disables =rob @user for yourself and people targetting you\n' \
+           '                          NOTE: peace mode has a cooldown that only resets once every week on Monday```'
 
     await client.send_message(context.message.author, msg)
     await client.send_message(context.message.author, msg2)
@@ -164,7 +169,7 @@ async def on_command_error(error, context):
         commands_logger.info(str(error) +
                              "\nInitiated by: {}, ID: {}".format(context.message.author.name, context.message.author.id))
 
-    # we use command checks when checking if user voted within 12 hours or if user has account in our database
+    # we use command checks when checking if user voted within 12 hours, or if a user has a pet/account in the database
     elif isinstance(error, commands.CheckFailure):
         # if the check failed for the daily2 function in Account.py
         if "daily2" in str(error):
