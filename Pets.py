@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-import random
 import asyncio
 import re
 import discord
@@ -79,7 +78,7 @@ class Pets:
     '''FEED PET FUNCTION'''
     @has_account()
     @has_pet()
-    @commands.cooldown(1, 1, commands.BucketType.user)
+    @commands.cooldown(1, 86400, commands.BucketType.user)
     @commands.command(name='feed', description='feed your pet for XP', brief='can use =feed',
                       aliases=['FEED'], pass_context=True)
     async def feed(self, context):
@@ -131,7 +130,7 @@ class Pets:
     '''PET HUNT LOOT FUNCTION'''
     @has_account()
     @has_pet()
-    @commands.cooldown(1, 0, commands.BucketType.user)
+    @commands.cooldown(1, 86400, commands.BucketType.user)
     @commands.command(name='hunt', description='command your pet to hunt for loot', brief='can use =hunt',
                       aliases=['HUNT', 'Hunt'], pass_context=True)
     async def hunt(self, context):
@@ -235,7 +234,7 @@ class Pets:
     '''PET PROFILE PAGE FUNCTION'''
     @has_account()
     @has_pet()
-    @commands.cooldown(1, 1, commands.BucketType.user)
+    @commands.cooldown(1, 10, commands.BucketType.user)
     @commands.command(name='pet', description='check your pet status', brief='can use =pet',
                       aliases=['PET', 'Pet'], pass_context=True)
     async def pet_profile(self, context):
