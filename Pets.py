@@ -47,6 +47,7 @@ class Pets:
             msg = await self.client.say("Failed! You already have a pet!")
             await asyncio.sleep(5)
             await self.client.delete_message(msg)
+            return
 
         intro_msg = 'Welcome to the **Pet Shelter**!\n\nPlease enter your desired pet name now:'
         # embed intro message, then overwrite the variable with the actual message object
