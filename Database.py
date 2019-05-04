@@ -104,6 +104,23 @@ class Database:
         except:
             return 0
 
+    def find_pet(self):
+        cur = self.connection.cursor()
+
+        # test if the pet ID exists in the datbase
+        sql = "SELECT * FROM Pets WHERE pet_id = ?"
+        cur.execute(sql, (self.id,))
+        row = cur.fetchone()
+        # see if a row exists in the fetch results, if not, they don't have an account
+        try:
+            if row[0] == "":
+                pass
+            # the above if statement didn't throw error, so the account exists. return 1
+            return 1
+        except:
+            return 0
+
+
     def find_server(self, server_id):
         cur = self.connection.cursor()
 

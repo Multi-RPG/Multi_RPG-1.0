@@ -26,6 +26,11 @@ class Users:
         hm_db.connect()
         return hm_db.find_acct()
 
+    def find_pet(self):
+        hm_db = Database(self.id)
+        hm_db.connect()
+        return hm_db.find_pet()
+
     def delete_user(self):
         hm_db = Database(self.id)
         hm_db.connect()

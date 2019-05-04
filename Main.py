@@ -166,9 +166,16 @@ async def on_command_error(error, context):
 
     # we use command checks when checking if user voted within 12 hours or if user has account in our database
     elif isinstance(error, commands.CheckFailure):
+        # if the check failed for the daily2 function in Account.py
         if "daily2" in str(error):
             error_msg = "Failed! You have not voted within the last 12 hours." \
                         "\nhttps://discordbots.org/bot/486349031224639488/vote"
+            em = discord.Embed(title=context.message.author.display_name, description=error_msg, colour=0x607d4a)
+            em.set_thumbnail(url="https://cdn.discordapp.com/emojis/440598341877891083.png?size=64")
+            await client.send_message(context.message.channel, embed=em)
+        # if the check failed for one of the 3 pet interaction functions in Pets.py
+        elif "feed" or "hunt" or "pet_profile" in str(error):
+            error_msg = "Failed! You have no pet! Use **=adopt** to adopt a pet."
             em = discord.Embed(title=context.message.author.display_name, description=error_msg, colour=0x607d4a)
             em.set_thumbnail(url="https://cdn.discordapp.com/emojis/440598341877891083.png?size=64")
             await client.send_message(context.message.channel, embed=em)
