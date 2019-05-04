@@ -61,7 +61,7 @@ class Shop:
                                    "**)\n\u200B \u200B \u200B \u200B \u200B \u200B \u200B \u200B \u200B \u200B \u200B"
                                    " \u200B \u200B \u200B __Type__: " + item_emoji + "\n\u200B \u200B \u200B \u200B"
                                    " \u200B \u200B \u200B \u200B \u200B \u200B \u200B \u200B \u200B \u200B"
-                                   " __Price__: **$" + str(item_price) + "**\n")
+                                   " __Price__: **$" + str("{:,}".format(item_price)) + "**\n")
 
         # place the first page of items into a string
         page1_str = ''
