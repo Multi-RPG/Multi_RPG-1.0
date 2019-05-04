@@ -4,7 +4,7 @@
 A discord bot, written in python, with several utility/meme generators/RPG elements and a feature-rich hangman game.
 
 ## Run requirements:
-1. Needs python 3.6+ with sqlite3, pillow, requests, discord, numpy, and dbl packages installed (use python3 -m pip install X)
+1. Needs python 3.6+ with sqlite3, pillow, requests, discord (0.16.12), numpy, dblpy (info on discordbots.org), and profanityfilter packages installed (use python3 -m pip install X)
 2. .ini config files with Bot and ImgFlip account data in "tokens/"
 
 ## Usage:
@@ -86,6 +86,29 @@ sqlite> CREATE TABLE Lottery(
 ...>	 ON DELETE CASCADE
 	    
 ...> );
+
+sqlite> CREATE TABLE Pets(
+
+...> pet_id varchar(255) NOT NULL PRIMARY KEY,
+	
+...> pet_name varchar(255),
+	
+...> pet_xp int,
+
+...> pet_level int,
+	
+...> CONSTRAINT fk_users3
+	
+...>	 FOREIGN KEY(pet_id)
+	    
+...>	 REFERENCES Users(user_id)
+	    
+...>	 ON UPDATE CASCADE
+	    
+...>	 ON DELETE CASCADE
+	    
+...> );
+
 
 sqlite> CREATE TABLE Shop(
 
