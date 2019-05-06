@@ -27,10 +27,10 @@ class Lottery:
     async def enter_lottery(self, context):
         # create instance of the user entering the lotto
         entry = Users(context.message.author.id)
-        # if they already purchased a premium ticket, don’t let them overwrite it by mistake with a free ticket
-        if entry.get_user_ticket_status() == 2:
-            error_msg = await self.client.say('**ERROR!** You have already entered and paid your entry fee'
-                                              ' for the **premium lottery** today! <a:worryhead:525164940231704577>')
+        # if they already got a ticket today, don’t let them overwrite it
+        if entry.get_user_ticket_status() == 2 or entry.get_user_ticket_status() == 1:
+            error_msg = await self.client.say('**ERROR!** You have already entered a **lottery** today!'
+                                              '<a:worryhead:525164940231704577>')
             await asyncio.sleep(8)
             await self.client.delete_message(error_msg)
             await self.client.delete_message(context.message)
@@ -88,11 +88,10 @@ class Lottery:
         # create instance of the user entering the lotto
         entry = Users(context.message.author.id)
         entry_fee = entry.get_user_level(0) * 10
-        # if they already purchased a premium ticket, don’t let them overwrite it by mistake by purchasing another one
-        if entry.get_user_ticket_status() == 2:
-            error_msg = await self.client.say('**ERROR!** You have already entered and paid your **$'
-                                              + str(entry_fee) + '** entry'
-                                              + ' for the **premium lottery** today! <a:worryhead:525164940231704577>')
+        # if they already got a ticket today, don’t let them overwrite it
+        if entry.get_user_ticket_status() == 2 or entry.get_user_ticket_status() == 1:
+            error_msg = await self.client.say('**ERROR!** You have already entered a **lottery** today!'
+                                              '<a:worryhead:525164940231704577>')
             await asyncio.sleep(8)
             await self.client.delete_message(error_msg)
             await self.client.delete_message(context.message)
