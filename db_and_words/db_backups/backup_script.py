@@ -91,7 +91,7 @@ def google_drive_upload(file_path):
     headers = {"Authorization": "Bearer {}".format(TOKEN)}
     para = {
         "name": "DB Backup {}".format(time.strftime("%Y-%m-%d---%H-%M")),
-        "parents": ["13CwrwRrvTVqENVxuOuRggqhAIMmkBbRs"]
+        # "parents": ["13CwrwRrvTVqENVxuOuRggqhAIMmkBbRs"] Insert google drive folder ID here
     }
     files = {
         'data': ('metadata', json.dumps(para), 'application/json; charset=UTF-8'),
