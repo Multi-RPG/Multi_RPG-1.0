@@ -85,7 +85,7 @@ def google_drive_upload(file_path):
         print(TOKEN)
     else:
         print("\n", "Google drive Oauth2 access token not found at: ", token_path,
-              "... Please correct file path in Main.py file.")
+              "... Please correct file path in backup_script.py file.")
         sys.exit()
 
     headers = {"Authorization": "Bearer {}".format(TOKEN)}
