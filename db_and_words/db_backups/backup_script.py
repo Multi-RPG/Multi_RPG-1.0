@@ -53,9 +53,9 @@ def clear_old_backups(backup_dir):
     num_days = 5
     elapse_time = time.time() - num_days * 86400
 
-    print("\n------------------------------")
+    print("\n-------------------------------")
     print("Deleting any backups older than " + str(num_days) + " days...")
-    print("\n------------------------------")
+    print("\n-------------------------------")
 
     for filename in os.listdir(backup_dir):
         backup_file = os.path.join(backup_dir, filename)
