@@ -10,7 +10,10 @@ import shutil
 import time
 import os
 import sys
-
+import json
+import requests
+import configparser
+from pathlib import Path
 
 def sqlite3_backup(db_file, directory):
     '''Copy the database file and timestamp it'''
@@ -47,6 +50,12 @@ def sqlite3_backup(db_file, directory):
     # unlock database
     connection.rollback()
 
+    # upload the backup to google drive
+    try:
+        google_drive_upload(backup_file)
+    except:
+        print("Failed to upload the backup to google drive.")
+
 
 def clear_old_backups(backup_dir):
     ''' Delete old database backups that are older than num_days '''
@@ -64,6 +73,36 @@ def clear_old_backups(backup_dir):
                 os.remove(backup_file)
                 print("Deleting {} now!".format(backup_file))
 
+def google_drive_upload(file_path):
+    # set up parser to config through our .ini file with our oauth2 access token
+    config = configparser.ConfigParser()
+    token_path = Path("../../tokens/token_gdrive_oauth.ini")  # use forward slash "/" for path directories
+    # confirm the token is located in the above path
+    if token_path.is_file():
+        config.read(token_path)
+        # we now have the bot's token
+        TOKEN = config.get('DRIVE1', 'token')
+        print(TOKEN)
+    else:
+        print("\n", "Google drive Oauth2 access token not found at: ", token_path,
+              "... Please correct file path in Main.py file.")
+        sys.exit()
+
+    headers = {"Authorization": "Bearer {}".format(TOKEN)}
+    para = {
+        "name": "DB Backup {}".format(time.strftime("%Y-%m-%d---%H-%M")),
+        "parents": ["13CwrwRrvTVqENVxuOuRggqhAIMmkBbRs"]
+    }
+    files = {
+        'data': ('metadata', json.dumps(para), 'application/json; charset=UTF-8'),
+        'file': open("{}".format(file_path), "rb")
+    }
+    r = requests.post(
+        "https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart",
+        headers=headers,
+        files=files
+    )
+    print(r.text)
 
 if __name__ == "__main__":
     sqlite3_backup("..\hangman.db", "..\db_backups")
