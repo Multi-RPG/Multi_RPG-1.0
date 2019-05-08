@@ -179,7 +179,7 @@ async def on_command_error(error, context):
             em.set_thumbnail(url="https://cdn.discordapp.com/emojis/440598341877891083.png?size=64")
             await client.send_message(context.message.channel, embed=em)
         # if the check failed for one of the 3 pet interaction functions in Pets.py
-        elif any(x in str(error) for x in ['feed', 'hunt', 'pet_profile']):
+        elif any(x in str(error) for x in ['feed', 'hunt', 'pet']):
             error_msg = "Failed! You have no pet! Use **=adopt** to adopt a pet."
             em = discord.Embed(title=context.message.author.display_name, description=error_msg, colour=0x607d4a)
             em.set_thumbnail(url="https://cdn.discordapp.com/emojis/440598341877891083.png?size=64")
