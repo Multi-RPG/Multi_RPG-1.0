@@ -10,10 +10,8 @@ import shutil
 import time
 import os
 import sys
-import json
-import requests
-import configparser
-from pathlib import Path
+from google.cloud import storage
+
 
 def sqlite3_backup(db_file, directory):
     '''Copy the database file and timestamp it'''
@@ -50,11 +48,14 @@ def sqlite3_backup(db_file, directory):
     # unlock database
     connection.rollback()
 
-    # upload the backup to google drive
+    # upload the backup to google cloud
     try:
         google_drive_upload(backup_file)
     except:
-        print("Failed to upload the backup to google drive.")
+        print("Failed to upload to google cloud. Please view "
+              "https://cloud.google.com/storage/docs/reference/libraries#client-libraries-install-"
+              " to set it up yourself if you wish to have this feature.")
+
 
 
 def clear_old_backups(backup_dir):
@@ -74,35 +75,14 @@ def clear_old_backups(backup_dir):
                 print("Deleting {} now!".format(backup_file))
 
 def google_drive_upload(file_path):
-    # set up parser to config through our .ini file with our oauth2 access token
-    config = configparser.ConfigParser()
-    token_path = Path("../../tokens/token_gdrive_oauth.ini")  # use forward slash "/" for path directories
-    # confirm the token is located in the above path
-    if token_path.is_file():
-        config.read(token_path)
-        # we now have the bot's token
-        TOKEN = config.get('DRIVE1', 'token')
-        print(TOKEN)
-    else:
-        print("\n", "Google drive Oauth2 access token not found at: ", token_path,
-              "... Please correct file path in backup_script.py file.")
-        sys.exit()
+    """Uploads a file to the bucket."""
+    # Edit this line with your private key json file path
+    # os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "C:\\Users\jake\Documents\Python discord bot\db_and_words\db_backups\creds.json"
+    storage_client = storage.Client()
+    bucket = storage_client.get_bucket("multirpg")
+    blob = bucket.blob("DB Backup {}".format(time.strftime("%Y-%m-%d---%H-%M")))
+    blob.upload_from_filename(file_path)
 
-    headers = {"Authorization": "Bearer {}".format(TOKEN)}
-    para = {
-        "name": "DB Backup {}".format(time.strftime("%Y-%m-%d---%H-%M")),
-        # "parents": ["13CwrwRrvTVqENVxuOuRggqhAIMmkBbRs"] Insert google drive folder ID here
-    }
-    files = {
-        'data': ('metadata', json.dumps(para), 'application/json; charset=UTF-8'),
-        'file': open("{}".format(file_path), "rb")
-    }
-    r = requests.post(
-        "https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart",
-        headers=headers,
-        files=files
-    )
-    print(r.text)
 
 if __name__ == "__main__":
     sqlite3_backup("..\hangman.db", "..\db_backups")
