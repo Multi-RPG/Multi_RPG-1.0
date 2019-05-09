@@ -345,10 +345,10 @@ class Games:
             user = Users(context.message.author.id)
 
             # Convenient way to flip all
-            if type(args[1]) == int:
-                bet = int(args[1])
-            elif type(args[1]) == str and args[1] == 'all':
+            if type(args[1]) == str and args[1] == 'all':
                 bet = user.get_user_money(0)
+            else:
+                bet = int(args[1])
 
             # pass 0 to return integer version of money, see USERS.PY function
             if bet > user.get_user_money(0) or bet < 1:
@@ -360,6 +360,7 @@ class Games:
                 return
         except:
             pass
+
 
         gif = await self.client.say("https://media1.tenor.com/images/938e1fc4fcf2e136855fd0e83b1e8a5f/tenor.gif?itemid=5017733")
         await asyncio.sleep(3)
