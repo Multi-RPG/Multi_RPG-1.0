@@ -49,8 +49,10 @@ def sqlite3_backup(db_file, directory):
     connection.rollback()
 
     # upload the backup to google cloud
+    print("Uploading to google cloud bucket now...\n")
     try:
         google_cloud_upload(backup_file)
+        print("Successfully uploaded to google cloud bucket!")
     except:
         print("Failed to upload to google cloud. Please view "
               "https://cloud.google.com/storage/docs/reference/libraries#client-libraries-install-"
@@ -77,7 +79,7 @@ def clear_old_backups(backup_dir):
 def google_cloud_upload(file_path):
     """Uploads a file to the bucket."""
     # Edit this line with your private key json file path
-    # os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "C:\\Users\jake\Documents\Python discord bot\db_and_words\db_backups\creds.json"
+    #os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "C:\\Users\jake\Documents\Python discord bot\db_and_words\db_backups\creds.json"
     storage_client = storage.Client()
     bucket = storage_client.get_bucket("multirpg")
     blob = bucket.blob("DB Backup {}".format(time.strftime("%Y-%m-%d---%H-%M")))
