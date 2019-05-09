@@ -50,7 +50,7 @@ def sqlite3_backup(db_file, directory):
 
     # upload the backup to google cloud
     try:
-        google_drive_upload(backup_file)
+        google_cloud_upload(backup_file)
     except:
         print("Failed to upload to google cloud. Please view "
               "https://cloud.google.com/storage/docs/reference/libraries#client-libraries-install-"
@@ -74,7 +74,7 @@ def clear_old_backups(backup_dir):
                 os.remove(backup_file)
                 print("Deleting {} now!".format(backup_file))
 
-def google_drive_upload(file_path):
+def google_cloud_upload(file_path):
     """Uploads a file to the bucket."""
     # Edit this line with your private key json file path
     # os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "C:\\Users\jake\Documents\Python discord bot\db_and_words\db_backups\creds.json"
