@@ -142,6 +142,11 @@ class Pets:
         # retrieve integer of pet's current level
         pet_level = pet_owner.get_user_pet_level(0)
 
+        # send a gif of hunting dog, wait 3 seconds, delete gif and continue
+        gif = await self.client.say("https://i.imgur.com/2Syc2jX.gif")
+        await asyncio.sleep(3)
+        await self.client.delete_message(gif)
+
         # 1. set the pet's avatar based on the pet's level
         # 2. randomly choose if the pet's hunt will find money or gear
         # note: a higher level pet will have a higher chance of finding gear
