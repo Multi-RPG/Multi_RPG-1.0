@@ -179,7 +179,7 @@ class Users:
     def update_user_money(self, amount):
         hm_db = Database(self.id)
         hm_db.connect()
-        return "Your new account balance: **$" + str(hm_db.update_money(amount)) + "**"
+        return "Your new account balance: **$" + str("{:,}".format(hm_db.update_money(amount))) + "**"
 
     def update_user_level(self):
         hm_db = Database(self.id)

@@ -343,7 +343,13 @@ class Games:
         # this try/catch block will simply pass if they did not specify a bet
         try:
             user = Users(context.message.author.id)
-            bet = int(args[1])
+
+            # Convenient way to flip all
+            if type(args[1]) == int:
+                bet = int(args[1])
+            elif type(args[1]) == str and args[1] == 'all':
+                bet = user.get_user_money(0)
+
             # pass 0 to return integer version of money, see USERS.PY function
             if bet > user.get_user_money(0) or bet < 1:
                 error_msg = await self.client.say("You don't have enough money for that bet..."
@@ -412,11 +418,7 @@ class Games:
             em = discord.Embed(description=msg, colour=0x607d4a)
             await self.client.say(context.message.author.mention, embed=em)
 
-
-
-
     '''HANGMAN main function'''
-
     @commands.command(name='hangman', description='Guess the word in order to survive.',
                       brief='can use "=hangman", type "stop" or "cancel" to end game',
                       aliases=['hm', 'hang', 'HM', 'HANGMAN'], pass_context=True)
