@@ -142,28 +142,23 @@ class Pets:
         # retrieve integer of pet's current level
         pet_level = pet_owner.get_user_pet_level(0)
 
-        # send a gif of hunting dog, wait 3 seconds, delete gif and continue
-        gif = await self.client.say("https://i.imgur.com/2Syc2jX.gif")
-        await asyncio.sleep(3)
-        await self.client.delete_message(gif)
-
         # 1. set the pet's avatar based on the pet's level
         # 2. randomly choose if the pet's hunt will find money or gear
         # note: a higher level pet will have a higher chance of finding gear
         if pet_level == 1:
-            pet_avatar = "https://cdn.discordapp.com/emojis/563872560308289536.png?v=1"
+            pet_avatar = "https://i.imgur.com/BknfCkz.gif"
             loot = choices([1, 2], [.90, .10])
         elif pet_level == 2:
-            pet_avatar = "https://cdn.discordapp.com/emojis/491930617823494147.png?v=1"
+            pet_avatar = "https://i.imgur.com/vm7GjwZ.gif"
             loot = choices([1, 2], [.87, .13])
         elif pet_level == 3:
-            pet_avatar = "https://cdn.discordapp.com/emojis/400690504104148992.png?v=1"
+            pet_avatar = "https://i.imgur.com/uhgLfqE.gif"
             loot = choices([1, 2], [.85, .15])
         elif pet_level == 4:
-            pet_avatar = "https://cdn.discordapp.com/emojis/400681095009533962.png?v=1"
+            pet_avatar = "https://i.imgur.com/00ZQwGP.gif"
             loot = choices([1, 2], [.83, .17])
         else:
-            pet_avatar = "https://cdn.discordapp.com/emojis/422845006232027147.png?v=1"
+            pet_avatar = "https://i.imgur.com/iELOcfw.gif"
             loot = choices([1, 2], [.80, .20])
 
         # remove brackets from returned value of choices() function
@@ -264,10 +259,10 @@ class Pets:
             pet_avatar = "https://cdn.discordapp.com/emojis/491930617823494147.png?v=1"
             hunt_gear_chance = "13%"
         elif pet_level == 3:
-            pet_avatar = "https://cdn.discordapp.com/emojis/400690504104148992.png?v=1"
+            pet_avatar = "https://cdn.discordapp.com/emojis/435032643772350464.png?v=1"
             hunt_gear_chance = "15%"
         elif pet_level == 4:
-            pet_avatar = "https://cdn.discordapp.com/emojis/400681095009533962.png?v=1"
+            pet_avatar = "https://cdn.discordapp.com/emojis/400690504104148992.png?v=1"
             hunt_gear_chance = "17%"
         else:
             pet_avatar = "https://cdn.discordapp.com/emojis/422845006232027147.png?v=1"
