@@ -93,18 +93,19 @@ class Pets:
         pet_level = pet_owner.get_user_pet_level(0)
 
         # calculate the current XP level up requirement for the user's pet
-        level_up_cost = int(300 * ((pet_level + 1) ** 1.18) - (300 * pet_level))
+        level_up_cost = int(300 * ((pet_level + 1) ** 1.25) - (300 * pet_level))
         if new_pet_xp >= level_up_cost:
             new_pet_level = pet_owner.update_user_pet_level()
             confirmation_msg = "Fed **" + pet_name + "**. They leveled up and transformed!\n" \
                                                      " They now have a higher chance to hunt for gear upgrades!" \
                                                      "\n\n\nNew level: **" + str(new_pet_level) + "**"
+            
             if new_pet_level == 2:
                 pet_avatar = "https://cdn.discordapp.com/emojis/491930617823494147.png?v=1"
             elif new_pet_level == 3:
-                pet_avatar = "https://cdn.discordapp.com/emojis/400690504104148992.png?v=1"
+                pet_avatar = "https://cdn.discordapp.com/emojis/435032643772350464.png?v=1"
             elif new_pet_level == 4:
-                pet_avatar = "https://cdn.discordapp.com/emojis/400681095009533962.png?v=1"
+                pet_avatar = "https://cdn.discordapp.com/emojis/400690504104148992.png?v=1"
             else:
                 pet_avatar = "https://cdn.discordapp.com/emojis/422845006232027147.png?v=1"
 
@@ -114,9 +115,9 @@ class Pets:
             elif pet_level == 2:
                 pet_avatar = "https://cdn.discordapp.com/emojis/491930617823494147.png?v=1"
             elif pet_level == 3:
-                pet_avatar = "https://cdn.discordapp.com/emojis/400690504104148992.png?v=1"
+                pet_avatar = "https://cdn.discordapp.com/emojis/435032643772350464.png?v=1"
             elif pet_level == 4:
-                pet_avatar = "https://cdn.discordapp.com/emojis/400681095009533962.png?v=1"
+                pet_avatar = "https://cdn.discordapp.com/emojis/400690504104148992.png?v=1"
             else:
                 pet_avatar = "https://cdn.discordapp.com/emojis/422845006232027147.png?v=1"
 
