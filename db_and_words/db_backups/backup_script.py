@@ -49,7 +49,7 @@ def sqlite3_backup(db_file, directory):
     connection.rollback()
 
     # upload the backup to google cloud
-    print("Uploading to google cloud bucket now...\n")
+    print("\nUploading to google cloud bucket now...\n")
     try:
         google_cloud_upload(backup_file)
         print("Successfully uploaded to google cloud bucket!")
