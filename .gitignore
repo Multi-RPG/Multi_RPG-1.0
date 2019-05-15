@@ -1,6 +1,9 @@
-__pycache__/
-test/
-lol/
+.vscode/
 
-*.txt
-*.exe
+__pycache__/
+
+# Virtual environment
+env/
+
+# Database files
+*.db

@@ -6,6 +6,7 @@ import datetime
 from discord.ext import commands
 from pathlib import Path
 
+
 # set up parser to config through our .ini file with our bot's token
 config = configparser.ConfigParser()
 bot_token_path = Path("tokens/tokenbot.ini") # use forward slash "/" for path directories
@@ -15,7 +16,7 @@ if bot_token_path.is_file():
     # we now have the bot's token
     TOKEN = config.get('BOT1', 'token')
 else:
-    print("\n","Discord bot token not found at: ",bot_token_path,"... Please correct file path in Main.py file.")
+    print("\n","Discord bot token not found at: ",bot_token_path,"...  Please correct file path in Main.py file.")
     sys.exit()
 
 client = commands.Bot(command_prefix=["=", "%"])
@@ -113,3 +114,4 @@ if __name__ == "__main__":
 
 
 client.run(TOKEN)
+
