@@ -1,14 +1,18 @@
 #!/usr/bin/env python3
+"""
+The purpose of this script is to:
+1. connect to database, and reset all "peace_cd" to 0 in "Users" table
+
+PS: FOR FULL AUTOMATION, SCHEDULE THIS FILE TO RUN AUTOMATICALLY AT AN INTERVAL.
+PS2: MAKE SURE TO CHANGE PATHS TO FULL FILE PATHS IF THIS IS AUTOMATED
+"""
+
 import configparser
 import sys
 import os
 from Database import Database
 from discord.ext import commands
 from pathlib import Path
-
-# IMPORTANT: FOR FULL AUTOMATION, SCHEDULE THIS FILE TO RUN AUTOMATICALLY AT AN INTERVAL.
-#   EX: CRONTAB WITH WEEKLY EXECUTION ON MONDAY AT 8AM.
-#   HOWEVER, MAKE SURE TO CHANGE PATH TO YOUR FULL FILE PATH FOR BOT_TOKEN_PATH
 
 # change working directory to parent to simplify file paths
 os.chdir("..")

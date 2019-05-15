@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
-'''
+"""
 The purpose of this script is to:
 1. create a timestamped database backup file
-2. clear backups older than the defined days
-'''
+2. upload backup database to google cloud
+3. clear backups older than the defined days
+"""
 
 import sqlite3
 import shutil

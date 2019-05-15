@@ -1,4 +1,14 @@
 #!/usr/bin/env python3
+"""
+The purpose of this script is to:
+1. reset and repopulate "Shops" table in database
+2. choose a winning lottery number, reward winners, and reset "Lottery" table in database
+3. determine tournament winners, reward winners, and reset "Battles" table in database
+
+PS: FOR FULL AUTOMATION, SCHEDULE THIS FILE TO RUN AUTOMATICALLY AT AN INTERVAL.
+PS2: MAKE SURE TO CHANGE PATHS TO FULL FILE PATHS IF THIS IS AUTOMATED
+"""
+
 import configparser
 import sys
 import random
@@ -12,12 +22,11 @@ from discord.ext import commands
 from pathlib import Path
 from datetime import date
 
-# IMPORTANT: FOR FULL AUTOMATION, SCHEDULE THIS FILE TO RUN AUTOMATICALLY AT AN INTERVAL.
-#   EX: CRONTAB WITH DAILY EXECUTION AT 8AM. HOWEVER, MAKE SURE TO CHANGE PATH TO YOUR FULL FILE PATH FOR BOT_TOKEN_PATH
 
 # change working directory to parent to simplify file paths
 os.chdir("..")
 
+# startup discord client
 client = commands.Bot(command_prefix=["=", "%"])
 # set up parser to config through our .ini file with our bot's token
 config = configparser.ConfigParser()
@@ -42,7 +51,7 @@ async def on_ready():
     db = Database(0)
     db.connect()
 
-    ''' PERFORM DAILY SHOP MAINTENANCE NOW! '''
+    """ PERFORM DAILY SHOP MAINTENANCE NOW! """
     db.reset_shop()
 
     # make sure to change this path to the full file path if you plan to use crontab, or else it will not work
@@ -66,7 +75,7 @@ async def on_ready():
             db.insert_shop_item(item_name, item_type, item_level, item_price)
 
 
-    ''' PERFORM DAILY LOTTERY MAINTENANCE NOW'''
+    """ PERFORM DAILY LOTTERY MAINTENANCE NOW """
     # generate a random winning number 1-5
     win_number = random.randint(1,5)
     # get python list of winner ticket id's who match today's winning number
@@ -149,7 +158,7 @@ async def on_ready():
                 pass
 
 
-    ''' PERFORM DAILY TOURNAMENT MAINTENANCE NOW! '''
+    """ PERFORM DAILY TOURNAMENT MAINTENANCE NOW! """
     for server in client.servers:
         server_fighters_ids = db.get_server_tourney_members(server.id)
         # only do anything else if the server has more than 1 entry
@@ -247,9 +256,6 @@ async def on_ready():
                             await client.send_message(channel, embed=em)
                         except:
                             pass
-
-
-
 
     # reset tournament entries after every server's tournament is processed
     db.reset_tourney()
