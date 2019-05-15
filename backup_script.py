@@ -19,7 +19,9 @@ def sqlite3_backup(db_file, directory):
     if not os.path.isdir(directory):
         raise Exception("Backup directory not found: {}".format(directory))
 
-    backup_file = os.path.join(directory, os.path.basename(db_file) + time.strftime("-%Y-%m-%d---%H-%M"))
+    # prepend current date to name of database file to backup
+    backup_file_name = str(time.strftime("%Y-%m-%d---%H-%M--")) + os.path.basename(db_file)
+    backup_file = os.path.join(directory, backup_file_name)
 
     # connect to database
     connection = sqlite3.connect(db_file)
@@ -79,15 +81,17 @@ def clear_old_backups(backup_dir):
 def google_cloud_upload(file_path):
     """Uploads a file to the bucket."""
     # Edit this line with your private key json file path
-    #os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "C:\\Users\jake\Documents\Python discord bot\db_and_words\db_backups\creds.json"
+    #os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "C:\\Users\jake\Documents\Python discord bot\tokens\creds.json"
     storage_client = storage.Client()
     bucket = storage_client.get_bucket("multirpg")
-    blob = bucket.blob("DB Backup {}".format(time.strftime("%Y-%m-%d---%H-%M")))
+    blob = bucket.blob(os.path.basename(file_path))
     blob.upload_from_filename(file_path)
 
 
 if __name__ == "__main__":
-    sqlite3_backup("..\hangman.db", "..\db_backups")
-    clear_old_backups(".")
+    # pass in parameters: database file to backup, and directory to place backup in
+    sqlite3_backup("db_and_words\hangman.db", "db_and_words\db_backups")
+    # pass in parameters: directory to clear old backups from
+    clear_old_backups("db_and_words\db_backups")
 
     print("\nBackup maintenance complete.")
