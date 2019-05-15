@@ -4,10 +4,15 @@
 A discord bot, written in python, with several utility/meme generators/RPG elements and a feature-rich hangman game.
 
 ## Run requirements:
-1. Needs python 3.6+ with sqlite3, pillow, requests, discord (0.16.12), numpy, dblpy (info on discordbots.org), and profanityfilter packages installed (use python3 -m pip install X);
-2. Optional: (Recommended) Create virtual environment, run `pip install requirements.txt`;
-3. Inside tokens folder, rename tokenbot-example.ini to tokenbot.ini, and add your bot token, config files with Bot login token and imgflip login token;
-4. Optional: Tokens for "DiscordBotLists.org" (for updating bot stats on their website) and google drive oauth2 access (for database backups).
+1. Needs python 3.6+ with sqlite3, pillow, requests, discord (0.16.12), numpy, dblpy (info on discordbots.org), and profanityfilter packages installed (use python3 -m pip install X)
+2. Optional: (Recommended) Create virtual environment, run `pip install -r requirements.txt`;
+3. In `scripts/setup/` folder, run `python setup.py`
+4. In new `tokens` folder, replace value in `tokenbot.ini` with your discord bot token
+ 
+Optional entries in `tokens` folder:
+ - imgflip account token in `tokenimgflip.ini` (if meme generation desired)
+ - discordbots.org token in `token_dbo_api.ini` (if uploading statistics about your bot is desired)
+ - google cloud service account, save as `creds.json` to upload database backups when `backup_script.py` is run
 
 ## Usage:
 ### Linux/macOS
@@ -20,116 +25,3 @@ C:\Users\jsmith> python Main.py
 ```
 
 Note: In this repository, paths are currently setup to run in a windows environment. Adjustment will need to be made for running on Unix.
-
-## SQL statements used for creating the database tables:
-
-sqlite> CREATE TABLE Users(
-
-...> user_id varchar(255) NOT NULL PRIMARY KEY,
-
-...> level int,
-
-...> money int,
-
-...> peace int,
-
-...> peace_cd int
-
-...> );
-
-sqlite> CREATE TABLE Battles(
-
-...> fighter_id varchar(255) NOT NULL PRIMARY KEY,
-
-...> tourney_server_id varchar(255) NOT NULL DEFAULT 0,
-
-...> weapon_level int DEFAULT 0,
-
-...> helmet_level int DEFAULT 0,
-
-...> chest_level int DEFAULT 0,
-
-...> boots_level int DEFAULT 0,
-
-...> battles_lost int,
-
-...> battles_won int,
-
-...> total_winnings int,
-
-...> CONSTRAINT fk_users
-
-...>     FOREIGN KEY (fighter_id)
-
-...>     REFERENCES Users(user_id)
-
-...>     ON UPDATE CASCADE
-
-...>     ON DELETE CASCADE
-
-...> );
-
-sqlite> CREATE TABLE Lottery(
-
-...> ticket_id varchar(255) NOT NULL PRIMARY KEY,
-	
-...> ticket_guess int,
-	
-...> ticket_active int,
-	
-...> CONSTRAINT fk_users2
-	
-...>	 FOREIGN KEY(ticket_id)
-	    
-...>	 REFERENCES Users(user_id)
-	    
-...>	 ON UPDATE CASCADE
-	    
-...>	 ON DELETE CASCADE
-	    
-...> );
-
-sqlite> CREATE TABLE Pets(
-
-...> pet_id varchar(255) NOT NULL PRIMARY KEY,
-	
-...> pet_name varchar(255),
-	
-...> pet_xp int,
-
-...> pet_level int,
-	
-...> CONSTRAINT fk_users3
-	
-...>	 FOREIGN KEY(pet_id)
-	    
-...>	 REFERENCES Users(user_id)
-	    
-...>	 ON UPDATE CASCADE
-	    
-...>	 ON DELETE CASCADE
-	    
-...> );
-
-
-sqlite> CREATE TABLE Shop(
-
-...> item_id int NOT NULL PRIMARY KEY AUTOINCREMENT,
-
-...> name text,
-
-...> type text,
-
-...> level int,
-
-...> price int
-
-...> );
-
-sqlite> CREATE TABLE Servers (
-
-...> server_id varchar(255) NOT NULL PRIMARY KEY,
-	
-...> announcements int
-
-...> );
