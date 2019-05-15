@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """
 The purpose of this script is to:
-1. build the database for the bot
-2. copy all startup files into main directory
+1. extract setup files for the bot to function
+2. build an empty database for the bot using an extracted schema
 """
 
 import os
