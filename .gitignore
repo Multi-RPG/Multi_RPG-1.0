@@ -6,21 +6,10 @@
 __pycache__/
 
 # Virtual environment
-env/
 venv/
 
-# Database files
-hangman.db
-*.db
-
 # folders
-db_backups/
 custom_memes/
-
-# some files
-tokenbot.ini
-commands_errors.txt
-dbo_api_log.txt
-a_shop_script.py
-Dibs.py
-daily.py
+db_and_words/
+logs/
+tokens/
