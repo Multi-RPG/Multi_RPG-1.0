@@ -14,7 +14,7 @@ import sys
 def copy_directories():
     # extract zip with setup files
     zip = zipfile.ZipFile('setup_files.zip', 'r')
-    zip.extractall('..\..')
+    zip.extractall('../..')
     zip.close()
 
     # create database from schema extracted
@@ -32,7 +32,7 @@ def create_database():
         # exit script if they do not
         else:
             sys.exit(0)
-            
+
     # create database
     connection = sqlite3.connect('../../db_and_words/hangman.db')
     # open our database schema
