@@ -2,6 +2,7 @@
 import random
 import asyncio
 import re
+import discord
 from discord.ext import commands
 from Users import Users
 from random import choices
@@ -27,7 +28,7 @@ class Games:
 
     '''ROB FUNCTION'''
     @has_account()
-    @commands.cooldown(1, 3600, commands.BucketType.user)
+    @commands.cooldown(1, 1, commands.BucketType.user)
     @commands.command(name='rob', description='Steal money from others', brief='can use =steal',
                       aliases=['thief', 'thieve', 'ROB', 'steal', 'mug'], pass_context=True)
     async def rob(self, context, *args):
@@ -35,7 +36,6 @@ class Games:
         robber = Users(context.message.author.id)
         # declare 30% fail chance, used to calculate chance of failing rob
         fail_chance = 30
-        level_difference = 0
         # pick a random user in the server to rob
         # target variable will function as the victim user's "english" name
         target = random.choice(list(context.message.server.members))
@@ -44,57 +44,116 @@ class Games:
         victim_id = target.id
         counter = 1
 
-        # if randomly chosen victim has an account, and robber specified NO target, account for any level difference
-        if not args and victim.find_user() == 1:
-            level_difference = (robber.get_user_level(0) - victim.get_user_level(0))
-
         # if they specified a rob target, change the random target to their specified target
         if args:
-            # retrieve rob target
-            target = args[0]
-            # use regex to extract only the user-id from the user targeted
-            victim_id = int(re.findall("\d+", target)[0])
-            victim = Users(victim_id)
-            # higher fail chance, 35%, if they want to specify a rob target
-            fail_chance = 35
-            # if the target doesn't have an account, change fail chance back to 30% and the target will reroll next loop
-            if victim.find_user() == 0:
-                fail_chance = 30
-                await self.client.say(context.message.author.mention +
-                                      " Your rob target doesn't have an account."
-                                      "\n**Rerolling** rob target now!")
+            try:
+                # use regex to extract only the user-id from the user targeted
+                victim_id = re.findall("\d+", args[0])[0]
+                victim = Users(victim_id)
 
-        # while the user to rob is yourself, re-roll the target
+                # get_member() returns the "member" object that matches an id provided
+                target = context.message.server.get_member(victim_id)
+                # higher fail chance, 35%, if they want to specify a rob target
+                fail_chance = 35
+                # if the target doesn't have an account, change fail chance back to 30% and the target will reroll next loop
+                if victim.find_user() == 0:
+                    fail_chance = 30
+                    await self.client.say(context.message.author.mention +
+                                          " Your rob target doesn't have an account."
+                                          "\n**Rerolling** rob target now!")
+                if robber.get_user_peace_status() == 1:
+                    fail_chance = 30
+                    await self.client.say(context.message.author.mention +
+                                          ' You are in :dove: **peace mode** :dove: and cannot use =rob @user.'
+                                          '\n**Rerolling** rob target now!')
+
+                    # pick a random user in the server to rob
+                    # target variable will function as the victim user's "english" name
+                    target = random.choice(list(context.message.server.members))
+                    # make an instance of the target
+                    victim = Users(target.id)
+                    victim_id = target.id
+                elif victim.get_user_peace_status() == 1:
+                    fail_chance = 30
+                    await self.client.say(context.message.author.mention +
+                                          ' That target is in :dove: **peace mode** :dove: and exempt to =rob @user.'
+                                          '\n**Rerolling** rob target now!')
+
+                    # pick a random user in the server to rob
+                    # target variable will function as the victim user's "english" name
+                    target = random.choice(list(context.message.server.members))
+                    # make an instance of the target
+                    victim = Users(target.id)
+                    victim_id = target.id
+
+            except:
+                pass
+
+        # while the user to rob is the robber, re-roll the target
         # while the user to rob does not have an account in the database, re-roll the target
-        # while the user to rob is not within 3 levels of yourself, re-roll the target
-        while victim_id == context.message.author.id or victim.find_user() == 0 or level_difference > 3:
-            # only try 60 members in the user's server
+        while victim_id == context.message.author.id or victim.find_user() == 0:
+            # only try 120 members in the user's server
             # otherwise if the user was the sole player with an account in the discord server, infinite while loop
             # this part is inefficient, but only way I can think of right now with discord's functionality
-            if counter == 60:
-                await self.client.say('No users found to rob...')
-                return
+            if counter == 120:
+                # no users were found to rob if we hit 120 in the counter
+                # calculate random integer 1-100
+                # if the result is within 1 through fail chance, they failed the rob, so take bail money and return
+                if fail_chance >= random.randint(1, 100) >= 1:
+                    robber_level = robber.get_user_level(0)
+
+                    bail = int(robber_level * 8.4)
+                    robber.update_user_money(bail * -1)
+
+                    msg = '<a:policesiren2:490326123549556746> :oncoming_police_car: ' \
+                          '<a:policesiren2:490326123549556746>\n<a:monkacop:490323719063863306>' \
+                          '\u200B \u200B \u200B \u200B \u200B \u200B \u200B \u200B \u200B \u200B' \
+                          '<a:monkacop:490323719063863306>\n' + 'Police shot you in the process.\n' \
+                          'You spent **$' + str(bail) + '** to bail out of jail.'
+
+                    # embed the rob failure message, set thumbnail to 80x80 of a "police siren" gif
+                    em = discord.Embed(description=msg, colour=0x607d4a)
+                    em.set_thumbnail(url="https://cdn.discordapp.com/emojis/490326123549556746.gif?size=80")
+                    await self.client.say(embed=em)
+                    return
+                else:
+                    # if they passed the fail test, give the user a small prize and return
+                    bonus_prize = int(robber.get_user_level(0) * 29.3)
+                    robber.update_user_money(bonus_prize)
+                    msg = '**No users found to rob...** ' \
+                          '\nOn the way back to your basement, you found **$' + str(bonus_prize) + '** ' + \
+                          '<:poggers:490322361891946496>'
+                    # embed the rob confirmation message, set thumbnail to 40x40 of a "ninja" gif
+                    em = discord.Embed(description=msg, colour=0x607d4a)
+                    em.set_thumbnail(url="https://cdn.discordapp.com/emojis/419506568728543263.gif?size=40")
+                    await self.client.say(embed=em)
+                    return
             target = random.choice(list(context.message.server.members))
             # create a new instance of victim each loop
             # in order to check if the reroll has an account in database
             victim = Users(target.id)
             victim_id = target.id
             counter += 1
-            if victim.find_user() == 1:
-                level_difference = abs(robber.get_user_level(0) - victim.get_user_level(0))
+
 
         # calculate random integer 1-100
         # if the result is within 1 through fail chance, they failed the rob
         if fail_chance >= random.randint(1, 100) >= 1:
             robber_level = robber.get_user_level(0)
 
-            bail = int(robber_level * 5.3)
+            bail = int(robber_level * 10.4)
             robber.update_user_money(bail * -1)
-            await self.client.say('<a:policesiren2:490326123549556746> :oncoming_police_car: '
-                                  '<a:policesiren2:490326123549556746>\n'
-                                  '<a:monkacop:490323719063863306>         <a:monkacop:490323719063863306>\n**'
-                                  '' + str(target) + '** dodged and the police shot you in the process.\n'
-                                  'You spent **$' + str(bail) + '** to bail out of jail.')
+
+            msg = '<a:policesiren2:490326123549556746> :oncoming_police_car: ' \
+                  '<a:policesiren2:490326123549556746>\n<a:monkacop:490323719063863306>' \
+                  '\u200B \u200B \u200B \u200B \u200B \u200B \u200B \u200B \u200B \u200B' \
+                  '<a:monkacop:490323719063863306>\n**' + str(target.display_name) + '**' \
+                  ' dodged and the police shot you in the process.\nYou spent **$' + str(bail) + '** to bail out of jail.'
+
+            # embed the rob failure message, set thumbnail to 80x80 of a "police siren" gif
+            em = discord.Embed(description=msg, colour=0x607d4a)
+            em.set_thumbnail(url="https://cdn.discordapp.com/emojis/490326123549556746.gif?size=80")
+            await self.client.say(embed=em)
             return
 
         # we passed the dodge check, so reward thief with prize and bonus prize
@@ -103,29 +162,64 @@ class Games:
         robber_level = robber.get_user_level(0)
 
         # the victim will only lose the prize, not the bonus prize
-        prize = int(victim_level * 8.2)
-        bonus_prize = int(robber_level * 24.4)
+        bonus_prize = int(robber_level * 29.3)
 
-        # balancing mechanic, only let victims lose money by robbers when they are greater than -50x their level in money
-        if victim_money > (victim_level * -50):
+        # the prize will begin by scaling by victim's level
+        prize = int(victim_level * 9.4)
+        # if prize greater than the robber's maximum prize amount, decrease the standard prize to compensate
+        if prize > int(robber_level * 9.4):
+            prize = int(robber_level * 9.4)
+        # if prize less than the robber's maximum prize amount, increase the bonus prize to compensate
+        if prize < int(robber_level * 9.4):
+            bonus_prize += int(robber_level * 9.4 - prize)
+
+
+        # balancing mechanic, don't let victims lose any more money when they have less money than -50x their level
+        if not victim_money < (victim_level * -50):
             # subtract prize from victim
             victim.update_user_money(prize * -1)
         # reward robber with prize and bonus prize
         robber.update_user_money(prize + bonus_prize)
-        await self.client.say('**Success!** <:poggers:490322361891946496> '
-                              'You robbed **$' + str(prize) + '** (+**$' + str(bonus_prize)
-                              + '**) from **' + str(target) + '**')
+        msg = '**Success!** <:poggers:490322361891946496> ' \
+              '\nRobbed **$' + str(prize) + '** (+**$' + str(bonus_prize) \
+              + '**) from **' + str(target.display_name) + '**'
 
+        # embed the rob confirmation message, set thumbnail to 40x40 of a "ninja" gif
+        em = discord.Embed(description=msg, colour=0x607d4a)
+        em.set_thumbnail(url="https://cdn.discordapp.com/emojis/419506568728543263.gif?size=40")
+        await self.client.say(embed=em)
 
-    '''BATTLE FUNCTION'''
+    '''TOURNAMENT BATTLE FUNCTION'''
     @has_account()
+    @commands.cooldown(1, 10, commands.BucketType.user)
+    @commands.command(name='tournament', aliases=['TOURNAMENT', 'tourney', 'TOURNEY'], pass_context=True)
+    async def enter_daily_tournament(self, context):
+        # the bulk work of this feature is when the results are calculated from daily_maintenance.py
+        # create instance of user who wants to enter the daily, server-specific colosseum tournament
+        fighter = Users(context.message.author.id)
+        # update their tourney_server_id entry to be the server they executed the command on
+        msg = fighter.update_user_tourney_server_id(context.message.server.name, context.message.server.id)
+
+        # embed the tourney registration confirmation message, set thumbnail to 40x40 of the respective server's icon
+        em = discord.Embed(description=msg, colour=0x607d4a)
+        thumb_url = "https://cdn.discordapp.com/icons/{0.id}/{0.icon}.webp?size=40".format(context.message.server)
+        em.set_thumbnail(url=thumb_url)
+        await self.client.say(embed=em)
+
+
+    '''1v1 BATTLE FUNCTION'''
+    @has_account()
+    @commands.cooldown(1, 30, commands.BucketType.user)
     @commands.command(name='fight', description='Battle another user in your server',
                       brief='can use "fight @user X --X being amount to bet"',
-                      aliases=['battle', 'BATTLE', 'FIGHT'], pass_context=True)
+                      aliases=['battle', 'BATTLE', 'FIGHT', 'duel', 'DUEL'], pass_context=True)
     async def battle_user(self, context, *args):
         # retrieve how much the fighter is betting on the battle
         if len(args) == 2:
             bet = int(args[1])
+            if bet < 1:
+                await self.client.say('Bet cant be negative...')
+                return
         else:
             await self.client.say('No bet specified, defaulting to **$10**\n ** **')
             bet = 10
@@ -154,8 +248,8 @@ class Games:
                 return
 
             # give target the prompt to ask if they will accept the challenge
-            await self.client.say(target + ', you were challenged for **$' + str(bet) +
-                                  '**\n:crossed_swords: Type **yes** to accept this battle. :crossed_swords: ')
+            alert_msg = await self.client.say(target + ', you were challenged for **$' + str(bet) +
+                                              '**\n:crossed_swords: Type **yes** to accept this battle. :crossed_swords: ')
 
             # made this check function with the help of discord API documentation
             # it will be called below to check if the confirmation response to fight is from fighter2
@@ -165,25 +259,33 @@ class Games:
             # (try to) wait for a battle acceptance from other user
             try:
                 confirm = await self.client.wait_for_message(timeout=60, check=fighter2check)
+                await self.client.delete_message(alert_msg)
                 if confirm.clean_content.upper() == 'YES':
+                    await self.client.delete_message(confirm)
                     # have to use 2 messages to enlarge the emojis
-                    await self.client.say('**Commencing battle!** Fight will conclude in 10 seconds...')
-                    await self.client.say('<a:worryfight1:493220414206509056> <a:worryfight2:493220431738699786>')
+                    msg = context.message.author.mention + ' vs ' + args[0] + ' for **$' + str(bet) \
+                          + '**\nFight will conclude in 10 seconds...'
+                    # embed the duel alert message, set thumbnail to a "nunchuck frog" gif of size 64x64
+                    em = discord.Embed(title="", colour=0x607d4a)
+                    em.add_field(name="DUEL ALERT", value=msg, inline=True)
+                    em.set_thumbnail(url="https://cdn.discordapp.com/emojis/493220414206509056.gif?size=64")
+
+                    await self.client.say(embed=em)
                     await asyncio.sleep(10)
-                    # get the difference in player level between each player
-                    difference = fighter1.get_user_level(0) - fighter2.get_user_level(0)
 
-                    # if fighter1 is higher level or same level
-                    if difference >= 0:
-                        # decide winner, with fighter 1 having better odds (unless same level)
-                        winner = battle_decider(1, 2, difference)
+                    # get the stats of each fighter
+                    # algorithm for calculating a fighter's stats in duels: (item score + user level*2 + 20)
+                    f1_stats = fighter1.get_user_item_score() + (fighter1.get_user_level(0)*2) + 20
+                    f2_stats = fighter2.get_user_item_score() + (fighter2.get_user_level(0)*2) + 20
+                    total = (f1_stats + f2_stats)
+                    f1_weight = f1_stats / total
+                    f2_weight = f2_stats / total
 
-                    # if fighter2 is higher level
-                    elif difference < 0:
-                        # make level difference positive before calling our function
-                        difference *= -1
-                        # decide winner, with fighter 2 having better odds
-                        winner = battle_decider(2, 1, difference)
+
+                    # decide winner with custom function
+                    # if it returns 1, fighter 1 won
+                    # if it returns 2, fighter 2 won
+                    winner = battle_decider(1, 2, f1_weight, f2_weight)
 
                     # check if they tried to exploit the code by spending all their money during the battle
                     if fighter1.get_user_money(0) < bet or fighter2.get_user_money(0) < bet:
@@ -194,25 +296,26 @@ class Games:
                     # check who the winner was returned as
                     # update account balances respectively
                     if winner == 1:
-                        await self.client.say(context.message.author.mention + ' won **$' + str(bet)
-                                              + '** by defeating ' + target)
+                        msg = context.message.author.mention + ' won **$' + str(bet) \
+                              + '** by defeating ' + target
+                        # embed the duel results message
+                        em = discord.Embed(description=msg, colour=0x607d4a)
+                        await self.client.say(embed=em)
+
+                        # distribute money properly
                         fighter1.update_user_money(bet)
-                        # update winner's battle records... battles_won + 1 and total_winnings + X
-                        fighter1.update_user_records(0, 1, bet)
-
                         fighter2.update_user_money(bet * -1)
-                        # update loser's battle records... battles_lost + 1
-                        fighter2.update_user_records(1, 0, 0)
-                    else:
-                        await self.client.say(target + ' won **$' + str(bet) +
-                                              '** by defeating ' + context.message.author.mention)
-                        fighter1.update_user_money(bet * -1)
-                        # update loser's battle records... battles_lost + 1
-                        fighter1.update_user_records(1, 0, 0)
 
+                    elif winner == 2:
+                        msg = target + ' won **$' + str(bet) + '** by defeating ' + context.message.author.mention
+                        # embed the duel results message
+                        em = discord.Embed(description=msg, colour=0x607d4a)
+                        await self.client.say(embed=em)
+
+                        # distribute money properly
+                        fighter1.update_user_money(bet * -1)
                         fighter2.update_user_money(bet)
-                        # update winner's battle records... battles_won + 1 and total_winnings + X
-                        fighter2.update_user_records(0, 1, bet)
+
                 else:
                     await self.client.say('You rejected the battle! ' + target)
 
@@ -220,14 +323,15 @@ class Games:
             except:
                 await self.client.say('**Battle request ignored...** <a:pepehands:485869482602922021>')
 
-
+    
 
         # if they used syntax incorrectly
         except:
             await self.client.say(context.message.author.mention +
-                                  '```ml\nuse =fight like so: **=fight @user X**      -- X being amount to bet```')
+                                  '```ml\nuse =fight like so: "=fight @user X"  -- X being amount to bet```')
 
     '''FLIP COIN FUNCTION'''
+    @commands.cooldown(1, 6, commands.BucketType.user)
     @commands.command(name='flip', description='Flip a coin to earn social status.',
                       brief='can use "=flip" or "=flip X", with X being heads or tails',
                       aliases=['f', 'flpi', 'FLIP', 'F'], pass_context=True)
@@ -236,60 +340,86 @@ class Games:
         win = 0
 
         # first, check if they specified a bet and they have enough money for it
-        if args:
+        # this try/catch block will simply pass if they did not specify a bet
+        try:
             user = Users(context.message.author.id)
-            bet = int(args[1])
+
+            # Convenient way to flip all
+            if type(args[1]) == str and args[1] == 'all':
+                bet = user.get_user_money(0)
+            else:
+                bet = int(args[1])
+
             # pass 0 to return integer version of money, see USERS.PY function
             if bet > user.get_user_money(0) or bet < 1:
-                await self.client.say("You don't have enough money for that bet..."
-                                      " <a:pepehands:485869482602922021> " + context.message.author.mention)
-                return
+                error_msg = await self.client.say("You don't have enough money for that bet..."
+                                                  " <a:pepehands:485869482602922021> " + context.message.author.mention)
+                await asyncio.sleep(6)
+                await self.client.delete_message(error_msg)
 
+                return
+        except:
+            pass
+
+
+        gif = await self.client.say("https://media1.tenor.com/images/938e1fc4fcf2e136855fd0e83b1e8a5f/tenor.gif?itemid=5017733")
+        await asyncio.sleep(3)
+        await self.client.delete_message(gif)
 
         # check if they specified a guess of heads or tails
         # process if they won or not
         try:
-            if args[0] == 'heads':
+            if args[0] in ['heads', 'HEADS']:
                 if result == 1:
                     msg = '<:heads:486705167643967508> Result is **Heads**! You win! <a:worryHype:487059927731273739>'
                     win = 1
                 else:
                     msg = '<:heads:486705184370589718> Result is **Tails**! You lost. <a:pepehands:485869482602922021>'
-            else:
+            elif args[0] in ['tails', 'TAILS']:
                 if result == 1:
                     msg = '<:heads:486705167643967508> Result is **Heads**! You lost. <a:pepehands:485869482602922021>'
                 else:
                     msg = '<:heads:486705184370589718> Result is **Tails**! You win! <a:worryHype:487059927731273739>'
                     win = 1
+            else:
+                error_msg = await self.client.say('Did you mean heads or tails? Try **=flip heads** or **=flip tails**.')
+                await asyncio.sleep(6)
+                await self.client.delete_message(error_msg)
+                return
         except:
             # no arguments provided at all. so just give a result
-            print("No argument specified for betting on the coin side.")
             if result == 1:
                 msg = '<:heads:486705167643967508> Result is **Heads**!'
             else:
                 msg = '<:heads:486705184370589718> Result is **Tails**!'
-        await self.client.say(msg + ' ' + context.message.author.mention)
 
         # if they specified a "guess" and "bet" that was valid, check if they won
         # note this will only pass through if "bet" was assigned through the earlier try/catch
         try:
             if win == 1:
                 # triple user's bet if they win, add to account
-                msg = user.update_user_money(bet)
+                msg2 = '\n' + user.update_user_money(bet)
             else:
                 # remove user's bet from their account if they lose
-                msg = user.update_user_money(bet * -1)
+                msg2 = '\n' + user.update_user_money(bet * -1)
                 # if they have $0 after that flip, give a donation dollar to discourage account re-creation
                 # pass in 0 for get_user_money to return the money as integer, SEE USERS.PY
                 if user.get_user_money(0) == 0:
-                    msg += "\n** **\n_The gambling gods have shown mercy on your bankrupt existence, and given you **$1**_"
-                    msg += "\n" + user.update_user_money(1)
-            await self.client.say(msg)
+                    msg2 += "\n** **\n_Mission failed. We'll get 'em next time. Take this **$1**._"
+                    msg2 += "\n" + user.update_user_money(1)
         except:
-            print("No bet specified")
+            pass
+
+        try:
+            # embed the flip results message with money won and send
+            em = discord.Embed(description=msg + msg2, colour=0x607d4a)
+            await self.client.say(context.message.author.mention, embed=em)
+        except:
+            # embed the flip results message and send
+            em = discord.Embed(description=msg, colour=0x607d4a)
+            await self.client.say(context.message.author.mention, embed=em)
 
     '''HANGMAN main function'''
-
     @commands.command(name='hangman', description='Guess the word in order to survive.',
                       brief='can use "=hangman", type "stop" or "cancel" to end game',
                       aliases=['hm', 'hang', 'HM', 'HANGMAN'], pass_context=True)
@@ -312,143 +442,169 @@ class Games:
                                                                                           '7. US States\n'
                                                                                           '8. Sports & Hobbies```')
                 return
-            correct_word, category, underscore_sequence = pick_word(int(args[0]))
-
+            try:
+                correct_word, category, underscore_sequence = pick_word(int(args[0]))
+            except:
+                await self.client.say('Use a category number! (**Ex for Beach**: =hm 5)')
+                return
         # if no category was specified in argument by user...
         else:
             # pick random category 1-8
             rand_category = random.randint(1, 8)
             correct_word, category, underscore_sequence = pick_word(rand_category)
 
-        await self.client.say(context.message.author.mention + ' Word category is: **```fix\n' + category + '```**')
-        await self.client.say('** **')
-        # print the hangman ascii setup
-        await self.client.say(hangmen[0])
-        await self.client.say('** **\n' + "".join(underscore_sequence))
+        # print the hangman starting interface and ascii setup
         # use ** ** for empty line, discord doesn't allow empty messages.
         # also, using "".join because discord api can't  print lists.
         # we could cast, but the format would be unfriendly for the game.
+        cat_msg = await self.client.say(context.message.author.mention + ' Word category is: **```fix\n' + category + '\n```**')
+        art_msg = await self.client.say('\n** **\n' + hangmen[0] + '\n** **\n' + "".join(underscore_sequence))
 
+        counter = 0
         while True:  # main game loop
-            await self.client.say('*Guess a letter or the entire word now...*')
-            guess = await self.client.wait_for_message(author=context.message.author,
-                                                       timeout=60)  # wait for user's guess
+            guess_prompt_msg = await self.client.say('*Guess a letter or the entire word now...*')
+            guess_msg = await self.client.wait_for_message(author=context.message.author,
+                                                       timeout=60)  # wait for user's guess_msg
+
+            # make already_guessed boolean to facilitate a while loop that will loop if the user makes duplicate guess
             already_guessed = 1
-            while already_guessed == 1:  # loop that will exit immediately if letter guess isn't a repeat
-                if guess.clean_content.upper() in str("".join(guessed_letters)):
-                    await self.client.purge_from(context.message.channel, limit=1)
-                    await self.client.say('\n*You already tried that. Guess a different letter now...*')
-                    # wait for user's guess now
-                    guess = await self.client.wait_for_message(author=context.message.author, timeout=30)
-                    # account for that extra message, so delete last one
-                    await self.client.purge_from(context.message.channel, limit=1)
+            while already_guessed == 1:  # loop that will exit immediately if letter guess_msg isn't a repeat
+                if guess_msg.clean_content.upper() in str("".join(guessed_letters)):
+                    await self.client.delete_message(guess_msg)
+                    already_guessed_msg = await self.client.say('\n*You already tried that.'
+                                                                ' Guess a different letter now...*')
+                    # wait for user's guess_msg now
+                    guess_msg = await self.client.wait_for_message(author=context.message.author, timeout=30)
+                    await self.client.delete_message(already_guessed_msg)
                 else:
                     already_guessed = 0
 
             '''RUN WIN CHECKS AND CANCEL CHECKS NOW'''
             # run conditionals to check if they guessed entire word or they used a cancel keyword
-            print(guess.clean_content.upper() + ' and correct word: ' + correct_word)  # console print
-            if guess.clean_content.upper() == correct_word:
-                await self.client.purge_from(context.message.channel, limit=6)
+            print(guess_msg.clean_content.upper() + ' and correct word: ' + correct_word)  # console print
+            if guess_msg.clean_content.upper() == correct_word:
+                await self.client.delete_message(cat_msg)
+                await self.client.delete_message(art_msg)
+                await self.client.delete_message(guess_prompt_msg)
+                await self.client.delete_message(guess_msg)
+                # pick_result_msg, underscore_seq_msg, guessed_list_msg will only exist if the game has gone at least 1 loop
+                if counter > 0:
+                    await self.client.delete_message(pick_result_msg)
+                    await self.client.delete_message(underscore_seq_msg)
+                    await self.client.delete_message(guessed_list_msg)
                 await self.client.say(hangmen[wrong_guesses])
-                await self.client.say('**Correct word pick** <a:worryHype:487059927731273739>')
-                await self.client.say('You **won** the game!! <a:worryHype:487059927731273739> Correct word was:'
-                                      ' **' + correct_word.upper() + '** ' + context.message.author.mention)
-                # add $200 to user's bank account now
+                # prepare win message string & embed it
+                win_msg = '**Correct word pick** <a:worryHype:487059927731273739> ' + ' Correct word was: ' + \
+                          '**' + correct_word.upper() + '**\n'
+                # add WINNINGS to user's bank account now
                 user = Users(context.message.author.id)
-                await self.client.say(user.update_user_money(200))
+                prize = user.get_user_level(0) * 8
+                win_msg += "Won **$" + str(prize) + "**... " + user.update_user_money(prize)
+                em = discord.Embed(description=win_msg, colour=0x607d4a)
+                await self.client.say(context.message.author.mention, embed=em)
                 return
 
-            if guess.clean_content.upper() in ['STOP', 'CANCEL']:
-                await self.client.purge_from(context.message.channel, limit=6)
+            if guess_msg.clean_content.upper() in ['STOP', 'CANCEL']:
+                await self.client.delete_message(cat_msg)
+                await self.client.delete_message(art_msg)
+                await self.client.delete_message(guess_prompt_msg)
+                await self.client.delete_message(guess_msg)
+                # pick_result_msg, underscore_seq_msg, guessed_list_msg will only exist if the game has gone at least 1 loop
+                if counter > 0:
+                    await self.client.delete_message(pick_result_msg)
+                    await self.client.delete_message(underscore_seq_msg)
+                    await self.client.delete_message(guessed_list_msg)
                 await self.client.say('**Cancelled** the game!! <a:pepehands:485869482602922021> Correct word was: '
                                       '**' + correct_word.upper() + '** ' + context.message.author.mention)
                 return
 
             # quick win check, check for any underscores left to fill.
             # if unknown_letters ends up as 0 for this iteration, then there are no letters left to guess.
-            num_matches, underscore_sequence = find_matches(guess, correct_word, underscore_sequence)
+            num_matches, underscore_sequence = find_matches(guess_msg, correct_word, underscore_sequence)
             unknown_letters = 0
             for x in underscore_sequence:
-                if x == '\u2581':  # if it's an underscore still, the letter is still unknown to the user
+                if x == '\u2581':  # if there is a blank underscore , the letter is still unknown to the user
                     unknown_letters += 1
             if unknown_letters == 0:
-                await self.client.purge_from(context.message.channel, limit=6)
+                await self.client.delete_message(cat_msg)
+                await self.client.delete_message(art_msg)
+                await self.client.delete_message(guess_prompt_msg)
+                await self.client.delete_message(guess_msg)
+                # pick_result_msg, underscore_seq_msg, guessed_list_msg will only exist if the game has gone at least 1 loop
+                if counter > 0:
+                    await self.client.delete_message(pick_result_msg)
+                    await self.client.delete_message(underscore_seq_msg)
+                    await self.client.delete_message(guessed_list_msg)
                 await self.client.say(hangmen[wrong_guesses])
-                await self.client.say('You **won** the game!! <a:worryHype:487059927731273739> Correct word was: '
-                                      '**' + correct_word.upper() + '** ' + context.message.author.mention)
-                # add $500 to user's bank account now
+                # prepare win message string & embed it
+                win_msg = 'You **won** the game!!' + \
+                          ' <a:worryHype:487059927731273739> Correct word was: ' + \
+                          '**' + correct_word.upper() + '**\n'
+                # add WINNINGS to user's bank account now
                 user = Users(context.message.author.id)
-                await self.client.say(user.update_user_money(300))
+                prize = user.get_user_level(0) * 8
+                win_msg += "Won **$" + str(prize) + "**... " + user.update_user_money(prize)
+                em = discord.Embed(description=win_msg, colour=0x607d4a)
+                await self.client.say(context.message.author.mention, embed=em)
                 return
 
-            # clear up last 6 messages, only 5 if first round, to reduce bot spam
-            if len(guessed_letters) == 1:
-                await self.client.purge_from(context.message.channel, limit=5)
-            else:
-                await self.client.purge_from(context.message.channel, limit=6)
 
-            # print whether they guessed a correct letter or not
+            # now clear all messages besides category message (cat_msg variable)
+            await self.client.delete_message(art_msg)
+            await self.client.delete_message(guess_prompt_msg)
+            await self.client.delete_message(guess_msg)
+            # pick_result_msg, underscore_seq_msg, guessed_list_msg will only exist if the game has gone at least 1 loop
+            if counter > 0:
+                await self.client.delete_message(pick_result_msg)
+                await self.client.delete_message(underscore_seq_msg)
+                await self.client.delete_message(guessed_list_msg)
+
+            # if user's guess has zero matches in the correct word
             if num_matches == 0:
                 wrong_guesses += 1  # no letters matched, so they guessed a wrong letter
-                if len(guess.clean_content) == 1:
-                    await self.client.say('**Wrong letter pick** <a:pepehands:485869482602922021>')
+                if len(guess_msg.clean_content) == 1:
+                    pick_result_msg = await self.client.say('**Wrong letter pick** <a:pepehands:485869482602922021>')
                 else:
-                    await self.client.say('**Wrong word pick** <a:pepehands:485869482602922021>')
+                    pick_result_msg = await self.client.say('**Wrong word pick** <a:pepehands:485869482602922021>')
+            # if user's guess has any matches found in the correct word
             else:
-                await self.client.say('**Correct letter pick** <a:worryHype:487059927731273739>')
+                pick_result_msg = await self.client.say('**Correct letter pick** <a:worryHype:487059927731273739>')
                 # don't need "correct word pick" next because that would trigger
                 # in the conditional right after the guess is taken
 
             # print the ascii art corresponding to wrong guesses
             if wrong_guesses < 6:
-                await self.client.say(hangmen[wrong_guesses])
+                art_msg = await self.client.say(hangmen[wrong_guesses])
             elif wrong_guesses == 6:
+                await self.client.delete_message(cat_msg)
+                await self.client.delete_message(pick_result_msg)
                 await self.client.say(hangmen[6])
-                await self.client.say('\nYou were **hanged**! <a:pepehands:485869482602922021> The word was: '
-                                      '**' + correct_word + '**\n' + context.message.author.mention)
+                losing_msg = '\nYou were **hanged**! <a:pepehands:485869482602922021> ' + \
+                             'The word was: ' + '**' + correct_word + '**\n'
+                em = discord.Embed(description=losing_msg, colour=0x607d4a)
+                await self.client.say(context.message.author.mention, embed=em)
                 return
 
             # print underscores/letters, our main interface
-            await self.client.say('** **\n**' + "".join(underscore_sequence) + '**')
+            underscore_seq_msg = await self.client.say('** **\n**' + "".join(underscore_sequence) + '**')
             # add last guessed letter to our guessed-so-far list
-            guessed_letters, all_guessed = add_guess_to_list(guess, guessed_letters)
+            guessed_letters, all_guessed = add_guess_to_list(guess_msg, guessed_letters)
             # print all letters guessed so far
-            # all_guessed is just the string version of guessed_letters (a list version)
-            await self.client.say('** ```fix\nGuessed so far: ' + all_guessed + '``` **')
+            guessed_list_msg = await self.client.say('** ```fix\nGuessed so far: ' + all_guessed + '``` **')
+            # add 1 to the main game loop's counter
+            counter += 1
 
 
 def setup(client):
     client.add_cog(Games(client))
 
 
-def battle_decider(higher_odds, lower_odds, difference):
-    # the maximum player level difference is 9
+def battle_decider(fighter1, fighter2, fighter1_weight, fighter2_weight):
     # choices function maps a selection to a probability, and selects one choice based off probability
-    if difference == 1:
-        winner = choices([higher_odds, lower_odds], [.52, .48])
-    elif difference == 2:
-        winner = choices([higher_odds, lower_odds], [.54, .46])
-    elif difference == 3:
-        winner = choices([higher_odds, lower_odds], [.56, .44])
-    elif difference == 4:
-        winner = choices([higher_odds, lower_odds], [.58, .42])
-    elif difference == 5:
-        winner = choices([higher_odds, lower_odds], [.60, .40])
-    elif difference == 6:
-        winner = choices([higher_odds, lower_odds], [.62, .38])
-    elif difference == 7:
-        winner = choices([higher_odds, lower_odds], [.64, .36])
-    elif difference == 8:
-        winner = choices([higher_odds, lower_odds], [.66, .34])
-    elif difference == 9:
-        winner = choices([higher_odds, lower_odds], [.68, .32])
-    else:
-        winner = choices([higher_odds, lower_odds], [.50, .50])
-
+    winner = choices([fighter1, fighter2], [fighter1_weight, fighter2_weight])
+    print(winner)
     # choices function returning [1] or [2] so use regex to pull the integers out
     return int(re.findall("\d+", str(winner))[0])
-
 
 def pick_word(cat):
     if cat == 1:

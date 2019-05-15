@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+import asyncio
+import discord
 from discord.ext import commands
 from Users import Users
 
@@ -25,18 +27,29 @@ class Lottery:
     async def enter_lottery(self, context):
         # create instance of the user entering the lotto
         entry = Users(context.message.author.id)
-        # if they already purchased a premium ticket, don’t let them overwrite it by mistake with a free ticket
-        if entry.get_user_ticket_status() == 2:
-            await self.client.say('**ERROR!** You have already entered and paid your $100 entry for the **premium lottery** today! <a:worryhead:525164940231704577>')
+        # if they already got a ticket today, don’t let them overwrite it
+        if entry.get_user_ticket_status() == 2 or entry.get_user_ticket_status() == 1:
+            error_msg = await self.client.say('**ERROR!** You have already entered a **lottery** today!'
+                                              '<a:worryhead:525164940231704577>')
+            await asyncio.sleep(8)
+            await self.client.delete_message(error_msg)
+            await self.client.delete_message(context.message)
             return
             
-        await self.client.say('<a:worryhead:525164940231704577> Welcome to the **Basic** Lotto! <a:worryhead:525164940231704577>\n'
-                              ' Please enter your **ticket guess** now (1-5):')
-        guess = await self.client.wait_for_message(author=context.message.author,
-                                                   timeout=60)  # wait for user's ticket guess
+        intro_msg = 'Welcome to the **Basic** Lotto!\n Please enter your **ticket guess** now (1-5):'
+        # embed intro message, then overwrite the variable with the actual message object
+        em = discord.Embed(description=intro_msg, colour=0x607d4a)
+        em.set_thumbnail(url="https://cdn.discordapp.com/emojis/525164940231704577.gif?size=40")
+        intro_msg = await self.client.say(embed=em)
+
+        # wait for user's ticket guess
+        guess = await self.client.wait_for_message(author=context.message.author, timeout=60)
 
         if not guess.clean_content.isdigit():
-            await self.client.say('Cancelled lottery entry!')
+            cancel_msg = await self.client.say('**Cancelled** lottery entry!')
+            await asyncio.sleep(7)
+            await self.client.delete_message(intro_msg)
+            await self.client.delete_message(cancel_msg)
             return
 
         # next loop may be redundant, but you can never know what your end-users will do
@@ -46,11 +59,25 @@ class Lottery:
             # give them 3 attempts to input a 1-5 integer
             if counter == 3:
                 return
-            await self.client.say('Please enter your **ticket guess** again, as an integer (1-5):')
-            guess = await self.client.wait_for_message(author=context.message.author,
-                                                       timeout=60)  # wait for user's ticket guess
+            # delete their incorrect number guess
+            await self.client.delete_message(guess)
+            # prompt for valid number
+            retry_msg = await self.client.say('Please enter an integer (1-5):')
+            # wait for user's ticket guess
+            guess = await self.client.wait_for_message(author=context.message.author, timeout=60)
+            # delete retry prompt
+            await self.client.delete_message(retry_msg)
 
-        await self.client.say(entry.update_user_lottery_guess(guess.clean_content, 1))
+
+        confirm_msg = entry.update_user_lottery_guess(guess.clean_content, 1)
+        # embed intro message, then overwrite the variable with the actual message object
+        em = discord.Embed(description=confirm_msg, colour=0x607d4a)
+        em.set_thumbnail(url="https://cdn.discordapp.com/emojis/518016461604913162.gif?size=40")
+        await self.client.say(embed=em)
+        # wait 10 seconds, then clean up bot's spam
+        await asyncio.sleep(10)
+        await self.client.delete_message(guess)
+        await self.client.delete_message(intro_msg)
         
     '''ENTER PREMIUM LOTTERY FUNCTION'''
     @has_account()
@@ -60,22 +87,41 @@ class Lottery:
     async def enter_lottery2(self, context):
         # create instance of the user entering the lotto
         entry = Users(context.message.author.id)
-        # if they already purchased a premium ticket, don’t let them overwrite it by mistake by purchasing another one
-        if entry.get_user_ticket_status() == 2:
-            await self.client.say('**ERROR!** You have already entered and paid your $99 entry for the **premium lottery** today! <a:worryhead:525164940231704577>')
+        entry_fee = entry.get_user_level(0) * 10
+        # if they already got a ticket today, don’t let them overwrite it
+        if entry.get_user_ticket_status() == 2 or entry.get_user_ticket_status() == 1:
+            error_msg = await self.client.say('**ERROR!** You have already entered a **lottery** today!'
+                                              '<a:worryhead:525164940231704577>')
+            await asyncio.sleep(8)
+            await self.client.delete_message(error_msg)
+            await self.client.delete_message(context.message)
             return
             
-        if entry.get_user_money(0) < 99:
-            await self.client.say('**ERROR!** You do not have **$99** to enter the premium lottery... Use =lotto for the free lotto <a:worryhead:525164940231704577>')
+        if entry.get_user_money(0) < entry_fee:
+            error_msg = await self.client.say('**ERROR!** You do not have **$' + str(entry_fee)
+                                              + '** to enter the premium lottery...'
+                                              + ' Use =lotto for the free lotto <a:worryhead:525164940231704577>')
+            await asyncio.sleep(8)
+            await self.client.delete_message(error_msg)
+            await self.client.delete_message(context.message)
             return
-        
-        await self.client.say('<a:worryhead:525164940231704577> Welcome to the **Premium** Lotto! (tickets cost **$99**) <a:worryhead:525164940231704577>\n'
-                              ' Please enter your **ticket guess** now (1-5):')
-        guess = await self.client.wait_for_message(author=context.message.author,
-                                                   timeout=60)  # wait for user's ticket guess
+
+        intro_msg = 'Welcome to the **Premium** Lotto! _(Your ticket will cost **$' \
+                    + str(entry_fee) + '**)_ \nPlease enter your **ticket guess** now (1-5):'
+
+        # embed intro message, then overwrite the variable with the actual message object
+        em = discord.Embed(description=intro_msg, colour=0x607d4a)
+        em.set_thumbnail(url="https://cdn.discordapp.com/emojis/525164940231704577.gif?size=40")
+        intro_msg = await self.client.say(embed=em)
+
+        # wait for user's ticket guess
+        guess = await self.client.wait_for_message(author=context.message.author, timeout=60)
 
         if not guess.clean_content.isdigit():
-            await self.client.say('Cancelled lottery entry!')
+            cancel_msg = await self.client.say('Cancelled lottery entry!')
+            await asyncio.sleep(8)
+            await self.client.delete_message(intro_msg)
+            await self.client.delete_message(cancel_msg)
             return
 
         # next loop may be redundant, but you can never know what your end-users will do
@@ -85,13 +131,27 @@ class Lottery:
             # give them 3 attempts to input a 1-5 integer
             if counter == 3:
                 return
-            await self.client.say('Please enter your **ticket guess** again, as an integer (1-5):')
-            guess = await self.client.wait_for_message(author=context.message.author,
-                                                       timeout=60)  # wait for user's ticket guess
+            # delete their incorrect number guess
+            await self.client.delete_message(guess)
+            # prompt for valid number
+            retry_msg = await self.client.say('Please enter an integer (1-5):')
+            # wait for user's ticket guess
+            guess = await self.client.wait_for_message(author=context.message.author, timeout=60)
+            # delete retry prompt
+            await self.client.delete_message(retry_msg)
 
         # take the entry fee for premium lottery
-        entry.update_user_money(-99)
-        await self.client.say(entry.update_user_lottery_guess(guess.clean_content, 2))
+        entry.update_user_money(-entry_fee)
+        # register a premium ticket (ticket_active = 2)
+        confirm_msg = entry.update_user_lottery_guess(guess.clean_content, 2)
+        # embed intro message, then overwrite the variable with the actual message object
+        em = discord.Embed(description=confirm_msg, colour=0x607d4a)
+        em.set_thumbnail(url="https://cdn.discordapp.com/emojis/518016461604913162.gif?size=40")
+        await self.client.say(embed=em)
+        # wait 10 seconds, then clean up bot's spam
+        await asyncio.sleep(10)
+        await self.client.delete_message(guess)
+        await self.client.delete_message(intro_msg)
         
     
 
