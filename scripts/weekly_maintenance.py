@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import configparser
 import sys
+import os
 from Database import Database
 from discord.ext import commands
 from pathlib import Path
@@ -8,6 +9,9 @@ from pathlib import Path
 # IMPORTANT: FOR FULL AUTOMATION, SCHEDULE THIS FILE TO RUN AUTOMATICALLY AT AN INTERVAL.
 #   EX: CRONTAB WITH WEEKLY EXECUTION ON MONDAY AT 8AM.
 #   HOWEVER, MAKE SURE TO CHANGE PATH TO YOUR FULL FILE PATH FOR BOT_TOKEN_PATH
+
+# change working directory to parent to simplify file paths
+os.chdir("..")
 
 client = commands.Bot(command_prefix=["=", "%"])
 # set up parser to config through our .ini file with our bot's token

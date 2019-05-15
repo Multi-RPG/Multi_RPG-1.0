@@ -4,6 +4,7 @@ import sys
 import random
 import discord
 import numpy
+import os
 from numpy import random
 from Users import Users
 from Database import Database
@@ -13,6 +14,9 @@ from datetime import date
 
 # IMPORTANT: FOR FULL AUTOMATION, SCHEDULE THIS FILE TO RUN AUTOMATICALLY AT AN INTERVAL.
 #   EX: CRONTAB WITH DAILY EXECUTION AT 8AM. HOWEVER, MAKE SURE TO CHANGE PATH TO YOUR FULL FILE PATH FOR BOT_TOKEN_PATH
+
+# change working directory to parent to simplify file paths
+os.chdir("..")
 
 client = commands.Bot(command_prefix=["=", "%"])
 # set up parser to config through our .ini file with our bot's token
@@ -47,7 +51,7 @@ async def on_ready():
     if items_path.is_file():
         config.read(items_path)
     else:
-        print("\n", "User tokens not found at: ", items_path, "... Please correct file path in Dibs.py file.")
+        print("\n", "Shop items file not found at: ", items_path, "... Please correct file path in daily_maintenance.py file.")
         sys.exit()
 
     # parse through each section in the items in the .ini file
