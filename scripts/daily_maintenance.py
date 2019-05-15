@@ -28,6 +28,7 @@ os.chdir("..")
 
 # startup discord client
 client = commands.Bot(command_prefix=["=", "%"])
+
 # set up parser to config through our .ini file with our bot's token
 config = configparser.ConfigParser()
 bot_token_path = Path("tokens/tokenbot.ini") # use forward slash "/" for path directories

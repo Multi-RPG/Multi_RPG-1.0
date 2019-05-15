@@ -17,7 +17,9 @@ from pathlib import Path
 # change working directory to parent to simplify file paths
 os.chdir("..")
 
+# startup discord client
 client = commands.Bot(command_prefix=["=", "%"])
+
 # set up parser to config through our .ini file with our bot's token
 config = configparser.ConfigParser()
 bot_token_path = Path("tokens/tokenbot.ini") # use forward slash "/" for path directories
@@ -42,7 +44,7 @@ async def on_ready():
     db = Database(0)
     db.connect()
 
-    ''' PERFORM WEEKLY PEACE COOLDOWN RESET '''
+    """ PERFORM WEEKLY PEACE COOLDOWN RESET """
     db.reset_peace_cooldowns()
 
     # end this weekly maintenance program
