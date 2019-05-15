@@ -1,21 +1,23 @@
+# vscode and pycharm workspace files
 .vscode/
+.idea/
 
+# Byte-compiled / optimized / DLL files
+__pycache__/
 
 # Virtual environment
 env/
 
 # Database files
 *.db
-# Byte-compiled / optimized / DLL files
-__pycache__/
 
-
+# folders
 db_and_words/
-tokens/
 a_shop_script.py
 daily.py
 Dibs.py
 custom_memes/
+logs/
 
-
-.idea/
+# token.ini file
+tokenbot.ini
