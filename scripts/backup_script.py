@@ -4,6 +4,9 @@ The purpose of this script is to:
 1. create a timestamped database backup file
 2. upload backup database to google cloud
 3. clear backups older than the defined days
+
+PS: FOR FULL AUTOMATION, SCHEDULE THIS FILE TO RUN AUTOMATICALLY AT AN INTERVAL.
+PS2: MAKE SURE TO CHANGE PATHS TO FULL FILE PATHS IF THIS IS AUTOMATED
 """
 
 import sqlite3
