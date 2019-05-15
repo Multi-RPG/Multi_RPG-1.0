@@ -9,6 +9,7 @@ from discord.ext import commands
 from pathlib import Path
 from Database import Database
 
+
 # set our bot's prefix and remove the default help command
 client = commands.Bot(command_prefix=["=", "%"])
 client.remove_command('help')
