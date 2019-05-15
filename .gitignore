@@ -17,7 +17,8 @@ a_shop_script.py
 daily.py
 Dibs.py
 custom_memes/
-logs/
 
-# token.ini file
+# some files
 tokenbot.ini
+commands_errors.txt
+dbo_api_log.txt
