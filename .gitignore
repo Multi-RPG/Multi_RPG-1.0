@@ -9,16 +9,17 @@ __pycache__/
 env/
 
 # Database files
+hangman.db
 *.db
 
 # folders
-db_and_words/
-a_shop_script.py
-daily.py
-Dibs.py
+db_backups/
 custom_memes/
 
 # some files
 tokenbot.ini
 commands_errors.txt
 dbo_api_log.txt
+a_shop_script.py
+Dibs.py
+daily.py

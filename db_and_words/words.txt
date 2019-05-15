@@ -1,0 +1,999 @@
+Afghanistan
+Albania
+Algeria
+Andorra
+Angola
+Argentina
+Armenia
+Australia
+Austria
+Azerbaijan
+Bahamas
+Bahrain
+Bangladesh
+Barbados
+Belarus
+Belgium
+Belize
+Benin
+Bhutan
+Bolivia
+Botswana
+Brazil
+Brunei
+Bulgaria
+Burkina Faso
+Burma
+Burundi
+Cambodia
+Cameroon
+Canada
+Cape Verde
+Chad
+Chile
+China
+Cambodia
+Comoros
+Congo
+Costa Rica
+Croatia
+Cuba
+Cyprus
+Czech Republic
+Denmark
+Djibouti
+Dominica
+Dominican Republic
+East Timor
+Ecuador
+Egypt
+El Salvador
+Equatorial Guinea
+Eritrea
+Estonia
+Ethiopia
+Fiji
+Finland
+France
+Gabon
+The Gambia
+Georgia
+Germany
+Ghana
+Greece
+Grenada
+Guatemala
+Guinea
+Guyana
+Haiti
+Honduras
+Hungary
+Iceland
+India
+Indonesia
+Iran
+Iraq
+Ireland
+Israel
+Italy
+Jamaica
+Japan
+Jordan
+Kazakhstan
+Kenya
+Kiribati
+North Korea
+South Korea
+Kuwait
+Kyrgyzstan
+Laos
+Latvia
+Lebanon
+Lesotho
+Liberia
+Libya
+Liechtenstein
+Lithuania
+Luxembourg
+Macedonia
+Madagascar
+Malawi
+Malaysia
+Maldives
+Mali
+Malta
+Marshall Islands
+Mauritania
+Mauritius
+Mexico
+Micronesia
+Moldova
+Monaco
+Mongolia
+Montenegro
+Morocco
+Mozambique
+Namibia
+Nauru
+Nepal
+Netherlands
+New Zealand
+Nicaragua
+Niger
+Nigeria
+Norway
+Oman
+Pakistan
+Palau
+Panama
+Paraguay
+Peru
+Philippines
+Poland
+Portugal
+Qatar
+Romania
+Russia
+Rwanda
+Saint Lucia
+Samoa
+San Marino
+Saudi Arabia
+Senegal
+Serbia
+Seychelles
+Sierra Leone
+Singapore
+Slovakia
+Slovenia
+Solomon Islands
+Somalia
+South Africa
+Spain
+Sri Lanka
+Sudan
+Suriname
+Swaziland
+Sweden
+Switzerland
+Syria
+Tajikistan
+Tanzania
+Thailand
+Togo
+Tonga
+Tunisia
+Turkey
+Turkmenistan
+Tuvalu
+Uganda
+Ukraine
+United Kingdom
+United States
+Uruguay
+Uzbekistan
+Vanuatu
+Vatican City
+Venezuela
+Vietnam
+Yemen
+Zambia
+Zimbabwe
+acre
+acreage
+agriculture
+animals
+bale of hay
+baler
+barley
+barn
+bee
+beehive
+bison
+boar
+breed
+bucket
+buffalo
+bull
+calf
+cat
+cattle
+chick
+chicken
+combine
+coop
+corn
+cow
+crops
+crow
+cultivator
+dairy
+dog
+donkey
+drake
+duck
+duckling
+egg
+ewe
+fallow
+farm
+farmer
+farmhouse
+feed
+fence
+fertilizer
+field
+flock
+foal
+food
+fruit
+gander
+gate
+geese
+goat
+goose
+grains
+grow
+harvest
+harvester
+hatchery
+hay
+haystack
+hen
+herd
+hive
+hoe
+hog
+honey
+honeybee
+horse
+incubator
+insecticide
+irrigation
+Jersey cow
+kid
+lamb
+land
+llama
+longhorn
+machete
+mare
+meadow
+milk
+mower
+mulch
+mule
+oats
+orchard
+ox
+pail
+pasture
+pick
+pickaxe
+pig
+piglet
+plant
+plow
+poult
+poultry
+produce
+pullet
+rabbit
+rake
+ram
+ranch
+reap
+rice
+ripe
+roost
+rooster
+rye
+scarecrow
+scythe
+seeds
+shears
+sheep
+shepherd
+shovel
+sickle
+silo
+soil
+sow
+stable
+stallion
+steer
+swine
+tend
+till
+tiller
+tractor
+trough
+trowel
+turkey
+udder
+vegetable
+water
+weeder
+weeds
+wheat
+windmill
+yak
+adventure
+animals
+backpack
+boots
+cabin
+camp
+camper
+campfire
+campground
+canoe
+canteen
+cap
+caravan
+climb
+compass
+day pack
+dehydrated food
+dugout
+equipment
+evergreen
+fishing
+flashlight
+forest
+gear
+gorp
+hammock
+hat
+hike
+hiking boots
+hunting
+hut
+insect
+insect repellent
+kayak
+knapsack
+lake
+lantern
+map
+moon
+mountain
+national park
+natural
+nature
+oar
+outdoors
+outside
+paddle
+park
+path
+pup tent
+rope
+scenery
+sleeping bag
+stars
+state park
+sun
+sunscreen
+tarp
+tent
+trail
+trail mix
+trailer
+trees
+trip
+vest
+walking
+water bottle
+waterfall
+wildlife
+woods
+air conditioner
+alarm clock
+answering machine
+BBQ grill
+barbecue grill
+blender
+blowdryer
+burglar alarm
+calculator
+camera
+can opener
+CD player
+ceiling fan
+cell phone
+clock
+clothes dryer
+clothes washer
+coffee grinder
+coffee maker
+computer
+convection oven
+copier
+crock pot
+curling iron
+dishwasher
+doorbell
+dryer
+electric blanket
+electric drill
+electric fan
+electric guitar
+electric keyboard
+electric pencil sharpener
+electric razor
+electric toothbrush
+espresso maker
+fan
+fax machine
+fire alarm
+fire extinguisher
+fireplace
+flashlight
+flatscreen TV
+food processor
+freezer
+furnace
+garage door
+garbage disposal
+GPS
+grill
+hair clippers
+hair dryer
+headphones
+heater
+hood
+hot plate
+humidifier
+ice cream maker
+iron
+lamp
+lantern
+laptop
+lawn mower
+leaf blower
+light
+microwave oven
+mixer
+mousetrap
+MP3 player
+oven
+percolator
+pressure cooker
+printer
+radio
+range
+record player
+refrigerator
+rotisserie
+scale
+scanner
+sewing machine
+smoke detector
+stapler
+stereo
+stove
+telephone
+television
+timer
+toaster
+toaster oven
+torch
+trash compactor
+trimmer
+TV
+vacuum cleaner
+vaporizer
+video camera
+waffle iron
+washing machine
+watch
+water heater
+barnacle
+bathing suit
+bay
+beach
+beachball
+bikini
+boardwalk
+boat
+boogie board
+cape
+catamaran
+clam
+clam bake
+coast
+conch
+cooler
+coral
+cove
+crab
+currents
+dive
+dock
+dune
+dune buggy
+ebb tide
+family
+fins
+fish
+fishing
+Frisbee
+gull
+hang five
+hat
+hermit crab
+high tide
+ice cream
+intertidal zone
+island
+jellyfish
+kayak
+kelp
+lagoon
+lake
+lakeshore
+lifeguard
+life jacket
+life preserver
+longboard
+low tide
+ocean
+paddleboat
+palm tree
+pelican
+pier
+popsicle
+reef
+relax
+rip current
+sail
+sailboat
+salt water
+sand
+sandals
+sandbar
+sandcastle
+sand dollar
+scuba
+sea
+seagull
+seashell
+seashore
+sea star
+shark
+shell
+ship
+shore
+shorebirds
+snacks
+snorkel
+spray
+starfish
+sun
+sunbathe
+sunburn
+sunglasses
+sun hat
+sunscreen
+suntan
+surf
+surfboard
+swim
+swim fins
+swimming cap
+taffy
+tan
+tide
+tide pool
+towel
+trip
+trunks
+tsunami
+umbrella
+undertow
+underwater
+vacation
+volleyball
+water
+water bottle
+waves
+weekend
+wet
+wharf
+yacht
+April Fool's Day
+Arbor Day
+Bastille Day
+Boxing Day
+Canada Day
+Chinese New Year
+Christmas
+Cinco de Mayo
+Columbus Day
+Day of the Dead
+Diwali
+Earth Day
+Easter
+Election Day
+Emancipation Day
+Father's Day
+Flag Day
+Grandparent's Day
+Groundhog Day
+Halloween
+Hanukkah
+Independence Day
+July Fourth
+Juneteenth
+Martin Luther King
+Kwanzaa
+Labor Day
+Lincoln's Birthday
+May Day
+Memorial Day
+Mother's Day
+New Year's Day
+New Year's Eve
+Passover
+Pi Day
+President's Day
+Purim
+Ramadan
+Rosh Hashanah
+St. Patrick's Day
+Thanksgiving
+Valentine's Day
+Veteran's Day
+Washington's Birthday
+World Environment Day
+Alabama
+Alaska
+Arizona
+Arkansas
+California
+Colorado
+Connecticut
+Delaware
+District of Columbia
+Florida
+Georgia
+Hawaii
+Idaho
+Illinois
+Indiana
+Iowa
+Kansas
+Kentucky
+Louisiana
+Maine
+Maryland
+Massachusetts
+Michigan
+Minnesota
+Mississippi
+Missouri
+Montana
+Nebraska
+Nevada
+New Hampshire
+New Jersey
+New Mexico
+New York
+North Carolina
+North Dakota
+Ohio
+Oklahoma
+Oregon
+Pennsylvania
+Rhode Island
+South Carolina
+South Dakota
+Tennessee
+Texas
+Utah
+Vermont
+Virginia
+Washington
+West Virginia
+Wisconsin
+Wyoming
+aerobics
+archer
+archery
+arena
+arrow
+athlete
+athletics
+badminton
+ball
+base
+baseball
+basketball
+bat
+baton
+batter
+batting
+bicycle
+bicycling
+bike
+biking
+billiards
+bobsleigh
+boomerang
+boules
+bow
+bowler
+bowling
+boxer
+boxing
+bunt
+canoe
+canoeing
+catch
+catcher
+champion
+championship
+cleats
+club
+coach
+compete
+competing
+competition
+competitor
+crew
+cricket
+croquet
+cross country
+curling
+cycle
+cycling
+cyclist
+dart
+dartboard
+deadlifting
+decathlon
+defense
+dive
+diving
+dodgeball
+dugout
+equipment
+exercise
+fencing
+field
+fielder
+field hockey
+fielding
+figure skating
+fitness
+football
+forward
+free throw
+frisbee
+game
+gear
+geocaching
+goal
+goalie
+gold medal
+golf
+golfer
+golfing
+guard
+gym
+gymnast
+gymnastics
+halftime
+hammer throw
+handball
+hang gliding
+hardball
+helmet
+heptathlon
+high jump
+hitter
+hockey
+hole-in-one
+home
+home plate
+home run
+home team
+hoop
+horseshoes
+huddle
+hurdle
+ice hockey
+ice rink
+ice skates
+ice skating
+infield
+infielder
+inline skates
+inning
+javelin
+jog
+jogger
+judo
+jump
+jumper
+jumping
+jump rope
+karate
+kayak
+kayaker
+kayaking
+kickball
+kneepads
+kung fu
+kite
+lacrosse
+lawn bowling
+league
+long jump
+lose
+loser
+major league
+mallet
+martial arts
+mat
+medal
+minor league
+mitt
+mouthguard
+move
+movement
+MVP
+net
+no-hitter
+Nordic skiing
+offense
+ollie
+Olympics
+orienteering
+outfield
+outfielder
+paddle
+paddleball
+paddling
+paintball
+parasailing
+parkour
+pentathlon
+pickleball
+ping pong
+pitch
+pitcher
+play
+player
+playing
+playoffs
+pogo stick
+pole
+pole vault
+polo
+pool
+puck
+quarter
+quarterback
+quiver
+race
+racer
+racewalking
+racing
+racket
+racquetball
+rafting
+referee
+relay
+ride
+riding
+rink
+rock climbing
+roller skates
+roller skating
+row
+rower
+rowing
+rugby
+run
+runner
+running
+sailing
+score
+scoreboard
+scuba
+scull
+sculling
+shortstop
+shot put
+silver medal
+skate
+skating rink
+skeleton
+ski
+skier
+skiing
+slalom
+sled
+sledder
+sledding
+snorkling
+snowboard
+snowboarder
+snowboarding
+snowshoeing
+soccer
+softball
+somersault
+speed skating
+sport
+sportsmanship
+squash
+stadium
+stick
+strike
+stroke
+Sumo wrestling
+surfer
+surfing
+swim
+swimmer
+swimming
+synchronized swimming
+table tennis
+taekwondo
+tag
+target
+team
+teammate
+tee
+telemark skiing
+tennis
+tetherball
+throw
+throwing
+tie
+toboggan
+track and field
+trampoline
+triathlon
+triathlete
+triple jump
+triple play
+tug of war
+ultramarathon
+ultramarathoner
+umpire
+unicycle
+unicyclist
+uniform
+vault
+vaulter
+vaulting
+visiting team
+volley
+volley ball
+wakeboarding
+walk
+walker
+walking
+water polo
+waterski
+waterskier
+waterskiing
+weightlifter
+weightlifting
+weights
+wetsuit
+white water rafting
+wicket
+win
+windsurfer
+windsurfing
+winner
+winning
+World Cup
+World Series
+wrestler
+wrestling 
