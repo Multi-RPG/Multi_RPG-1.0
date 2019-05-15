@@ -6,7 +6,7 @@ A discord bot, written in python, with several utility/meme generators/RPG eleme
 ## Run requirements:
 1. Needs python 3.6+ with sqlite3, pillow, requests, discord (0.16.12), numpy, dblpy (info on discordbots.org), and profanityfilter packages installed (use python3 -m pip install X)
 2. Optional: (Recommended) Create virtual environment, run `pip install requirements.txt`;
-3. In setup folder, run `python setup.py`
+3. In `scripts/setup/` folder, run `python setup.py`
 4. In new `tokens` folder, replace value in `tokenbot.ini` with your discord bot token
  
 Optional entries in `tokens` folder:
