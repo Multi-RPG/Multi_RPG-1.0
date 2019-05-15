@@ -10,9 +10,13 @@ PS2: MAKE SURE TO CHANGE PATHS TO FULL FILE PATHS IF THIS IS AUTOMATED
 import configparser
 import sys
 import os
+# add parent folder to module path. can comment this out if using virtual environment
+sys.path.append('..')
+
 from Database import Database
 from discord.ext import commands
 from pathlib import Path
+
 
 # change working directory to parent to simplify file paths
 os.chdir("..")

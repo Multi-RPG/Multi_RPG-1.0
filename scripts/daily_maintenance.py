@@ -15,6 +15,9 @@ import random
 import discord
 import numpy
 import os
+# add parent folder to module path. can comment this out if using virtual environment
+sys.path.append('..')
+
 from numpy import random
 from Users import Users
 from Database import Database
