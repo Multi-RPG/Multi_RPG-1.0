@@ -217,10 +217,6 @@ if __name__ == "__main__":
             print('Failed to load extension {}\n{}'.format(extension, exc))
 
 
-<<<<<<< HEAD
-client.run(TOKEN)
-
-=======
 # set up parser to config through our .ini file with our bot's token
 config = configparser.ConfigParser()
 bot_token_path = Path("tokens/tokenbot.ini") # use forward slash "/" for path directories
@@ -234,4 +230,3 @@ else:
     sys.exit()
 
 client.run(TOKEN)
->>>>>>> c0ccd93969d25c856ef0ae7a378e2e39048d7f2b
