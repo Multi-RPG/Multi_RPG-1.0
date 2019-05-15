@@ -249,7 +249,7 @@ class Account:
                                                                              + '** **\nAccount balance: '
                                                                              + user.get_user_money() + '\nLevel **'
                                                                              + str(user_level + 1) + '** requires: **$'
-                                                                             + str(level_up_cost) + '**')
+                                                                             + str("{:,}".format((level_up_cost)) + '**'))
             # wait 15 seconds then delete error message and original message to reduce spam
             await asyncio.sleep(15)
             await self.client.delete_message(error_msg)
@@ -260,7 +260,7 @@ class Account:
         # confirm if they really want to level-up
         msg = '\nAccount balance: ' + user.get_user_money() \
               + '\nLevel **' + str(user_level + 1) \
-              + '** requires: **$' + str(level_up_cost) \
+              + '** requires: **$' + str("{:,}".format((level_up_cost))) \
               + '**\n** **\nDo you want to level-up?' \
               + ' Type **confirm** to confirm.'
 
