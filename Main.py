@@ -78,6 +78,7 @@ async def helper(context):
           '  =flip           use "=flip" or "=flip X" or "=flip X Y" \n' \
           '                  -- X being heads or tails guess\n' \
           '                  -- Y being amount to bet\n\n' \
+          '  =slot           use "=slot" to roll the slot machine. Ticket costs $3\n' \
           '  =hangman        use "=hangman" or "=hangman X", -- X being a category number \n' \
           '                  use "=hm cats" for category numbers\n' \
           '                  use "stop" or "cancel" to stop game\n' \
