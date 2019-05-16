@@ -12,6 +12,70 @@ words_file = open("db_and_words\words.txt", "r")
 all_words = words_file.readlines()
 words_file.close()
 
+# High tier list
+HIGH_TIER_EMOTES = [
+    "<:feelsamazingman:356602477518258176>",
+    "<a:gachibass:486357565374988288>",
+    "<:feelsdamngood:364951015323074570>"
+]
+
+# Mid tier list
+MID_TIER_EMOTES = [
+    "<:jacobgasm:356612403884064769>",
+    "<:FEELSBOTHMAN6:372047377089036298>",
+    "<:worryadam:510556471759470602>",
+    "<:rogi:356613888021626883>",
+    "<:trump:356620607934431242>",
+    "<:confusedwillsmith:423326414759133194>",
+    "<:pogpepe:356620818517721088>",
+    "<a:monkaoff:486357534203183105>",
+    "<:coolstorybob:356599291177074688>",
+    "<:feelsblablaman:371822616073469964>",
+    "<:weworry:480114079277645845>",
+    "<:marvin:348656681841852426>",
+    "<:horiacall:350386206405689354>",
+    "<:jon:347974598387564545>",
+    "<:LUL:348320120470241281>",
+    "<:feelsneatman:369937314786443264>",
+    "<:slickmonka:451089726485692417>",
+    "<:feelsdabman:365335714302263296>"
+]
+
+# Low tier list
+LOW_TIER_EMOTES = [
+    "<:anthony:405531083036426241>",
+    "<:kmsross:348662039616684032>",
+    "<:heyguys:347974915154247681>",
+    "<:feelswtfman:356606240971030528>",
+    "<:feelspalmman:356613360755671040>",
+    "<:feelsnastyman:356620663395450880>",
+    "<:MonkaOmegaaaa:576468889257639947>",
+    "<:feelshysterical:364855367508688896>",
+    "<:feelshangman:365337331168837642>",
+    "<:feelsgunman:356620799047630848>",
+    "<:feelsdetective:364848320092438548>",
+    "<:feelscoventry:376375781003100171>",
+    "<:feelsckckman:369937199908782080>",
+    "<:thinkingblackguy:423326028522586122>",
+    "<:sudoku:348665716452360213>",
+    "<:feelschromosome:370341822205001729>",
+    "<:chinking:353002845437427713>",
+    "<:autisticirfaan:348661076822327296>",
+    "<:ANGERYPUKE:356617049671335939>",
+    "<:angery2:355924233060220929>",
+    "<:angery:348669707219632129>",
+    "<:aidu:427582280236662785>",
+    "<:pepethinkkk:372049190928515082>",
+    "<:pepethink1:356600456165851136>",
+    "<:monkathink:356603999270600705>",
+    "<:monkaD:369938168344084480>",
+    "<:kyskirby:365367117987577875>",
+    "<:skypehorse:359888968294072330>",
+    "<:skypeclapxmas:393082341502877697>",
+    "<:rosspalm:348668105427517440>"
+]
+
+
 # short decorator function declaration, confirm that command user has an account in database
 def has_account():
     def predicate(ctx):
@@ -594,6 +658,140 @@ class Games:
             # add 1 to the main game loop's counter
             counter += 1
 
+    """ Slot Machine """
+    @has_account()
+    @commands.cooldown(1, 1, commands.BucketType.user)
+    @commands.command(name='slot', description='Slot Machine game',
+                      aliases=['machine', 'pachinko', 'slots'], pass_context=True)
+    async def slot_machine(self, context):
+
+        # Create a user instance
+        user = Users(context.message.author.id)
+
+        # Check if user has enough money. Ticket costs $3
+        if user.get_user_money(0) < 3:
+            await self.client.say(context.message.author.mention +
+                                  " You don't have enough money...\n"
+                                  " Ticket costs $3!")
+            return
+
+        # Deduct 3$ from user
+        # XXX uncomment this before release
+        #user.update_user_money(-3)
+
+        # High tier should have the lowest chance possible
+        def get_tier():
+            """ High tier => 5%
+                Mid Tier => 15%
+                Low Tier => 80%
+            """
+            tier = ""
+            # Scuffed way to get real value, but I don't trust uniform method
+            result = (random.randrange(1, 10001)) / 100
+            if result <= 5.0:
+                # High Tier
+                tier = "high"
+                print(f"Tier is {result} = {tier}")
+            elif result > 5.0 and result <= 20.0:
+                # Mid Tier
+                tier = "mid"
+                print(f"Tier is {result} = {tier}")
+            elif result > 20.0 and result <= 100.0:
+                # Low Tier
+                tier = "low"
+                print(f"Tier is {result} = {tier}")
+            return tier
+
+        def get_emoji(result):
+            """Pick a emote from emote tier lists determined by the result
+               Return a random emote
+            """
+            emote = ""
+            if result == "high":
+                emote = random.choice(HIGH_TIER_EMOTES)
+            elif result == "mid":
+                emote = random.choice(MID_TIER_EMOTES)
+            elif result == "low":
+                emote = random.choice(LOW_TIER_EMOTES)
+            return emote
+
+        def get_bonus(slot1, slot2, slot3):
+            """Getting a jackpot gives user a reward = 500 + bonus
+               Bonus is determined by the emote tier
+               High tier = 1000.0
+               Mid tier = 500.0
+               Low tier = 250.0
+
+               If not jackpot, user is given a compensation of 2.5.
+
+               :return a list with msg and reward
+               result[0] -> msg
+               result[1] -> reward
+            """
+            result = []
+
+            # If all slots are equal
+            if (slot1 == slot2) and (slot2 == slot3):
+                # Print Jackpot
+                result.append(1)
+                if slot1 in HIGH_TIER_EMOTES:
+                    result.append(500.0 + 1000.0)
+                    return result
+                elif slot1 in MID_TIER_EMOTES:
+                    result.append(500.0 + 500.0)
+                    return result
+                elif slot1 in LOW_TIER_EMOTES:
+                    result.append(500.0 + 250.0)
+                    return result
+
+            result.append(0)
+            result.append(2.5)
+            return result
+
+        # assign results to 3 differents slots
+        result_1 = get_tier()
+        result_2 = get_tier()
+        result_3 = get_tier()
+
+        # Get emotes from  the tier lists.
+        slot_1 = get_emoji(result_1)
+        slot_2 = get_emoji(result_2)
+        slot_3 = get_emoji(result_3)
+        # Debugging
+        print(f"Emote -> ( {slot_1} )")
+        print(f"Emote -> ( {slot_2} )")
+        print(f"Emote -> ( {slot_3} )")
+        print("----------------------------------------------------------")
+        assert slot_1 != ""
+        assert slot_2 != ""
+        assert slot_3 != ""
+
+        # XXX delete the 3 lines below before release
+        #slot_1 = HIGH_TIER_EMOTES[1]
+        #slot_2 = HIGH_TIER_EMOTES[1]
+        #slot_3 = HIGH_TIER_EMOTES[1]
+
+        # Check for jackpot
+        bonus = get_bonus(slot_1, slot_2, slot_3)
+        user.update_user_money(bonus[1])
+
+        msg = f"「 {slot_1}  {slot_2}  {slot_3} 」"
+
+        # Jackpot worry image
+        em1 = discord.Embed(title="", colour=0x801a06)
+        em1.set_image(url="https://i.imgur.com/a9pARrC.gif")
+        await self.client.say(embed=em1)
+        await asyncio.sleep(1)
+
+        # print result
+        em2 = discord.Embed(title="", description=msg, colour=0x801a06)
+        await self.client.say(embed=em2)
+        # if Jackpot, announce it with :worrycash:
+        if bonus[0] == 1:
+            em3 = discord.Embed(title="Jackpot!!!", colour=0xffd700)
+            em3.set_image(url="https://cdn.discordapp.com/emojis/525200274340577290.gif?v=1")
+            await self.client.say(embed=em3)
+
 
 def setup(client):
     client.add_cog(Games(client))
@@ -605,6 +803,7 @@ def battle_decider(fighter1, fighter2, fighter1_weight, fighter2_weight):
     print(winner)
     # choices function returning [1] or [2] so use regex to pull the integers out
     return int(re.findall("\d+", str(winner))[0])
+
 
 def pick_word(cat):
     if cat == 1:
@@ -654,6 +853,7 @@ def pick_word(cat):
 
     return random_word.upper(), category, underscore_sequence
 
+
 def get_hangman_art():
     # prepare array of hangman art
     hangmen = []
@@ -672,6 +872,7 @@ def get_hangman_art():
     hangmen[6] = ''.join(hangmen[42:49])
 
     return hangmen
+
 
 def add_guess_to_list(guess, guessed):  # accepts guess and list of all guesses
     if len(guess.clean_content) > 1:  # don't want to add whole word to guess list
