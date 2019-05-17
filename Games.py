@@ -905,7 +905,7 @@ class Games:
                Mid tier = 60.0
                Low tier = 20.0
 
-               User is given a compensation of 2.5 for playing.
+               If one emoji is high tier, user is given $50.0
 
                return a list with msg type, reward, and tier
                result[0] -> 1 if jackpot, 2 if two equal elements, 0 otherwise
@@ -914,7 +914,7 @@ class Games:
             """
             # result list
             # default values incase of no bonus
-            result = [0, 2.5, ""]
+            result = [0, 0, ""]
 
             # If all elements inside temp_slot_machine are equal
             # Jackpot
@@ -951,6 +951,12 @@ class Games:
                     result[2] = "Low"
                     return result
 
+            # If one element is a High Tier emoji
+            for i in slot_machine:
+                if i in HIGH_TIER_EMOTES:
+                    result[1] = 50.0
+                    return result
+
             return result
 
         # assign results to 3 differents slots
@@ -962,10 +968,7 @@ class Games:
         slot_1 = get_emoji(result_1)
         slot_2 = get_emoji(result_2)
         slot_3 = get_emoji(result_3)
-        # slot_1 = MID_TIER_EMOTES[0]
-        # slot_2 = MID_TIER_EMOTES[0]
-        # slot_3 = MID_TIER_EMOTES[0]
-
+        
         # Check for bonus
         slot_machine = [slot_1, slot_2, slot_3]
         bonus = get_bonus(slot_machine)
