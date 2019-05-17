@@ -916,7 +916,7 @@ class Games:
             # default values incase of no bonus
             result = [0, 0, ""]
 
-            # If all elements inside temp_slot_machine are equal
+            # If all emojis are equal
             # Jackpot
             if len(set(slot_machine)) == 1:
                 # Print Jackpot
@@ -934,7 +934,7 @@ class Games:
                     result[2] = "Low"
                     return result
 
-            # If two elements inside slot_machine are equal
+            # If two emojis inside slot_machine are equal
             if len(set(slot_machine)) == 2:
                 result[0] = 2
                 temp = [i for i in slot_machine if slot_machine.count(i) > 1]
