@@ -847,15 +847,16 @@ class Games:
         user = Users(context.message.author.id)
 
         # Check if user has enough money. Ticket costs $3
-        if user.get_user_money(0) < 3:
+        ticket = 3
+        if user.get_user_money(0) < ticket:
             await self.client.say(
                 context.message.author.mention + " You don't have enough money...\n"
-                " Ticket costs $3!"
+                " Ticket costs ${}!".format(ticket)
             )
             return
 
-        # Deduct 3$ from user
-        user.update_user_money(-3)
+        # Deduct ticket price from user
+        user.update_user_money(ticket * -1)
 
         # High tier should have the lowest chance possible
         def get_tier():
