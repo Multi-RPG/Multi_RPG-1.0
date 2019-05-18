@@ -917,7 +917,6 @@ class Games:
             # add 1 to the main game loop's counter
             counter += 1
 
-
     """ Slot Machine """
     @has_account()
     @commands.cooldown(1, 3, commands.BucketType.user)
@@ -932,7 +931,7 @@ class Games:
         # Create a user instance
         user = Users(context.message.author.id)
 
-        # Check if user has enough money. Ticket costs $3
+        # Check if user has enough money for ticket price
         ticket_cost = 5
         if user.get_user_money(0) < ticket_cost:
             msg = await self.client.say(
@@ -1043,6 +1042,7 @@ class Games:
             for i in slot_machine:
                 if i in high_tier_emotes:
                     result[1] = 50.0
+                    result[2] = "High"
                     return result
 
             return result
@@ -1075,23 +1075,20 @@ class Games:
         em2 = discord.Embed(title="", description=result_msg, colour=0x801A06)
         await self.client.say(embed=em2)
         # If bonus
-        if bonus[0] != 0:
+        if bonus[1] != 0:
             # This assert only works in debug mode due to application error handling
             assert bonus[2] != ""  # Make sure there is an actual tier
             if bonus[0] == 1:
                 msg = f"**Jackpot**! <a:worrycash:525200274340577290>\n {bonus[2]} Tier! You won **${bonus[1]}**!"
-                em3 = discord.Embed(title="", description=msg, colour=0xFFD700)
-
-                await self.client.say(embed=em3)
-
             elif bonus[0] == 2:
                 msg = f"You got **two** {bonus[2]} Tier! <a:worryHype:487059927731273739>\n You won **${bonus[1]}**!"
-                em3 = discord.Embed(title="", description=msg, colour=0xFFD700)
+            elif bonus[1] == 50.0:
+                msg = f"You got **one** {bonus[2]} Tier! <a:worryHype:487059927731273739>\n You won **${bonus[1]}**!"
 
-                await self.client.say(embed=em3)
+            em3 = discord.Embed(title="", description=msg, colour=0xFFD700)
+            await self.client.say(embed=em3)
 
     """ Slots tier list information """
-
     @commands.cooldown(1, 3, commands.BucketType.user)
     @commands.command(
         name="tiers",
