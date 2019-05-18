@@ -1120,6 +1120,7 @@ class Games:
         em = discord.Embed(title="**Low-tier emotes**", description=msg3, colour=0xFFD700)
         await self.client.say(embed=em)
         em = discord.Embed(title="**Rewards Information**", description=msg4, colour=0xFFD700)
+        em.set_thumbnail(url="https://i.imgur.com/a9pARrC.gif")
         await self.client.say(embed=em)
 
 
