@@ -89,6 +89,7 @@ async def helper(context):
         "                  -- X being heads or tails guess\n"
         "                  -- Y being amount to bet\n"
         '  =slots          use "=slots" to roll the slot machine! Ticket costs $5\n'
+        '  =slothelp       use "=slothelp" for information on rewards calculation\n'
         '  =hangman        use "=hangman" or "=hangman X", -- X being a category number \n'
         '                  use "=hm cats" for category numbers\n'
         '                  use "stop" or "cancel" to stop game\n'
