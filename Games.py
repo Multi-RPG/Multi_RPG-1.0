@@ -919,7 +919,7 @@ class Games:
 
     """ Slot Machine """
     @has_account()
-    @commands.cooldown(1, 3, commands.BucketType.user)
+    @commands.cooldown(1, 2, commands.BucketType.user)
     @commands.command(
         name="slot",
         description="Slot Machine game",
@@ -931,7 +931,7 @@ class Games:
         # Create a user instance
         user = Users(context.message.author.id)
 
-        # Check if user has enough money for ticket price
+        # Check if user has enough money. Ticket costs $8
         ticket_cost = 8
         if user.get_user_money(0) < ticket_cost:
             msg = await self.client.say(
@@ -1026,11 +1026,11 @@ class Games:
                 result[0] = 2
                 temp = [i for i in slot_machine if slot_machine.count(i) > 1]
                 if temp[0] in high_tier_emotes:
-                    result[1] = 120.0 + 130.0
+                    result[1] = 120.0 + 230.0
                     result[2] = "High"
                     return result
                 elif temp[0] in mid_tier_emotes:
-                    result[1] = 120.0 + 50.0
+                    result[1] = 120.0 + 130.0
                     result[2] = "Mid"
                     return result
                 elif temp[0] in low_tier_emotes:
@@ -1093,7 +1093,7 @@ class Games:
     @commands.command(
         name="tiers",
         description="Slot Machine help page",
-        aliases=["slothelp", "slottiers", "slotstiers"],
+        aliases=["slothelp", "slotshelp", "slottiers", "slotstiers"],
         pass_context=True,
     )
     async def slot_tiers_help(self, context):
@@ -1104,8 +1104,8 @@ class Games:
                **3** Identical High tier = **$2,500**\n\
                **3** Identical Mid tier = **$1,500**\n\
                **3** Identical Low tier = **$750**\n\n\
-               **2** Identical High tier = **$250**\n\
-               **2** Identical Mid tier = **$170**\n\
+               **2** Identical High tier = **$350**\n\
+               **2** Identical Mid tier = **$250**\n\
                **2** Identical Low tier = **$120**\n\n\
                **1** of __any__ High tier = **$50**\
                ")
@@ -1122,5 +1122,4 @@ class Games:
 
 def setup(client):
     client.add_cog(Games(client))
-
 
