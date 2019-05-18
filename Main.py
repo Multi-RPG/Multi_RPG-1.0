@@ -87,7 +87,7 @@ async def helper(context):
         '  =fight          use "=fight @user X" -- X being money to bet\n'
         '  =flip           use "=flip" or "=flip X" or "=flip X Y" \n'
         "                  -- X being heads or tails guess\n"
-        "                  -- Y being amount to bet\n\n"
+        "                  -- Y being amount to bet\n"
         '  =slots          use "=slots" to roll the slot machine! Ticket costs $5\n'
         '  =hangman        use "=hangman" or "=hangman X", -- X being a category number \n'
         '                  use "=hm cats" for category numbers\n'
