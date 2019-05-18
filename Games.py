@@ -7,78 +7,156 @@ from discord.ext import commands
 from Users import Users
 from random import choices
 
-# only read words file once so we won't have to re-open the file every game call
-words_file = open("db_and_words\words.txt", "r")
-all_words = words_file.readlines()
-words_file.close()
 
-# High tier list
-HIGH_TIER_EMOTES = [
-    "<:feelsamazingman:356602477518258176>",
-    "<a:gachibass:486357565374988288>",
-    "<:feelsdamngood:364951015323074570>",
-    "<:worrysign10:531221748964786188>",
-    "<:worryfedora:490306444433031208>",
-    "<a:worryhype:487059927731273739>",
-    "<a:worryhead:525164940231704577>",
-    "<a:worryblow:535914005244411904>",
-]
+def get_hangman_art():
+    # prepare array of hangman art
+    art_array = []
+    with open("db_and_words\hangmen.txt") as my_file:
+        for line in my_file:
+            art_array.append(line)
 
-# Mid tier list
-MID_TIER_EMOTES = [
-    "<:jacobgasm:356612403884064769>",
-    "<:FEELSBOTHMAN6:372047377089036298>",
-    "<:worryadam:510556471759470602>",
-    "<:rogi:356613888021626883>",
-    "<:trump:356620607934431242>",
-    "<:confusedwillsmith:423326414759133194>",
-    "<:pogpepe:356620818517721088>",
-    "<a:monkaoff:486357534203183105>",
-    "<:coolstorybob:356599291177074688>",
-    "<:feelsblablaman:371822616073469964>",
-    "<:weworry:480114079277645845>",
-    "<:marvin:348656681841852426>",
-    "<:horiacall:350386206405689354>",
-    "<:jon:347974598387564545>",
-    "<:LUL:348320120470241281>",
-    "<:feelsneatman:369937314786443264>",
-    "<:slickmonka:451089726485692417>",
-    "<:feelsdabman:365335714302263296>",
-]
+    # convert respective list index-ranges to string with ''.join
+    # the resulting art_array[0-6] will represent each stage of hangman
+    art_array[0] = "".join(art_array[0:6])
+    art_array[1] = "".join(art_array[7:13])
+    art_array[2] = "".join(art_array[14:20])
+    art_array[3] = "".join(art_array[21:27])
+    art_array[4] = "".join(art_array[28:34])
+    art_array[5] = "".join(art_array[35:41])
+    art_array[6] = "".join(art_array[42:49])
+    return art_array
 
-# Low tier list
-LOW_TIER_EMOTES = [
-    "<:anthony:405531083036426241>",
-    "<:kmsross:348662039616684032>",
-    "<:heyguys:347974915154247681>",
-    "<:feelswtfman:356606240971030528>",
-    "<:feelspalmman:356613360755671040>",
-    "<:feelsnastyman:356620663395450880>",
-    "<:MonkaOmegaaaa:576468889257639947>",
-    "<:feelshysterical:364855367508688896>",
-    "<:feelshangman:365337331168837642>",
-    "<:feelsgunman:356620799047630848>",
-    "<:feelsdetective:364848320092438548>",
-    "<:feelscoventry:376375781003100171>",
-    "<:feelsckckman:369937199908782080>",
-    "<:thinkingblackguy:423326028522586122>",
-    "<:sudoku:348665716452360213>",
-    "<:feelschromosome:370341822205001729>",
-    "<:chinking:353002845437427713>",
-    "<:autisticirfaan:348661076822327296>",
-    "<:ANGERYPUKE:356617049671335939>",
-    "<:angery2:355924233060220929>",
-    "<:angery:348669707219632129>",
-    "<:aidu:427582280236662785>",
-    "<:pepethinkkk:372049190928515082>",
-    "<:pepethink1:356600456165851136>",
-    "<:monkathink:356603999270600705>",
-    "<:monkaD:369938168344084480>",
-    "<:kyskirby:365367117987577875>",
-    "<:skypehorse:359888968294072330>",
-    "<:skypeclapxmas:393082341502877697>",
-    "<:rosspalm:348668105427517440>",
-]
+
+def get_hangman_words():
+    # only read words file once so we won't have to re-open the file every game call
+    words_file = open("db_and_words\words.txt", "r")
+    words = words_file.readlines()
+    words_file.close()
+    return words
+
+
+def battle_decider(fighter1, fighter2, fighter1_weight, fighter2_weight):
+    # choices function maps a selection to a probability, and selects one choice based off probability
+    winner = choices([fighter1, fighter2], [fighter1_weight, fighter2_weight])
+    print(winner)
+    # choices function returning [1] or [2] so use regex to pull the integers out
+    return int(re.findall("\d+", str(winner))[0])
+
+
+def pick_word(cat):
+    if cat == 1:
+        random_word = random.choice(all_words[0:180])
+        category = "Country name"
+    elif cat == 2:
+        random_word = random.choice(all_words[181:319])
+        category = "Farm"
+    elif cat == 3:
+        random_word = random.choice(all_words[320:389])
+        category = "Camping"
+    elif cat == 4:
+        random_word = random.choice(all_words[390:490])
+        category = "Household items/devices"
+    elif cat == 5:
+        random_word = random.choice(all_words[491:603])
+        category = "Beach"
+    elif cat == 6:
+        random_word = random.choice(all_words[604:648])
+        category = "Holidays"
+    elif cat == 7:
+        random_word = random.choice(all_words[649:699])
+        category = "US States"
+    elif cat == 8:
+        random_word = random.choice(all_words[700:998])
+        category = "Sports & Hobbies"
+    else:
+        random_word = random.choice(all_words[649:699])
+        category = "US States"
+
+    # quick band-aid fix to truncate CR in text file, COMING BACK LATER TO FIX
+    length = (
+            len(random_word) - 1
+    )  # to remove carriage return, I'm not using unix format to make the list
+    random_word = random_word[
+                  :length
+                  ]  # truncate word with [:length] cause of carriage return in text file...
+
+    underscore_sequence = list("")  # this will be our list of underscores
+    # it will be consistently replaced by guesses
+
+    # fill the underscore_sequence list with underscore underscore_sequencelate of the correct word
+    for x in random_word:
+        if x == " ":
+            underscore_sequence += (
+                "      "
+            )  # in the case of 2-word phrases, need to move everything over
+        elif x == "'":
+            underscore_sequence += " '"
+        else:
+            underscore_sequence += (
+                " \u2581"
+            )  # if not a space, add: \u2581, a special underscore character.
+            # using to replace by correctly guessed letters
+
+    return random_word.upper(), category, underscore_sequence
+
+
+def add_guess_to_list(guess, guessed):  # accepts guess and list of all guesses
+    if len(guess.clean_content) > 1:  # don't want to add whole word to guess list
+        all_guessed = "".join(map(str, guessed))
+        return guessed, all_guessed
+    guessed.extend(
+        guess.clean_content.upper()
+    )  # add last guess to the list of guessed words
+    guessed.extend(" ")  # add space to guessed list
+    all_guessed = "".join(
+        map(str, guessed)
+    )  # messy syntax, convert the list into a string so bot can print it
+    return guessed, all_guessed
+
+
+def find_matches(guess, correct_word, underscore_sequence):
+    index = 0
+    num_matches = 0
+    for x in correct_word:
+        index += 1
+        if x == " ":
+            index += 2
+        # if any matches, we need to replace underscore(s) in the sequence
+        # and increase the number of matches for the loop
+        if guess.clean_content.upper() == x:
+            # convulted index scheme due to underscore_sequence format
+            underscore_sequence[index * 2 - 1] = guess.clean_content.upper()
+            num_matches += 1
+    return num_matches, underscore_sequence
+
+
+def get_slots_emoji_list():
+    with open("db_and_words\\emoji_names.txt", "r") as lines:
+        high_tier = []
+        mid_tier = []
+        low_tier = []
+
+        current_tier = ''
+
+        for line in lines:
+            line = line.rstrip('\n')
+            if line == 'HIGH-TIER-LIST':
+                current_tier = 'high'
+                continue
+            if line == 'MEDIUM-TIER-LIST':
+                current_tier = 'med'
+                continue
+            if line == 'LOW-TIER-LIST':
+                current_tier = 'low'
+                continue
+
+            if current_tier == 'high':
+                high_tier.append(line)
+            elif current_tier == 'med':
+                mid_tier.append(line)
+            elif current_tier == 'low':
+                low_tier.append(line)
+        return high_tier, mid_tier, low_tier
 
 
 # short decorator function declaration, confirm that command user has an account in database
@@ -93,6 +171,12 @@ def has_account():
     return commands.check(predicate)
 
 
+# store data from text files into memory (emoji lists, hangman words, hangman art)
+high_tier_emotes, mid_tier_emotes, low_tier_emotes = get_slots_emoji_list()
+all_words = get_hangman_words()
+hangmen = get_hangman_art()
+
+
 class Games:
     def __init__(self, client):
         self.client = client
@@ -100,7 +184,7 @@ class Games:
     """ROB FUNCTION"""
 
     @has_account()
-    @commands.cooldown(1, 1, commands.BucketType.user)
+    @commands.cooldown(1, 3600, commands.BucketType.user)
     @commands.command(
         name="rob",
         description="Steal money from others",
@@ -138,14 +222,14 @@ class Games:
                     await self.client.say(
                         context.message.author.mention
                         + " Your rob target doesn't have an account."
-                        "\n**Rerolling** rob target now!"
+                          "\n**Rerolling** rob target now!"
                     )
                 if robber.get_user_peace_status() == 1:
                     fail_chance = 30
                     await self.client.say(
                         context.message.author.mention
                         + " You are in :dove: **peace mode** :dove: and cannot use =rob @user."
-                        "\n**Rerolling** rob target now!"
+                          "\n**Rerolling** rob target now!"
                     )
 
                     # pick a random user in the server to rob
@@ -159,7 +243,7 @@ class Games:
                     await self.client.say(
                         context.message.author.mention
                         + " That target is in :dove: **peace mode** :dove: and exempt to =rob @user."
-                        "\n**Rerolling** rob target now!"
+                          "\n**Rerolling** rob target now!"
                     )
 
                     # pick a random user in the server to rob
@@ -189,12 +273,12 @@ class Games:
                     robber.update_user_money(bail * -1)
 
                     msg = (
-                        "<a:policesiren2:490326123549556746> :oncoming_police_car: "
-                        "<a:policesiren2:490326123549556746>\n<a:monkacop:490323719063863306>"
-                        "\u200B \u200B \u200B \u200B \u200B \u200B \u200B \u200B \u200B \u200B"
-                        "<a:monkacop:490323719063863306>\n"
-                        + "Police shot you in the process.\n"
-                        "You spent **$" + str(bail) + "** to bail out of jail."
+                            "<a:policesiren2:490326123549556746> :oncoming_police_car: "
+                            "<a:policesiren2:490326123549556746>\n<a:monkacop:490323719063863306>"
+                            "\u200B \u200B \u200B \u200B \u200B \u200B \u200B \u200B \u200B \u200B"
+                            "<a:monkacop:490323719063863306>\n"
+                            + "Police shot you in the process.\n"
+                              "You spent **$" + str(bail) + "** to bail out of jail."
                     )
 
                     # embed the rob failure message, set thumbnail to 80x80 of a "police siren" gif
@@ -209,11 +293,11 @@ class Games:
                     bonus_prize = int(robber.get_user_level(0) * 29.3)
                     robber.update_user_money(bonus_prize)
                     msg = (
-                        "**No users found to rob...** "
-                        "\nOn the way back to your basement, you found **$"
-                        + str(bonus_prize)
-                        + "** "
-                        + "<:poggers:490322361891946496>"
+                            "**No users found to rob...** "
+                            "\nOn the way back to your basement, you found **$"
+                            + str(bonus_prize)
+                            + "** "
+                            + "<:poggers:490322361891946496>"
                     )
                     # embed the rob confirmation message, set thumbnail to 40x40 of a "ninja" gif
                     em = discord.Embed(description=msg, colour=0x607D4A)
@@ -238,13 +322,15 @@ class Games:
             robber.update_user_money(bail * -1)
 
             msg = (
-                "<a:policesiren2:490326123549556746> :oncoming_police_car: "
-                "<a:policesiren2:490326123549556746>\n<a:monkacop:490323719063863306>"
-                "\u200B \u200B \u200B \u200B \u200B \u200B \u200B \u200B \u200B \u200B"
-                "<a:monkacop:490323719063863306>\n**" + str(target.display_name) + "**"
-                " dodged and the police shot you in the process.\nYou spent **$"
-                + str(bail)
-                + "** to bail out of jail."
+                    "<a:policesiren2:490326123549556746> :oncoming_police_car: "
+                    "<a:policesiren2:490326123549556746>\n<a:monkacop:490323719063863306>"
+                    "\u200B \u200B \u200B \u200B \u200B \u200B \u200B \u200B \u200B \u200B"
+                    "<a:monkacop:490323719063863306>\n**" + str(target.display_name) + "**"
+                                                                                       " dodged"
+                                                                                       " and the police shot you"
+                                                                                       " in the process.\nYou spent **$"
+                    + str(bail)
+                    + "** to bail out of jail."
             )
 
             # embed the rob failure message, set thumbnail to 80x80 of a "police siren" gif
@@ -279,14 +365,14 @@ class Games:
         # reward robber with prize and bonus prize
         robber.update_user_money(prize + bonus_prize)
         msg = (
-            "**Success!** <:poggers:490322361891946496> "
-            "\nRobbed **$"
-            + str(prize)
-            + "** (+**$"
-            + str(bonus_prize)
-            + "**) from **"
-            + str(target.display_name)
-            + "**"
+                "**Success!** <:poggers:490322361891946496> "
+                "\nRobbed **$"
+                + str(prize)
+                + "** (+**$"
+                + str(bonus_prize)
+                + "**) from **"
+                + str(target.display_name)
+                + "**"
         )
 
         # embed the rob confirmation message, set thumbnail to 40x40 of a "ninja" gif
@@ -299,7 +385,7 @@ class Games:
     """TOURNAMENT BATTLE FUNCTION"""
 
     @has_account()
-    @commands.cooldown(1, 10, commands.BucketType.user)
+    @commands.cooldown(1, 5, commands.BucketType.user)
     @commands.command(
         name="tournament",
         aliases=["TOURNAMENT", "tourney", "TOURNEY"],
@@ -359,7 +445,7 @@ class Games:
                 await self.client.say(
                     context.message.author.mention
                     + " Your fighting target doesn't have an account."
-                    "\nTell them to use **=create** to make one."
+                      "\nTell them to use **=create** to make one."
                 )
                 return
 
@@ -394,12 +480,12 @@ class Games:
                     await self.client.delete_message(confirm)
                     # have to use 2 messages to enlarge the emojis
                     msg = (
-                        context.message.author.mention
-                        + " vs "
-                        + args[0]
-                        + " for **$"
-                        + str(bet)
-                        + "**\nFight will conclude in 10 seconds..."
+                            context.message.author.mention
+                            + " vs "
+                            + args[0]
+                            + " for **$"
+                            + str(bet)
+                            + "**\nFight will conclude in 10 seconds..."
                     )
                     # embed the duel alert message, set thumbnail to a "nunchuck frog" gif of size 64x64
                     em = discord.Embed(title="", colour=0x607D4A)
@@ -414,14 +500,14 @@ class Games:
                     # get the stats of each fighter
                     # algorithm for calculating a fighter's stats in duels: (item score + user level*2 + 20)
                     f1_stats = (
-                        fighter1.get_user_item_score()
-                        + (fighter1.get_user_level(0) * 2)
-                        + 20
+                            fighter1.get_user_item_score()
+                            + (fighter1.get_user_level(0) * 2)
+                            + 20
                     )
                     f2_stats = (
-                        fighter2.get_user_item_score()
-                        + (fighter2.get_user_level(0) * 2)
-                        + 20
+                            fighter2.get_user_item_score()
+                            + (fighter2.get_user_level(0) * 2)
+                            + 20
                     )
                     total = f1_stats + f2_stats
                     f1_weight = f1_stats / total
@@ -434,8 +520,8 @@ class Games:
 
                     # check if they tried to exploit the code by spending all their money during the battle
                     if (
-                        fighter1.get_user_money(0) < bet
-                        or fighter2.get_user_money(0) < bet
+                            fighter1.get_user_money(0) < bet
+                            or fighter2.get_user_money(0) < bet
                     ):
                         await self.client.say(
                             context.message.author.mention
@@ -447,11 +533,11 @@ class Games:
                     # update account balances respectively
                     if winner == 1:
                         msg = (
-                            context.message.author.mention
-                            + " won **$"
-                            + str(bet)
-                            + "** by defeating "
-                            + target
+                                context.message.author.mention
+                                + " won **$"
+                                + str(bet)
+                                + "** by defeating "
+                                + target
                         )
                         # embed the duel results message
                         em = discord.Embed(description=msg, colour=0x607D4A)
@@ -463,11 +549,11 @@ class Games:
 
                     elif winner == 2:
                         msg = (
-                            target
-                            + " won **$"
-                            + str(bet)
-                            + "** by defeating "
-                            + context.message.author.mention
+                                target
+                                + " won **$"
+                                + str(bet)
+                                + "** by defeating "
+                                + context.message.author.mention
                         )
                         # embed the duel results message
                         em = discord.Embed(description=msg, colour=0x607D4A)
@@ -495,7 +581,7 @@ class Games:
 
     """FLIP COIN FUNCTION"""
 
-    @commands.cooldown(1, 6, commands.BucketType.user)
+    @commands.cooldown(1, 5, commands.BucketType.user)
     @commands.command(
         name="flip",
         description="Flip a coin to earn social status.",
@@ -595,6 +681,7 @@ class Games:
 
     """HANGMAN main function"""
 
+    @commands.cooldown(1, 10, commands.BucketType.user)
     @commands.command(
         name="hangman",
         description="Guess the word in order to survive.",
@@ -603,7 +690,6 @@ class Games:
         pass_context=True,
     )
     async def hangman(self, context, *args):
-        hangmen = get_hangman_art()
         # initialize message to be printed if user wants category list
         hm_help = (
             "```fix\n1. Country name\n2. Farm\n3. Camping\n4. Household items/devices\n"
@@ -620,11 +706,11 @@ class Games:
                     context.message.author.mention
                     + " Categories:\n"
                     + "```fix\n1. Country name\n"
-                    "2. Farm\n3. Camping\n"
-                    "4. Household items/devices\n"
-                    "5. Beach\n6. Holidays\n"
-                    "7. US States\n"
-                    "8. Sports & Hobbies```"
+                      "2. Farm\n3. Camping\n"
+                      "4. Household items/devices\n"
+                      "5. Beach\n6. Holidays\n"
+                      "7. US States\n"
+                      "8. Sports & Hobbies```"
                 )
                 return
             try:
@@ -666,7 +752,7 @@ class Games:
             # make already_guessed boolean to facilitate a while loop that will loop if the user makes duplicate guess
             already_guessed = 1
             while (
-                already_guessed == 1
+                    already_guessed == 1
             ):  # loop that will exit immediately if letter guess_msg isn't a repeat
                 if guess_msg.clean_content.upper() in str("".join(guessed_letters)):
                     await self.client.delete_message(guess_msg)
@@ -699,17 +785,17 @@ class Games:
                 await self.client.say(hangmen[wrong_guesses])
                 # prepare win message string & embed it
                 win_msg = (
-                    "**Correct word pick** <a:worryHype:487059927731273739> "
-                    + " Correct word was: "
-                    + "**"
-                    + correct_word.upper()
-                    + "**\n"
+                        "**Correct word pick** <a:worryHype:487059927731273739> "
+                        + " Correct word was: "
+                        + "**"
+                        + correct_word.upper()
+                        + "**\n"
                 )
                 # add WINNINGS to user's bank account now
                 user = Users(context.message.author.id)
                 prize = user.get_user_level(0) * 8
                 win_msg += (
-                    "Won **$" + str(prize) + "**... " + user.update_user_money(prize)
+                        "Won **$" + str(prize) + "**... " + user.update_user_money(prize)
                 )
                 em = discord.Embed(description=win_msg, colour=0x607D4A)
                 await self.client.say(context.message.author.mention, embed=em)
@@ -739,7 +825,7 @@ class Games:
             unknown_letters = 0
             for x in underscore_sequence:
                 if (
-                    x == "\u2581"
+                        x == "\u2581"
                 ):  # if there is a blank underscore , the letter is still unknown to the user
                     unknown_letters += 1
             if unknown_letters == 0:
@@ -755,17 +841,17 @@ class Games:
                 await self.client.say(hangmen[wrong_guesses])
                 # prepare win message string & embed it
                 win_msg = (
-                    "You **won** the game!!"
-                    + " <a:worryHype:487059927731273739> Correct word was: "
-                    + "**"
-                    + correct_word.upper()
-                    + "**\n"
+                        "You **won** the game!!"
+                        + " <a:worryHype:487059927731273739> Correct word was: "
+                        + "**"
+                        + correct_word.upper()
+                        + "**\n"
                 )
                 # add WINNINGS to user's bank account now
                 user = Users(context.message.author.id)
                 prize = user.get_user_level(0) * 8
                 win_msg += (
-                    "Won **$" + str(prize) + "**... " + user.update_user_money(prize)
+                        "Won **$" + str(prize) + "**... " + user.update_user_money(prize)
                 )
                 em = discord.Embed(description=win_msg, colour=0x607D4A)
                 await self.client.say(context.message.author.mention, embed=em)
@@ -808,11 +894,11 @@ class Games:
                 await self.client.delete_message(pick_result_msg)
                 await self.client.say(hangmen[6])
                 losing_msg = (
-                    "\nYou were **hanged**! <a:pepehands:485869482602922021> "
-                    + "The word was: "
-                    + "**"
-                    + correct_word
-                    + "**\n"
+                        "\nYou were **hanged**! <a:pepehands:485869482602922021> "
+                        + "The word was: "
+                        + "**"
+                        + correct_word
+                        + "**\n"
                 )
                 em = discord.Embed(description=losing_msg, colour=0x607D4A)
                 await self.client.say(context.message.author.mention, embed=em)
@@ -831,10 +917,10 @@ class Games:
             # add 1 to the main game loop's counter
             counter += 1
 
-    """ Slot Machine """
 
+    """ Slot Machine """
     @has_account()
-    @commands.cooldown(1, 1, commands.BucketType.user)
+    @commands.cooldown(1, 3, commands.BucketType.user)
     @commands.command(
         name="slot",
         description="Slot Machine game",
@@ -847,34 +933,36 @@ class Games:
         user = Users(context.message.author.id)
 
         # Check if user has enough money. Ticket costs $3
-        ticket = 3
-        if user.get_user_money(0) < ticket:
-            await self.client.say(
+        ticket_cost = 5
+        if user.get_user_money(0) < ticket_cost:
+            msg = await self.client.say(
                 context.message.author.mention + " You don't have enough money...\n"
-                " Ticket costs ${}!".format(ticket)
+                                                 " ticket_cost costs ${}!".format(ticket_cost)
             )
+            await asyncio.sleep(5)
+            await self.client.delete_message(msg)
             return
 
-        # Deduct ticket price from user
-        user.update_user_money(ticket * -1)
+        # Deduct ticket cost from user
+        user.update_user_money(ticket_cost * -1)
 
         # High tier should have the lowest chance possible
         def get_tier():
-            """ High tier => 5%
-                Mid Tier => 15%
-                Low Tier => 80%
+            """ High tier => 10%
+                Mid Tier => 20%
+                Low Tier => 70%
             """
             tier = ""
             # Scuffed way to get real value
             # Get a random real value 0.01...100.0
             result = (random.randrange(1, 10001)) / 100
-            if result <= 5.0:
+            if result <= 10.0:
                 # High Tier
                 tier = "high"
-            elif result > 5.0 and result <= 20.0:
+            elif result > 10.0 and result <= 30.0:
                 # Mid Tier
                 tier = "mid"
-            elif result > 20.0 and result <= 100.0:
+            elif result > 30.0 and result <= 100.0:
                 # Low Tier
                 tier = "low"
             return tier
@@ -886,11 +974,11 @@ class Games:
             """
             emote = ""
             if result == "high":
-                emote = random.choice(HIGH_TIER_EMOTES)
+                emote = random.choice(high_tier_emotes)
             elif result == "mid":
-                emote = random.choice(MID_TIER_EMOTES)
+                emote = random.choice(mid_tier_emotes)
             elif result == "low":
-                emote = random.choice(LOW_TIER_EMOTES)
+                emote = random.choice(low_tier_emotes)
             return emote
 
         def get_bonus(slot_machine):
@@ -921,15 +1009,15 @@ class Games:
             if len(set(slot_machine)) == 1:
                 # Print Jackpot
                 result[0] = 1
-                if slot_machine[0] in HIGH_TIER_EMOTES:
+                if slot_machine[0] in high_tier_emotes:
                     result[1] = 500.0 + 1000.0
                     result[2] = "High"
                     return result
-                elif slot_machine[0] in MID_TIER_EMOTES:
+                elif slot_machine[0] in mid_tier_emotes:
                     result[1] = 500.0 + 500.0
                     result[2] = "Mid"
                     return result
-                elif slot_machine[0] in LOW_TIER_EMOTES:
+                elif slot_machine[0] in low_tier_emotes:
                     result[1] = 500.0 + 250.0
                     result[2] = "Low"
                     return result
@@ -938,28 +1026,28 @@ class Games:
             if len(set(slot_machine)) == 2:
                 result[0] = 2
                 temp = [i for i in slot_machine if slot_machine.count(i) > 1]
-                if temp[0] in HIGH_TIER_EMOTES:
+                if temp[0] in high_tier_emotes:
                     result[1] = 120.0 + 80.0
                     result[2] = "High"
                     return result
-                elif temp[0] in MID_TIER_EMOTES:
+                elif temp[0] in mid_tier_emotes:
                     result[1] = 120.0 + 60.0
                     result[2] = "Mid"
                     return result
-                elif temp[0] in LOW_TIER_EMOTES:
+                elif temp[0] in low_tier_emotes:
                     result[1] = 120.0 + 20.0
                     result[2] = "Low"
                     return result
 
             # If one element is a High Tier emoji
             for i in slot_machine:
-                if i in HIGH_TIER_EMOTES:
+                if i in high_tier_emotes:
                     result[1] = 50.0
                     return result
 
             return result
 
-        # assign results to 3 differents slots
+        # assign results to 3 different slots
         result_1 = get_tier()
         result_2 = get_tier()
         result_3 = get_tier()
@@ -968,7 +1056,7 @@ class Games:
         slot_1 = get_emoji(result_1)
         slot_2 = get_emoji(result_2)
         slot_3 = get_emoji(result_3)
-        
+
         # Check for bonus
         slot_machine = [slot_1, slot_2, slot_3]
         bonus = get_bonus(slot_machine)
@@ -991,13 +1079,13 @@ class Games:
             # This assert only works in debug mode due to application error handling
             assert bonus[2] != ""  # Make sure there is an actual tier
             if bonus[0] == 1:
-                msg = f"Result is **Jackpot**! <a:worrycash:525200274340577290>\n {bonus[2]} Tier! You won ${bonus[1]}!"
+                msg = f"**Jackpot**! <a:worrycash:525200274340577290>\n {bonus[2]} Tier! You won **${bonus[1]}**!"
                 em3 = discord.Embed(title="", description=msg, colour=0xFFD700)
 
                 await self.client.say(embed=em3)
 
             elif bonus[0] == 2:
-                msg = f"You got two {bonus[2]} Tier! <a:worryHype:487059927731273739>\n You won ${bonus[1]}!"
+                msg = f"You got **two** {bonus[2]} Tier! <a:worryHype:487059927731273739>\n You won **${bonus[1]}**!"
                 em3 = discord.Embed(title="", description=msg, colour=0xFFD700)
 
                 await self.client.say(embed=em3)
@@ -1007,116 +1095,3 @@ def setup(client):
     client.add_cog(Games(client))
 
 
-def battle_decider(fighter1, fighter2, fighter1_weight, fighter2_weight):
-    # choices function maps a selection to a probability, and selects one choice based off probability
-    winner = choices([fighter1, fighter2], [fighter1_weight, fighter2_weight])
-    print(winner)
-    # choices function returning [1] or [2] so use regex to pull the integers out
-    return int(re.findall("\d+", str(winner))[0])
-
-
-def pick_word(cat):
-    if cat == 1:
-        random_word = random.choice(all_words[0:180])
-        category = "Country name"
-    elif cat == 2:
-        random_word = random.choice(all_words[181:319])
-        category = "Farm"
-    elif cat == 3:
-        random_word = random.choice(all_words[320:389])
-        category = "Camping"
-    elif cat == 4:
-        random_word = random.choice(all_words[390:490])
-        category = "Household items/devices"
-    elif cat == 5:
-        random_word = random.choice(all_words[491:603])
-        category = "Beach"
-    elif cat == 6:
-        random_word = random.choice(all_words[604:648])
-        category = "Holidays"
-    elif cat == 7:
-        random_word = random.choice(all_words[649:699])
-        category = "US States"
-    elif cat == 8:
-        random_word = random.choice(all_words[700:998])
-        category = "Sports & Hobbies"
-    else:
-        random_word = random.choice(all_words[649:699])
-        category = "US States"
-
-    # quick band-aid fix to truncate CR in text file, COMING BACK LATER TO FIX
-    length = (
-        len(random_word) - 1
-    )  # to remove carriage return, I'm not using unix format to make the list
-    random_word = random_word[
-        :length
-    ]  # truncate word with [:length] cause of carriage return in text file...
-
-    underscore_sequence = list("")  # this will be our list of underscores
-    # it will be consistently replaced by guesses
-
-    # fill the underscore_sequence list with underscore underscore_sequencelate of the correct word
-    for x in random_word:
-        if x == " ":
-            underscore_sequence += (
-                "      "
-            )  # in the case of 2-word phrases, need to move everything over
-        elif x == "'":
-            underscore_sequence += " '"
-        else:
-            underscore_sequence += (
-                " \u2581"
-            )  # if not a space, add: \u2581, a special underscore character.
-            # using to replace by correctly guessed letters
-
-    return random_word.upper(), category, underscore_sequence
-
-
-def get_hangman_art():
-    # prepare array of hangman art
-    hangmen = []
-    with open("db_and_words\hangmen.txt") as my_file:
-        for line in my_file:
-            hangmen.append(line)
-
-    # convert respective list index-ranges to string with ''.join
-    # the resulting hangmen[0-6] will represent each stage of hangman
-    hangmen[0] = "".join(hangmen[0:6])
-    hangmen[1] = "".join(hangmen[7:13])
-    hangmen[2] = "".join(hangmen[14:20])
-    hangmen[3] = "".join(hangmen[21:27])
-    hangmen[4] = "".join(hangmen[28:34])
-    hangmen[5] = "".join(hangmen[35:41])
-    hangmen[6] = "".join(hangmen[42:49])
-
-    return hangmen
-
-
-def add_guess_to_list(guess, guessed):  # accepts guess and list of all guesses
-    if len(guess.clean_content) > 1:  # don't want to add whole word to guess list
-        all_guessed = "".join(map(str, guessed))
-        return guessed, all_guessed
-    guessed.extend(
-        guess.clean_content.upper()
-    )  # add last guess to the list of guessed words
-    guessed.extend(" ")  # add space to guessed list
-    all_guessed = "".join(
-        map(str, guessed)
-    )  # messy syntax, convert the list into a string so bot can print it
-    return guessed, all_guessed
-
-
-def find_matches(guess, correct_word, underscore_sequence):
-    index = 0
-    num_matches = 0
-    for x in correct_word:
-        index += 1
-        if x == " ":
-            index += 2
-        # if any matches, we need to replace underscore(s) in the sequence
-        # and increase the number of matches for the loop
-        if guess.clean_content.upper() == x:
-            # convulted index scheme due to underscore_sequence format
-            underscore_sequence[index * 2 - 1] = guess.clean_content.upper()
-            num_matches += 1
-    return num_matches, underscore_sequence
