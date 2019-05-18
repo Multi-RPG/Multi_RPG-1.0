@@ -947,21 +947,21 @@ class Games:
 
         # High tier should have the lowest chance possible
         def get_tier():
-            """ High tier => 10%
-                Mid Tier => 20%
-                Low Tier => 70%
+            """ High tier => 7%
+                Mid Tier => 28%
+                Low Tier => 65%
             """
             tier = ""
             # Scuffed way to get real value
             # Get a random real value 0.01...100.0
             result = (random.randrange(1, 10001)) / 100
-            if result <= 10.0:
+            if result <= 7.0:
                 # High Tier
                 tier = "high"
-            elif result > 10.0 and result <= 30.0:
+            elif result > 7.0 and result <= 35.0:
                 # Mid Tier
                 tier = "mid"
-            elif result > 30.0 and result <= 100.0:
+            elif result > 35.0 and result <= 100.0:
                 # Low Tier
                 tier = "low"
             return tier
@@ -1009,11 +1009,11 @@ class Games:
                 # Print Jackpot
                 result[0] = 1
                 if slot_machine[0] in high_tier_emotes:
-                    result[1] = 500.0 + 1000.0
+                    result[1] = 500.0 + 2000.0
                     result[2] = "High"
                     return result
                 elif slot_machine[0] in mid_tier_emotes:
-                    result[1] = 500.0 + 500.0
+                    result[1] = 500.0 + 1000.0
                     result[2] = "Mid"
                     return result
                 elif slot_machine[0] in low_tier_emotes:
@@ -1026,11 +1026,11 @@ class Games:
                 result[0] = 2
                 temp = [i for i in slot_machine if slot_machine.count(i) > 1]
                 if temp[0] in high_tier_emotes:
-                    result[1] = 120.0 + 80.0
+                    result[1] = 120.0 + 130.0
                     result[2] = "High"
                     return result
                 elif temp[0] in mid_tier_emotes:
-                    result[1] = 120.0 + 60.0
+                    result[1] = 120.0 + 50.0
                     result[2] = "Mid"
                     return result
                 elif temp[0] in low_tier_emotes:
@@ -1093,7 +1093,7 @@ class Games:
     @commands.command(
         name="tiers",
         description="Slot Machine help page",
-        aliases=["slotshelp", "slottiers", "slotstiers"],
+        aliases=["slothelp", "slottiers", "slotstiers"],
         pass_context=True,
     )
     async def slot_tiers_help(self, context):
@@ -1101,11 +1101,11 @@ class Games:
         msg2 = ' '.join(mid_tier_emotes)
         msg3 = ' '.join(low_tier_emotes)
         msg4 = ("\
-               **3** Identical High tier = **$1,500**\n\
-               **3** Identical Mid tier = **$1,000**\n\
+               **3** Identical High tier = **$2,500**\n\
+               **3** Identical Mid tier = **$1,500**\n\
                **3** Identical Low tier = **$750**\n\n\
-               **2** Identical High tier = **$200**\n\
-               **2** Identical Mid tier = **$180**\n\
+               **2** Identical High tier = **$250**\n\
+               **2** Identical Mid tier = **$170**\n\
                **2** Identical Low tier = **$120**\n\n\
                **1** of __any__ High tier = **$50**\
                ")
@@ -1119,7 +1119,6 @@ class Games:
         em = discord.Embed(title="**Rewards Information**", description=msg4, colour=0xFFD700)
         em.set_thumbnail(url="https://i.imgur.com/a9pARrC.gif")
         await self.client.send_message(context.message.author, embed=em)
-
 
 def setup(client):
     client.add_cog(Games(client))
