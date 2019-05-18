@@ -932,7 +932,7 @@ class Games:
         user = Users(context.message.author.id)
 
         # Check if user has enough money for ticket price
-        ticket_cost = 5
+        ticket_cost = 8
         if user.get_user_money(0) < ticket_cost:
             msg = await self.client.say(
                 context.message.author.mention + " You don't have enough money...\n"
