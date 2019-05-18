@@ -13,6 +13,9 @@ Optional entries in `tokens` folder:
  - imgflip account token in `tokenimgflip.ini` (if meme generation desired)
  - discordbots.org token in `token_dbo_api.ini` (if uploading statistics about your bot is desired)
  - google cloud service account, save as `creds.json` to upload database backups when `backup_script.py` is run
+ 
+Optional edits in `db_and_words` folder:
+ - list of discord "emojis" as `emoji_names.txt`, the emote ID's must be replaced for a different discord bot to use them
 
 ## Usage:
 ### Linux/macOS
