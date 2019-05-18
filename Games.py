@@ -1034,7 +1034,7 @@ class Games:
                     result[2] = "Mid"
                     return result
                 elif temp[0] in low_tier_emotes:
-                    result[1] = 120.0 + 20.0
+                    result[1] = 120.0
                     result[2] = "Low"
                     return result
 
@@ -1101,12 +1101,12 @@ class Games:
         msg2 = ' '.join(mid_tier_emotes)
         msg3 = ' '.join(low_tier_emotes)
         msg4 = ("\
-               **3** Identical High tier = **$1,000**\n\
-               **3** Identical Mid tier = **$500**\n\
-               **3** Identical Low tier = **$250**\n\n\
-               **2** Identical High tier = **$80**\n\
-               **2** Identical Mid tier = **$60**\n\
-               **2** Identical Low tier = **$20**\n\n\
+               **3** Identical High tier = **$1,500**\n\
+               **3** Identical Mid tier = **$1,000**\n\
+               **3** Identical Low tier = **$750**\n\n\
+               **2** Identical High tier = **$200**\n\
+               **2** Identical Mid tier = **$180**\n\
+               **2** Identical Low tier = **$120**\n\n\
                **1** of __any__ High tier = **$50**\
                ")
 
