@@ -919,7 +919,7 @@ class Games:
 
     """ Slot Machine """
     @has_account()
-    @commands.cooldown(1, 2, commands.BucketType.user)
+    @commands.cooldown(15, 86400, commands.BucketType.user)
     @commands.command(
         name="slot",
         description="Slot Machine game",
@@ -931,8 +931,8 @@ class Games:
         # Create a user instance
         user = Users(context.message.author.id)
 
-        # Check if user has enough money. Ticket costs $8
-        ticket_cost = 8
+        # Check if user has enough money. Ticket costs $10
+        ticket_cost = 10
         if user.get_user_money(0) < ticket_cost:
             msg = await self.client.say(
                 context.message.author.mention + " You don't have enough money...\n"
@@ -983,14 +983,14 @@ class Games:
         def get_bonus(slot_machine):
             """Getting a jackpot gives user a reward = 500 + bonus
                Bonus is determined by the emote tier
-               High tier = 1000.0
-               Mid tier = 500.0
+               High tier = 2000.0
+               Mid tier = 1000.0
                Low tier = 250.0
 
                Getting 2 same emotes also gives user a reward = 120 + bonus
-               High tier = 80.0
-               Mid tier = 60.0
-               Low tier = 20.0
+               High tier = 230.0
+               Mid tier = 130.0
+               Low tier = 0.0
 
                If one emoji is high tier, user is given $50.0
 
