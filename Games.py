@@ -1107,7 +1107,7 @@ class Games:
                **2** Identical High tier = **$80**\n\
                **2** Identical Mid tier = **$60**\n\
                **2** Identical Low tier = **$20**\n\n\
-               **1** of __any__ High tier = **$55**\
+               **1** of __any__ High tier = **$50**\
                ")
 
         em = discord.Embed(title="**High-tier emotes**", description=msg, colour=0xFFD700)
