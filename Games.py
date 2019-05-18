@@ -1090,6 +1090,38 @@ class Games:
 
                 await self.client.say(embed=em3)
 
+    """ Slots tier list information """
+
+    @commands.cooldown(1, 3, commands.BucketType.user)
+    @commands.command(
+        name="tiers",
+        description="Slot Machine help page",
+        aliases=["slotshelp", "slottiers", "slotstiers"],
+        pass_context=True,
+    )
+    async def slot_tiers_help(self, context):
+        msg =  ' '.join(high_tier_emotes)
+        msg2 = ' '.join(mid_tier_emotes)
+        msg3 = ' '.join(low_tier_emotes)
+        msg4 = ("\
+               **3** Identical High tier = **$1,000**\n\
+               **3** Identical Mid tier = **$500**\n\
+               **3** Identical Low tier = **$250**\n\n\
+               **2** Identical High tier = **$80**\n\
+               **2** Identical Mid tier = **$60**\n\
+               **2** Identical Low tier = **$20**\n\n\
+               **1** of __any__ High tier = **$55**\
+               ")
+
+        em = discord.Embed(title="**High-tier emotes**", description=msg, colour=0xFFD700)
+        await self.client.say(embed=em)
+        em = discord.Embed(title="**Mid-tier emotes**", description=msg2, colour=0xFFD700)
+        await self.client.say(embed=em)
+        em = discord.Embed(title="**Low-tier emotes**", description=msg3, colour=0xFFD700)
+        await self.client.say(embed=em)
+        em = discord.Embed(title="**Rewards Information**", description=msg4, colour=0xFFD700)
+        await self.client.say(embed=em)
+
 
 def setup(client):
     client.add_cog(Games(client))
