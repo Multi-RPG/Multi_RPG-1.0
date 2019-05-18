@@ -1111,14 +1111,14 @@ class Games:
                ")
 
         em = discord.Embed(title="**High-tier emotes**", description=msg, colour=0xFFD700)
-        await self.client.say(embed=em)
+        await self.client.send_message(context.message.author, embed=em)
         em = discord.Embed(title="**Mid-tier emotes**", description=msg2, colour=0xFFD700)
-        await self.client.say(embed=em)
+        await self.client.send_message(context.message.author, embed=em)
         em = discord.Embed(title="**Low-tier emotes**", description=msg3, colour=0xFFD700)
-        await self.client.say(embed=em)
+        await self.client.send_message(context.message.author, embed=em)
         em = discord.Embed(title="**Rewards Information**", description=msg4, colour=0xFFD700)
         em.set_thumbnail(url="https://i.imgur.com/a9pARrC.gif")
-        await self.client.say(embed=em)
+        await self.client.send_message(context.message.author, embed=em)
 
 
 def setup(client):
