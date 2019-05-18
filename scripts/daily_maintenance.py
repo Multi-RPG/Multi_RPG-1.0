@@ -78,7 +78,6 @@ async def on_ready():
 
             db.insert_shop_item(item_name, item_type, item_level, item_price)
 
-
     """ PERFORM DAILY LOTTERY MAINTENANCE NOW """
     # generate a random winning number 1-5
     win_number = random.randint(1,5)
