@@ -74,11 +74,11 @@ def pick_word(cat):
 
     # quick band-aid fix to truncate CR in text file, COMING BACK LATER TO FIX
     length = (
-            len(random_word) - 1
+        len(random_word) - 1
     )  # to remove carriage return, I'm not using unix format to make the list
     random_word = random_word[
-                  :length
-                  ]  # truncate word with [:length] cause of carriage return in text file...
+        :length
+    ]  # truncate word with [:length] cause of carriage return in text file...
 
     underscore_sequence = list("")  # this will be our list of underscores
     # it will be consistently replaced by guesses
@@ -136,25 +136,25 @@ def get_slots_emoji_list():
         mid_tier = []
         low_tier = []
 
-        current_tier = ''
+        current_tier = ""
 
         for line in lines:
-            line = line.rstrip('\n')
-            if line == 'HIGH-TIER-LIST':
-                current_tier = 'high'
+            line = line.rstrip("\n")
+            if line == "HIGH-TIER-LIST":
+                current_tier = "high"
                 continue
-            if line == 'MEDIUM-TIER-LIST':
-                current_tier = 'med'
+            if line == "MEDIUM-TIER-LIST":
+                current_tier = "med"
                 continue
-            if line == 'LOW-TIER-LIST':
-                current_tier = 'low'
+            if line == "LOW-TIER-LIST":
+                current_tier = "low"
                 continue
 
-            if current_tier == 'high':
+            if current_tier == "high":
                 high_tier.append(line)
-            elif current_tier == 'med':
+            elif current_tier == "med":
                 mid_tier.append(line)
-            elif current_tier == 'low':
+            elif current_tier == "low":
                 low_tier.append(line)
         return high_tier, mid_tier, low_tier
 
@@ -222,14 +222,14 @@ class Games:
                     await self.client.say(
                         context.message.author.mention
                         + " Your rob target doesn't have an account."
-                          "\n**Rerolling** rob target now!"
+                        "\n**Rerolling** rob target now!"
                     )
                 if robber.get_user_peace_status() == 1:
                     fail_chance = 30
                     await self.client.say(
                         context.message.author.mention
                         + " You are in :dove: **peace mode** :dove: and cannot use =rob @user."
-                          "\n**Rerolling** rob target now!"
+                        "\n**Rerolling** rob target now!"
                     )
 
                     # pick a random user in the server to rob
@@ -243,7 +243,7 @@ class Games:
                     await self.client.say(
                         context.message.author.mention
                         + " That target is in :dove: **peace mode** :dove: and exempt to =rob @user."
-                          "\n**Rerolling** rob target now!"
+                        "\n**Rerolling** rob target now!"
                     )
 
                     # pick a random user in the server to rob
@@ -273,12 +273,12 @@ class Games:
                     robber.update_user_money(bail * -1)
 
                     msg = (
-                            "<a:policesiren2:490326123549556746> :oncoming_police_car: "
-                            "<a:policesiren2:490326123549556746>\n<a:monkacop:490323719063863306>"
-                            "\u200B \u200B \u200B \u200B \u200B \u200B \u200B \u200B \u200B \u200B"
-                            "<a:monkacop:490323719063863306>\n"
-                            + "Police shot you in the process.\n"
-                              "You spent **$" + str(bail) + "** to bail out of jail."
+                        "<a:policesiren2:490326123549556746> :oncoming_police_car: "
+                        "<a:policesiren2:490326123549556746>\n<a:monkacop:490323719063863306>"
+                        "\u200B \u200B \u200B \u200B \u200B \u200B \u200B \u200B \u200B \u200B"
+                        "<a:monkacop:490323719063863306>\n"
+                        + "Police shot you in the process.\n"
+                        "You spent **$" + str(bail) + "** to bail out of jail."
                     )
 
                     # embed the rob failure message, set thumbnail to 80x80 of a "police siren" gif
@@ -293,11 +293,11 @@ class Games:
                     bonus_prize = int(robber.get_user_level(0) * 29.3)
                     robber.update_user_money(bonus_prize)
                     msg = (
-                            "**No users found to rob...** "
-                            "\nOn the way back to your basement, you found **$"
-                            + str(bonus_prize)
-                            + "** "
-                            + "<:poggers:490322361891946496>"
+                        "**No users found to rob...** "
+                        "\nOn the way back to your basement, you found **$"
+                        + str(bonus_prize)
+                        + "** "
+                        + "<:poggers:490322361891946496>"
                     )
                     # embed the rob confirmation message, set thumbnail to 40x40 of a "ninja" gif
                     em = discord.Embed(description=msg, colour=0x607D4A)
@@ -322,15 +322,15 @@ class Games:
             robber.update_user_money(bail * -1)
 
             msg = (
-                    "<a:policesiren2:490326123549556746> :oncoming_police_car: "
-                    "<a:policesiren2:490326123549556746>\n<a:monkacop:490323719063863306>"
-                    "\u200B \u200B \u200B \u200B \u200B \u200B \u200B \u200B \u200B \u200B"
-                    "<a:monkacop:490323719063863306>\n**" + str(target.display_name) + "**"
-                                                                                       " dodged"
-                                                                                       " and the police shot you"
-                                                                                       " in the process.\nYou spent **$"
-                    + str(bail)
-                    + "** to bail out of jail."
+                "<a:policesiren2:490326123549556746> :oncoming_police_car: "
+                "<a:policesiren2:490326123549556746>\n<a:monkacop:490323719063863306>"
+                "\u200B \u200B \u200B \u200B \u200B \u200B \u200B \u200B \u200B \u200B"
+                "<a:monkacop:490323719063863306>\n**" + str(target.display_name) + "**"
+                " dodged"
+                " and the police shot you"
+                " in the process.\nYou spent **$"
+                + str(bail)
+                + "** to bail out of jail."
             )
 
             # embed the rob failure message, set thumbnail to 80x80 of a "police siren" gif
@@ -365,14 +365,14 @@ class Games:
         # reward robber with prize and bonus prize
         robber.update_user_money(prize + bonus_prize)
         msg = (
-                "**Success!** <:poggers:490322361891946496> "
-                "\nRobbed **$"
-                + str(prize)
-                + "** (+**$"
-                + str(bonus_prize)
-                + "**) from **"
-                + str(target.display_name)
-                + "**"
+            "**Success!** <:poggers:490322361891946496> "
+            "\nRobbed **$"
+            + str(prize)
+            + "** (+**$"
+            + str(bonus_prize)
+            + "**) from **"
+            + str(target.display_name)
+            + "**"
         )
 
         # embed the rob confirmation message, set thumbnail to 40x40 of a "ninja" gif
@@ -445,7 +445,7 @@ class Games:
                 await self.client.say(
                     context.message.author.mention
                     + " Your fighting target doesn't have an account."
-                      "\nTell them to use **=create** to make one."
+                    "\nTell them to use **=create** to make one."
                 )
                 return
 
@@ -480,12 +480,12 @@ class Games:
                     await self.client.delete_message(confirm)
                     # have to use 2 messages to enlarge the emojis
                     msg = (
-                            context.message.author.mention
-                            + " vs "
-                            + args[0]
-                            + " for **$"
-                            + str(bet)
-                            + "**\nFight will conclude in 10 seconds..."
+                        context.message.author.mention
+                        + " vs "
+                        + args[0]
+                        + " for **$"
+                        + str(bet)
+                        + "**\nFight will conclude in 10 seconds..."
                     )
                     # embed the duel alert message, set thumbnail to a "nunchuck frog" gif of size 64x64
                     em = discord.Embed(title="", colour=0x607D4A)
@@ -500,14 +500,14 @@ class Games:
                     # get the stats of each fighter
                     # algorithm for calculating a fighter's stats in duels: (item score + user level*2 + 20)
                     f1_stats = (
-                            fighter1.get_user_item_score()
-                            + (fighter1.get_user_level(0) * 2)
-                            + 20
+                        fighter1.get_user_item_score()
+                        + (fighter1.get_user_level(0) * 2)
+                        + 20
                     )
                     f2_stats = (
-                            fighter2.get_user_item_score()
-                            + (fighter2.get_user_level(0) * 2)
-                            + 20
+                        fighter2.get_user_item_score()
+                        + (fighter2.get_user_level(0) * 2)
+                        + 20
                     )
                     total = f1_stats + f2_stats
                     f1_weight = f1_stats / total
@@ -520,8 +520,8 @@ class Games:
 
                     # check if they tried to exploit the code by spending all their money during the battle
                     if (
-                            fighter1.get_user_money(0) < bet
-                            or fighter2.get_user_money(0) < bet
+                        fighter1.get_user_money(0) < bet
+                        or fighter2.get_user_money(0) < bet
                     ):
                         await self.client.say(
                             context.message.author.mention
@@ -533,11 +533,11 @@ class Games:
                     # update account balances respectively
                     if winner == 1:
                         msg = (
-                                context.message.author.mention
-                                + " won **$"
-                                + str(bet)
-                                + "** by defeating "
-                                + target
+                            context.message.author.mention
+                            + " won **$"
+                            + str(bet)
+                            + "** by defeating "
+                            + target
                         )
                         # embed the duel results message
                         em = discord.Embed(description=msg, colour=0x607D4A)
@@ -549,11 +549,11 @@ class Games:
 
                     elif winner == 2:
                         msg = (
-                                target
-                                + " won **$"
-                                + str(bet)
-                                + "** by defeating "
-                                + context.message.author.mention
+                            target
+                            + " won **$"
+                            + str(bet)
+                            + "** by defeating "
+                            + context.message.author.mention
                         )
                         # embed the duel results message
                         em = discord.Embed(description=msg, colour=0x607D4A)
@@ -706,11 +706,11 @@ class Games:
                     context.message.author.mention
                     + " Categories:\n"
                     + "```fix\n1. Country name\n"
-                      "2. Farm\n3. Camping\n"
-                      "4. Household items/devices\n"
-                      "5. Beach\n6. Holidays\n"
-                      "7. US States\n"
-                      "8. Sports & Hobbies```"
+                    "2. Farm\n3. Camping\n"
+                    "4. Household items/devices\n"
+                    "5. Beach\n6. Holidays\n"
+                    "7. US States\n"
+                    "8. Sports & Hobbies```"
                 )
                 return
             try:
@@ -752,7 +752,7 @@ class Games:
             # make already_guessed boolean to facilitate a while loop that will loop if the user makes duplicate guess
             already_guessed = 1
             while (
-                    already_guessed == 1
+                already_guessed == 1
             ):  # loop that will exit immediately if letter guess_msg isn't a repeat
                 if guess_msg.clean_content.upper() in str("".join(guessed_letters)):
                     await self.client.delete_message(guess_msg)
@@ -785,17 +785,17 @@ class Games:
                 await self.client.say(hangmen[wrong_guesses])
                 # prepare win message string & embed it
                 win_msg = (
-                        "**Correct word pick** <a:worryHype:487059927731273739> "
-                        + " Correct word was: "
-                        + "**"
-                        + correct_word.upper()
-                        + "**\n"
+                    "**Correct word pick** <a:worryHype:487059927731273739> "
+                    + " Correct word was: "
+                    + "**"
+                    + correct_word.upper()
+                    + "**\n"
                 )
                 # add WINNINGS to user's bank account now
                 user = Users(context.message.author.id)
                 prize = user.get_user_level(0) * 8
                 win_msg += (
-                        "Won **$" + str(prize) + "**... " + user.update_user_money(prize)
+                    "Won **$" + str(prize) + "**... " + user.update_user_money(prize)
                 )
                 em = discord.Embed(description=win_msg, colour=0x607D4A)
                 await self.client.say(context.message.author.mention, embed=em)
@@ -825,7 +825,7 @@ class Games:
             unknown_letters = 0
             for x in underscore_sequence:
                 if (
-                        x == "\u2581"
+                    x == "\u2581"
                 ):  # if there is a blank underscore , the letter is still unknown to the user
                     unknown_letters += 1
             if unknown_letters == 0:
@@ -841,17 +841,17 @@ class Games:
                 await self.client.say(hangmen[wrong_guesses])
                 # prepare win message string & embed it
                 win_msg = (
-                        "You **won** the game!!"
-                        + " <a:worryHype:487059927731273739> Correct word was: "
-                        + "**"
-                        + correct_word.upper()
-                        + "**\n"
+                    "You **won** the game!!"
+                    + " <a:worryHype:487059927731273739> Correct word was: "
+                    + "**"
+                    + correct_word.upper()
+                    + "**\n"
                 )
                 # add WINNINGS to user's bank account now
                 user = Users(context.message.author.id)
                 prize = user.get_user_level(0) * 8
                 win_msg += (
-                        "Won **$" + str(prize) + "**... " + user.update_user_money(prize)
+                    "Won **$" + str(prize) + "**... " + user.update_user_money(prize)
                 )
                 em = discord.Embed(description=win_msg, colour=0x607D4A)
                 await self.client.say(context.message.author.mention, embed=em)
@@ -894,11 +894,11 @@ class Games:
                 await self.client.delete_message(pick_result_msg)
                 await self.client.say(hangmen[6])
                 losing_msg = (
-                        "\nYou were **hanged**! <a:pepehands:485869482602922021> "
-                        + "The word was: "
-                        + "**"
-                        + correct_word
-                        + "**\n"
+                    "\nYou were **hanged**! <a:pepehands:485869482602922021> "
+                    + "The word was: "
+                    + "**"
+                    + correct_word
+                    + "**\n"
                 )
                 em = discord.Embed(description=losing_msg, colour=0x607D4A)
                 await self.client.say(context.message.author.mention, embed=em)
@@ -918,6 +918,7 @@ class Games:
             counter += 1
 
     """ Slot Machine """
+
     @has_account()
     @commands.cooldown(15, 86400, commands.BucketType.user)
     @commands.command(
@@ -936,7 +937,7 @@ class Games:
         if user.get_user_money(0) < ticket_cost:
             msg = await self.client.say(
                 context.message.author.mention + " You don't have enough money...\n"
-                                                 " ticket_cost costs ${}!".format(ticket_cost)
+                " ticket_cost costs ${}!".format(ticket_cost)
             )
             await asyncio.sleep(5)
             await self.client.delete_message(msg)
@@ -1089,6 +1090,7 @@ class Games:
             await self.client.say(embed=em3)
 
     """ Slots tier list information """
+
     @commands.cooldown(1, 3, commands.BucketType.user)
     @commands.command(
         name="tiers",
@@ -1097,10 +1099,10 @@ class Games:
         pass_context=True,
     )
     async def slot_tiers_help(self, context):
-        msg =  ' '.join(high_tier_emotes)
-        msg2 = ' '.join(mid_tier_emotes)
-        msg3 = ' '.join(low_tier_emotes)
-        msg4 = ("\
+        msg = " ".join(high_tier_emotes)
+        msg2 = " ".join(mid_tier_emotes)
+        msg3 = " ".join(low_tier_emotes)
+        msg4 = "\
                **3** Identical High tier = **$2,500**\n\
                **3** Identical Mid tier = **$1,500**\n\
                **3** Identical Low tier = **$750**\n\n\
@@ -1108,18 +1110,26 @@ class Games:
                **2** Identical Mid tier = **$250**\n\
                **2** Identical Low tier = **$120**\n\n\
                **1** of __any__ High tier = **$50**\
-               ")
+               "
 
-        em = discord.Embed(title="**High-tier emotes**", description=msg, colour=0xFFD700)
+        em = discord.Embed(
+            title="**High-tier emotes**", description=msg, colour=0xFFD700
+        )
         await self.client.send_message(context.message.author, embed=em)
-        em = discord.Embed(title="**Mid-tier emotes**", description=msg2, colour=0xFFD700)
+        em = discord.Embed(
+            title="**Mid-tier emotes**", description=msg2, colour=0xFFD700
+        )
         await self.client.send_message(context.message.author, embed=em)
-        em = discord.Embed(title="**Low-tier emotes**", description=msg3, colour=0xFFD700)
+        em = discord.Embed(
+            title="**Low-tier emotes**", description=msg3, colour=0xFFD700
+        )
         await self.client.send_message(context.message.author, embed=em)
-        em = discord.Embed(title="**Rewards Information**", description=msg4, colour=0xFFD700)
+        em = discord.Embed(
+            title="**Rewards Information**", description=msg4, colour=0xFFD700
+        )
         em.set_thumbnail(url="https://i.imgur.com/a9pARrC.gif")
         await self.client.send_message(context.message.author, embed=em)
 
+
 def setup(client):
     client.add_cog(Games(client))
-

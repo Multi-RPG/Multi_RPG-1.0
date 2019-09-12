@@ -4,6 +4,7 @@ from Database import Database
 # This class serves as a medium between the front-end bot code and the back-end database class
 # Performs string or data manipulation as well, so database class can be as simple as possible
 
+
 class Users:
     def __init__(self, id):
         self.id = id
@@ -11,15 +12,23 @@ class Users:
     def add_user(self):
         hm_db = Database(self.id)
         hm_db.connect()
-        return " Made account!\nYour starting :moneybag: balance: **$" + str(hm_db.insert_acct()) + "**"
+        return (
+            " Made account!\nYour starting :moneybag: balance: **$"
+            + str(hm_db.insert_acct())
+            + "**"
+        )
 
     def add_pet(self, pet_name):
         hm_db = Database(self.id)
         hm_db.connect()
         hm_db.insert_pet(pet_name)
-        return " Adopted **" + pet_name + "**!\n\nYou can: \n1. Use **=feed** to level them up\n" \
-                                          "2. Use **=hunt** for rewards\n" \
-                                          "3. Use **=pet** to check their status"
+        return (
+            " Adopted **"
+            + pet_name
+            + "**!\n\nYou can: \n1. Use **=feed** to level them up\n"
+            "2. Use **=hunt** for rewards\n"
+            "3. Use **=pet** to check their status"
+        )
 
     def find_user(self):
         hm_db = Database(self.id)
@@ -96,7 +105,6 @@ class Users:
         elif string == 1:
             return "**" + str(hm_db.get_pet_level()) + "**"
 
-
     def get_user_peace_status(self):
         hm_db = Database(self.id)
         hm_db.connect()
@@ -128,40 +136,57 @@ class Users:
         # if we want the full formatted string sequence of battle records
         elif string == 1:
             # assign each variable from the sql query
-            weapon_level, helmet_level, chest_level, boots_level,\
-            battles_lost, battles_won, total_winnings = hm_db.get_battle_stats()
+            weapon_level, helmet_level, chest_level, boots_level, battles_lost, battles_won, total_winnings = (
+                hm_db.get_battle_stats()
+            )
             total_winnings = "{:,}".format(total_winnings)
             user_level = hm_db.get_level()
             # format money with commas
             user_money = "{:,}".format(hm_db.get_money())
 
             # add full bold discord-format to each variable
-            item_score = '**' + str(weapon_level + helmet_level + chest_level + boots_level) + '**'
+            item_score = (
+                "**"
+                + str(weapon_level + helmet_level + chest_level + boots_level)
+                + "**"
+            )
 
-            weapon_level = '**' + str(weapon_level) + '**'
-            helmet_level = '**' + str(helmet_level) + '**'
-            chest_level = '**' + str(chest_level) + '**'
-            boots_level = '**' + str(boots_level) + '**'
-            battles_lost = '**' + str(battles_lost) + '**'
-            battles_won = '**' + str(battles_won) + '**'
-            total_winnings = '**$' + str(total_winnings) + '**'
-            user_level = '**' + str(user_level) + '**'
-            user_money = '**$' + str(user_money) + '**'
+            weapon_level = "**" + str(weapon_level) + "**"
+            helmet_level = "**" + str(helmet_level) + "**"
+            chest_level = "**" + str(chest_level) + "**"
+            boots_level = "**" + str(boots_level) + "**"
+            battles_lost = "**" + str(battles_lost) + "**"
+            battles_won = "**" + str(battles_won) + "**"
+            total_winnings = "**$" + str(total_winnings) + "**"
+            user_level = "**" + str(user_level) + "**"
+            user_money = "**$" + str(user_money) + "**"
 
             # have to insert encode \u200B for spaces when using discord encoding
-            return ('\n**ACCOUNT:**'
-                    '\n:chart_with_upwards_trend: Level: \u200B \u200B \u200B \u200B \u200B \u200B' + user_level +
-                    '\n:moneybag: Money: \u200B \u200B' + user_money +
-                    '\n\n**GEAR:**' 
-                    '\n<:weapon1:532252764097740861> Weapon: \u200B \u200B' + weapon_level +
-                    '\n<:helmet2:532252796255469588> Helmet: \u200B \u200B \u200B \u200B' + helmet_level +
-                    '\n<:chest5:532255708679503873> Chest: \u200B \u200B \u200B \u200B \u200B \u200B \u200B' + chest_level +
-                    '\n<:boots1:532252814953676807> Boots: \u200B \u200B \u200B \u200B \u200B \u200B \u200B' + boots_level +
-                    '\n__Total__:\u200B \u200B \u200B' + item_score +
-                    '\n\n**TOURNAMENT RECORDS:**'
-                    '\n:crossed_swords:\u200B \u200B lost: \u200B \u200B' + battles_lost +
-                    '\n:crossed_swords:\u200B \u200B won: ' + battles_won +
-                    '\n__Total winnings__: ' + total_winnings)
+            return (
+                "\n**ACCOUNT:**"
+                "\n:chart_with_upwards_trend: Level: \u200B \u200B \u200B \u200B \u200B \u200B"
+                + user_level
+                + "\n:moneybag: Money: \u200B \u200B"
+                + user_money
+                + "\n\n**GEAR:**"
+                "\n<:weapon1:532252764097740861> Weapon: \u200B \u200B"
+                + weapon_level
+                + "\n<:helmet2:532252796255469588> Helmet: \u200B \u200B \u200B \u200B"
+                + helmet_level
+                + "\n<:chest5:532255708679503873> Chest: \u200B \u200B \u200B \u200B \u200B \u200B \u200B"
+                + chest_level
+                + "\n<:boots1:532252814953676807> Boots: \u200B \u200B \u200B \u200B \u200B \u200B \u200B"
+                + boots_level
+                + "\n__Total__:\u200B \u200B \u200B"
+                + item_score
+                + "\n\n**TOURNAMENT RECORDS:**"
+                "\n:crossed_swords:\u200B \u200B lost: \u200B \u200B"
+                + battles_lost
+                + "\n:crossed_swords:\u200B \u200B won: "
+                + battles_won
+                + "\n__Total winnings__: "
+                + total_winnings
+            )
 
     def get_user_ticket_status(self):
         hm_db = Database(self.id)
@@ -179,13 +204,20 @@ class Users:
     def update_user_money(self, amount):
         hm_db = Database(self.id)
         hm_db.connect()
-        return "Your new account balance: **$" + str("{:,}".format(hm_db.update_money(amount))) + "**"
+        return (
+            "Your new account balance: **$"
+            + str("{:,}".format(hm_db.update_money(amount)))
+            + "**"
+        )
 
     def update_user_level(self):
         hm_db = Database(self.id)
         hm_db.connect()
-        return "\n<:worrysign10:531221748964786188> New level: **" + str(hm_db.update_level()) +\
-               "** <:worrysign10:531221748964786188>"
+        return (
+            "\n<:worrysign10:531221748964786188> New level: **"
+            + str(hm_db.update_level())
+            + "** <:worrysign10:531221748964786188>"
+        )
 
     def update_user_pet_xp(self):
         hm_db = Database(self.id)
@@ -217,39 +249,63 @@ class Users:
         hm_db = Database(self.id)
         hm_db.connect()
 
-        if gear_type == 'weapon':
-            return " Your new total item score: **" + \
-                   str(hm_db.update_battle_weapon(level)) + "**"
-        elif gear_type == 'helmet':
-            return " Your new total item score: **" +\
-               str(hm_db.update_battle_helmet(level)) + "**"
-        elif gear_type == 'chest':
-            return " Your new total item score: **" +\
-               str(hm_db.update_battle_chest(level)) + "**"
-        elif gear_type == 'boots':
-            return " Your new total item score: **" +\
-               str(hm_db.update_battle_boots(level)) + "**"
-
+        if gear_type == "weapon":
+            return (
+                " Your new total item score: **"
+                + str(hm_db.update_battle_weapon(level))
+                + "**"
+            )
+        elif gear_type == "helmet":
+            return (
+                " Your new total item score: **"
+                + str(hm_db.update_battle_helmet(level))
+                + "**"
+            )
+        elif gear_type == "chest":
+            return (
+                " Your new total item score: **"
+                + str(hm_db.update_battle_chest(level))
+                + "**"
+            )
+        elif gear_type == "boots":
+            return (
+                " Your new total item score: **"
+                + str(hm_db.update_battle_boots(level))
+                + "**"
+            )
 
     def update_user_tourney_server_id(self, server_name, server_id):
         hm_db = Database(self.id)
         hm_db.connect()
 
         hm_db.update_tourney_server_id(server_id)
-        return ":crossed_swords: Registered for **" + server_name + "** daily FFA tournament! :crossed_swords:"\
-               + "\nResults will be live by :alarm_clock: **7 AM PST!**"
+        return (
+            ":crossed_swords: Registered for **"
+            + server_name
+            + "** daily FFA tournament! :crossed_swords:"
+            + "\nResults will be live by :alarm_clock: **7 AM PST!**"
+        )
 
     def update_user_records(self, battles_lost, battles_won, total_winnings):
         hm_db = Database(self.id)
         hm_db.connect()
 
-        return " Your new battle records: **" \
-               + str(hm_db.update_battle_records(battles_lost, battles_won, total_winnings)) + "**"
+        return (
+            " Your new battle records: **"
+            + str(
+                hm_db.update_battle_records(battles_lost, battles_won, total_winnings)
+            )
+            + "**"
+        )
 
     def update_user_lottery_guess(self, ticket_guess, ticket_active):
         hm_db = Database(self.id)
         hm_db.connect()
 
         hm_db.update_lottery_guess(ticket_guess, ticket_active)
-        return "Thanks! Processed ticket ID: **" + self.id + "**\n " \
-               + "Results will be live by :alarm_clock: **7 AM PST!**"
+        return (
+            "Thanks! Processed ticket ID: **"
+            + self.id
+            + "**\n "
+            + "Results will be live by :alarm_clock: **7 AM PST!**"
+        )
