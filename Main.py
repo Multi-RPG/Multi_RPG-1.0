@@ -18,7 +18,7 @@ if len(sys.argv) > 1:
     if sys.argv[1] == "dev":
         prefix = "."
         print(f"Running [{sys.argv[1]}] mode, prefix set to [{prefix}]")
-        client = commands.Bot(command_prefix=[prefix])
+        client = commands.Bot(command_prefix=[prefix, "=", "%"])
         enable_error = False
     else:
         client = commands.Bot(command_prefix=["=", "%"])
