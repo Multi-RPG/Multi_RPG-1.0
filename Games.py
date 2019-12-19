@@ -1035,9 +1035,9 @@ class Games:
         pass_context=True,
     )
     async def high_and_low(self, context, *args):
-        ok, argc, arg = handle_args(args)
+        ok, arg = handle_args(args)
         if not ok:
-            await self.client.say(f"Sorry, an error occurred. argument count is {argc}.")
+            await self.client.say("No bet specified!")
         else:
             user = Users(context.message.author.id)
             bet = int(arg)
@@ -1094,12 +1094,12 @@ def handle_args(args):
     if args:
         # One arg: bet amount
         if len(args) == 1:
-            return True, len(args), args[0]
+            return True, args[0]
         # We don't expect more than 2 args
         elif len(args) > 1:
-            return False, len(args), None
+            return False, None
     else:
-        return False, len(args), None
+        return False, None
 
 
 def get_cards():
