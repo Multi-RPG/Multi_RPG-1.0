@@ -73,12 +73,8 @@ def pick_word(cat):
         category = "US States"
 
     # quick band-aid fix to truncate CR in text file, COMING BACK LATER TO FIX
-    length = (
-        len(random_word) - 1
-    )  # to remove carriage return, I'm not using unix format to make the list
-    random_word = random_word[
-        :length
-    ]  # truncate word with [:length] cause of carriage return in text file...
+    length = len(random_word) - 1  # to remove carriage return, I'm not using unix format to make the list
+    random_word = random_word[:length]  # truncate word with [:length] cause of carriage return in text file...
 
     underscore_sequence = list("")  # this will be our list of underscores
     # it will be consistently replaced by guesses
@@ -86,15 +82,11 @@ def pick_word(cat):
     # fill the underscore_sequence list with underscore underscore_sequencelate of the correct word
     for x in random_word:
         if x == " ":
-            underscore_sequence += (
-                "      "
-            )  # in the case of 2-word phrases, need to move everything over
+            underscore_sequence += "      "  # in the case of 2-word phrases, need to move everything over
         elif x == "'":
             underscore_sequence += " '"
         else:
-            underscore_sequence += (
-                " \u2581"
-            )  # if not a space, add: \u2581, a special underscore character.
+            underscore_sequence += " \u2581"  # if not a space, add: \u2581, a special underscore character.
             # using to replace by correctly guessed letters
 
     return random_word.upper(), category, underscore_sequence
@@ -104,13 +96,9 @@ def add_guess_to_list(guess, guessed):  # accepts guess and list of all guesses
     if len(guess.clean_content) > 1:  # don't want to add whole word to guess list
         all_guessed = "".join(map(str, guessed))
         return guessed, all_guessed
-    guessed.extend(
-        guess.clean_content.upper()
-    )  # add last guess to the list of guessed words
+    guessed.extend(guess.clean_content.upper())  # add last guess to the list of guessed words
     guessed.extend(" ")  # add space to guessed list
-    all_guessed = "".join(
-        map(str, guessed)
-    )  # messy syntax, convert the list into a string so bot can print it
+    all_guessed = "".join(map(str, guessed))  # messy syntax, convert the list into a string so bot can print it
     return guessed, all_guessed
 
 
@@ -220,8 +208,7 @@ class Games:
                 if victim.find_user() == 0:
                     fail_chance = 30
                     await self.client.say(
-                        context.message.author.mention
-                        + " Your rob target doesn't have an account."
+                        context.message.author.mention + " Your rob target doesn't have an account."
                         "\n**Rerolling** rob target now!"
                     )
                 if robber.get_user_peace_status() == 1:
@@ -276,16 +263,13 @@ class Games:
                         "<a:policesiren2:490326123549556746> :oncoming_police_car: "
                         "<a:policesiren2:490326123549556746>\n<a:monkacop:490323719063863306>"
                         "\u200B \u200B \u200B \u200B \u200B \u200B \u200B \u200B \u200B \u200B"
-                        "<a:monkacop:490323719063863306>\n"
-                        + "Police shot you in the process.\n"
+                        "<a:monkacop:490323719063863306>\n" + "Police shot you in the process.\n"
                         "You spent **$" + str(bail) + "** to bail out of jail."
                     )
 
                     # embed the rob failure message, set thumbnail to 80x80 of a "police siren" gif
                     em = discord.Embed(description=msg, colour=0x607D4A)
-                    em.set_thumbnail(
-                        url="https://cdn.discordapp.com/emojis/490326123549556746.gif?size=80"
-                    )
+                    em.set_thumbnail(url="https://cdn.discordapp.com/emojis/490326123549556746.gif?size=80")
                     await self.client.say(embed=em)
                     return
                 else:
@@ -301,9 +285,7 @@ class Games:
                     )
                     # embed the rob confirmation message, set thumbnail to 40x40 of a "ninja" gif
                     em = discord.Embed(description=msg, colour=0x607D4A)
-                    em.set_thumbnail(
-                        url="https://cdn.discordapp.com/emojis/419506568728543263.gif?size=40"
-                    )
+                    em.set_thumbnail(url="https://cdn.discordapp.com/emojis/419506568728543263.gif?size=40")
                     await self.client.say(embed=em)
                     return
             target = random.choice(list(context.message.server.members))
@@ -328,16 +310,12 @@ class Games:
                 "<a:monkacop:490323719063863306>\n**" + str(target.display_name) + "**"
                 " dodged"
                 " and the police shot you"
-                " in the process.\nYou spent **$"
-                + str(bail)
-                + "** to bail out of jail."
+                " in the process.\nYou spent **$" + str(bail) + "** to bail out of jail."
             )
 
             # embed the rob failure message, set thumbnail to 80x80 of a "police siren" gif
             em = discord.Embed(description=msg, colour=0x607D4A)
-            em.set_thumbnail(
-                url="https://cdn.discordapp.com/emojis/490326123549556746.gif?size=80"
-            )
+            em.set_thumbnail(url="https://cdn.discordapp.com/emojis/490326123549556746.gif?size=80")
             await self.client.say(embed=em)
             return
 
@@ -377,9 +355,7 @@ class Games:
 
         # embed the rob confirmation message, set thumbnail to 40x40 of a "ninja" gif
         em = discord.Embed(description=msg, colour=0x607D4A)
-        em.set_thumbnail(
-            url="https://cdn.discordapp.com/emojis/419506568728543263.gif?size=40"
-        )
+        em.set_thumbnail(url="https://cdn.discordapp.com/emojis/419506568728543263.gif?size=40")
         await self.client.say(embed=em)
 
     """TOURNAMENT BATTLE FUNCTION"""
@@ -387,24 +363,18 @@ class Games:
     @has_account()
     @commands.cooldown(1, 5, commands.BucketType.user)
     @commands.command(
-        name="tournament",
-        aliases=["TOURNAMENT", "tourney", "TOURNEY"],
-        pass_context=True,
+        name="tournament", aliases=["TOURNAMENT", "tourney", "TOURNEY"], pass_context=True,
     )
     async def enter_daily_tournament(self, context):
         # the bulk work of this feature is when the results are calculated from daily_maintenance.py
         # create instance of user who wants to enter the daily, server-specific colosseum tournament
         fighter = Users(context.message.author.id)
         # update their tourney_server_id entry to be the server they executed the command on
-        msg = fighter.update_user_tourney_server_id(
-            context.message.server.name, context.message.server.id
-        )
+        msg = fighter.update_user_tourney_server_id(context.message.server.name, context.message.server.id)
 
         # embed the tourney registration confirmation message, set thumbnail to 40x40 of the respective server's icon
         em = discord.Embed(description=msg, colour=0x607D4A)
-        thumb_url = "https://cdn.discordapp.com/icons/{0.id}/{0.icon}.webp?size=40".format(
-            context.message.server
-        )
+        thumb_url = "https://cdn.discordapp.com/icons/{0.id}/{0.icon}.webp?size=40".format(context.message.server)
         em.set_thumbnail(url=thumb_url)
         await self.client.say(embed=em)
 
@@ -443,8 +413,7 @@ class Games:
             # check if targeted user has account
             if fighter2.find_user() == 0:
                 await self.client.say(
-                    context.message.author.mention
-                    + " Your fighting target doesn't have an account."
+                    context.message.author.mention + " Your fighting target doesn't have an account."
                     "\nTell them to use **=create** to make one."
                 )
                 return
@@ -452,8 +421,7 @@ class Games:
             # check if both users have enough money
             if fighter1.get_user_money(0) < bet or fighter2.get_user_money(0) < bet:
                 await self.client.say(
-                    context.message.author.mention
-                    + " Either you or the target doesn't have enough money..."
+                    context.message.author.mention + " Either you or the target doesn't have enough money..."
                 )
                 return
 
@@ -472,9 +440,7 @@ class Games:
 
             # (try to) wait for a battle acceptance from other user
             try:
-                confirm = await self.client.wait_for_message(
-                    timeout=60, check=fighter2check
-                )
+                confirm = await self.client.wait_for_message(timeout=60, check=fighter2check)
                 await self.client.delete_message(alert_msg)
                 if confirm.clean_content.upper() == "YES":
                     await self.client.delete_message(confirm)
@@ -490,25 +456,15 @@ class Games:
                     # embed the duel alert message, set thumbnail to a "nunchuck frog" gif of size 64x64
                     em = discord.Embed(title="", colour=0x607D4A)
                     em.add_field(name="DUEL ALERT", value=msg, inline=True)
-                    em.set_thumbnail(
-                        url="https://cdn.discordapp.com/emojis/493220414206509056.gif?size=64"
-                    )
+                    em.set_thumbnail(url="https://cdn.discordapp.com/emojis/493220414206509056.gif?size=64")
 
                     await self.client.say(embed=em)
                     await asyncio.sleep(10)
 
                     # get the stats of each fighter
                     # algorithm for calculating a fighter's stats in duels: (item score + user level*2 + 20)
-                    f1_stats = (
-                        fighter1.get_user_item_score()
-                        + (fighter1.get_user_level(0) * 2)
-                        + 20
-                    )
-                    f2_stats = (
-                        fighter2.get_user_item_score()
-                        + (fighter2.get_user_level(0) * 2)
-                        + 20
-                    )
+                    f1_stats = fighter1.get_user_item_score() + (fighter1.get_user_level(0) * 2) + 20
+                    f2_stats = fighter2.get_user_item_score() + (fighter2.get_user_level(0) * 2) + 20
                     total = f1_stats + f2_stats
                     f1_weight = f1_stats / total
                     f2_weight = f2_stats / total
@@ -519,26 +475,16 @@ class Games:
                     winner = battle_decider(1, 2, f1_weight, f2_weight)
 
                     # check if they tried to exploit the code by spending all their money during the battle
-                    if (
-                        fighter1.get_user_money(0) < bet
-                        or fighter2.get_user_money(0) < bet
-                    ):
+                    if fighter1.get_user_money(0) < bet or fighter2.get_user_money(0) < bet:
                         await self.client.say(
-                            context.message.author.mention
-                            + " One of you spent money while battling..."
+                            context.message.author.mention + " One of you spent money while battling..."
                         )
                         return
 
                     # check who the winner was returned as
                     # update account balances respectively
                     if winner == 1:
-                        msg = (
-                            context.message.author.mention
-                            + " won **$"
-                            + str(bet)
-                            + "** by defeating "
-                            + target
-                        )
+                        msg = context.message.author.mention + " won **$" + str(bet) + "** by defeating " + target
                         # embed the duel results message
                         em = discord.Embed(description=msg, colour=0x607D4A)
                         await self.client.say(embed=em)
@@ -548,13 +494,7 @@ class Games:
                         fighter2.update_user_money(bet * -1)
 
                     elif winner == 2:
-                        msg = (
-                            target
-                            + " won **$"
-                            + str(bet)
-                            + "** by defeating "
-                            + context.message.author.mention
-                        )
+                        msg = target + " won **$" + str(bet) + "** by defeating " + context.message.author.mention
                         # embed the duel results message
                         em = discord.Embed(description=msg, colour=0x607D4A)
                         await self.client.say(embed=em)
@@ -568,9 +508,7 @@ class Games:
 
             # if the target never responded
             except:
-                await self.client.say(
-                    "**Battle request ignored...** <a:pepehands:485869482602922021>"
-                )
+                await self.client.say("**Battle request ignored...** <a:pepehands:485869482602922021>")
 
         # if they used syntax incorrectly
         except:
@@ -608,8 +546,7 @@ class Games:
             if bet > user.get_user_money(0) or bet < 1:
                 error_msg = await self.client.say(
                     "You don't have enough money for that bet..."
-                    " <a:pepehands:485869482602922021> "
-                    + context.message.author.mention
+                    " <a:pepehands:485869482602922021> " + context.message.author.mention
                 )
                 await asyncio.sleep(6)
                 await self.client.delete_message(error_msg)
@@ -703,9 +640,7 @@ class Games:
         if args:
             if args[0] in ("help", "HELP", "categories", "cats", "h"):
                 await self.client.say(
-                    context.message.author.mention
-                    + " Categories:\n"
-                    + "```fix\n1. Country name\n"
+                    context.message.author.mention + " Categories:\n" + "```fix\n1. Country name\n"
                     "2. Farm\n3. Camping\n"
                     "4. Household items/devices\n"
                     "5. Beach\n6. Holidays\n"
@@ -716,9 +651,7 @@ class Games:
             try:
                 correct_word, category, underscore_sequence = pick_word(int(args[0]))
             except:
-                await self.client.say(
-                    "Use a category number! (**Ex for Beach**: =hm 5)"
-                )
+                await self.client.say("Use a category number! (**Ex for Beach**: =hm 5)")
                 return
         # if no category was specified in argument by user...
         else:
@@ -731,47 +664,34 @@ class Games:
         # also, using "".join because discord api can't  print lists.
         # we could cast, but the format would be unfriendly for the game.
         cat_msg = await self.client.say(
-            context.message.author.mention
-            + " Word category is: **```fix\n"
-            + category
-            + "\n```**"
+            context.message.author.mention + " Word category is: **```fix\n" + category + "\n```**"
         )
-        art_msg = await self.client.say(
-            "\n** **\n" + hangmen[0] + "\n** **\n" + "".join(underscore_sequence)
-        )
+        art_msg = await self.client.say("\n** **\n" + hangmen[0] + "\n** **\n" + "".join(underscore_sequence))
 
         counter = 0
         while True:  # main game loop
-            guess_prompt_msg = await self.client.say(
-                "*Guess a letter or the entire word now...*"
-            )
+            guess_prompt_msg = await self.client.say("*Guess a letter or the entire word now...*")
             guess_msg = await self.client.wait_for_message(
                 author=context.message.author, timeout=60
             )  # wait for user's guess_msg
 
             # make already_guessed boolean to facilitate a while loop that will loop if the user makes duplicate guess
             already_guessed = 1
-            while (
-                already_guessed == 1
-            ):  # loop that will exit immediately if letter guess_msg isn't a repeat
+            while already_guessed == 1:  # loop that will exit immediately if letter guess_msg isn't a repeat
                 if guess_msg.clean_content.upper() in str("".join(guessed_letters)):
                     await self.client.delete_message(guess_msg)
                     already_guessed_msg = await self.client.say(
                         "\n*You already tried that." " Guess a different letter now...*"
                     )
                     # wait for user's guess_msg now
-                    guess_msg = await self.client.wait_for_message(
-                        author=context.message.author, timeout=30
-                    )
+                    guess_msg = await self.client.wait_for_message(author=context.message.author, timeout=30)
                     await self.client.delete_message(already_guessed_msg)
                 else:
                     already_guessed = 0
 
             """RUN WIN CHECKS AND CANCEL CHECKS NOW"""
             # run conditionals to check if they guessed entire word or they used a cancel keyword
-            print(
-                guess_msg.clean_content.upper() + " and correct word: " + correct_word
-            )  # console print
+            print(guess_msg.clean_content.upper() + " and correct word: " + correct_word)  # console print
             if guess_msg.clean_content.upper() == correct_word:
                 await self.client.delete_message(cat_msg)
                 await self.client.delete_message(art_msg)
@@ -794,9 +714,7 @@ class Games:
                 # add WINNINGS to user's bank account now
                 user = Users(context.message.author.id)
                 prize = user.get_user_level(0) * 8
-                win_msg += (
-                    "Won **$" + str(prize) + "**... " + user.update_user_money(prize)
-                )
+                win_msg += "Won **$" + str(prize) + "**... " + user.update_user_money(prize)
                 em = discord.Embed(description=win_msg, colour=0x607D4A)
                 await self.client.say(context.message.author.mention, embed=em)
                 return
@@ -819,14 +737,10 @@ class Games:
 
             # quick win check, check for any underscores left to fill.
             # if unknown_letters ends up as 0 for this iteration, then there are no letters left to guess.
-            num_matches, underscore_sequence = find_matches(
-                guess_msg, correct_word, underscore_sequence
-            )
+            num_matches, underscore_sequence = find_matches(guess_msg, correct_word, underscore_sequence)
             unknown_letters = 0
             for x in underscore_sequence:
-                if (
-                    x == "\u2581"
-                ):  # if there is a blank underscore , the letter is still unknown to the user
+                if x == "\u2581":  # if there is a blank underscore , the letter is still unknown to the user
                     unknown_letters += 1
             if unknown_letters == 0:
                 await self.client.delete_message(cat_msg)
@@ -850,9 +764,7 @@ class Games:
                 # add WINNINGS to user's bank account now
                 user = Users(context.message.author.id)
                 prize = user.get_user_level(0) * 8
-                win_msg += (
-                    "Won **$" + str(prize) + "**... " + user.update_user_money(prize)
-                )
+                win_msg += "Won **$" + str(prize) + "**... " + user.update_user_money(prize)
                 em = discord.Embed(description=win_msg, colour=0x607D4A)
                 await self.client.say(context.message.author.mention, embed=em)
                 return
@@ -871,18 +783,12 @@ class Games:
             if num_matches == 0:
                 wrong_guesses += 1  # no letters matched, so they guessed a wrong letter
                 if len(guess_msg.clean_content) == 1:
-                    pick_result_msg = await self.client.say(
-                        "**Wrong letter pick** <a:pepehands:485869482602922021>"
-                    )
+                    pick_result_msg = await self.client.say("**Wrong letter pick** <a:pepehands:485869482602922021>")
                 else:
-                    pick_result_msg = await self.client.say(
-                        "**Wrong word pick** <a:pepehands:485869482602922021>"
-                    )
+                    pick_result_msg = await self.client.say("**Wrong word pick** <a:pepehands:485869482602922021>")
             # if user's guess has any matches found in the correct word
             else:
-                pick_result_msg = await self.client.say(
-                    "**Correct letter pick** <a:worryHype:487059927731273739>"
-                )
+                pick_result_msg = await self.client.say("**Correct letter pick** <a:worryHype:487059927731273739>")
                 # don't need "correct word pick" next because that would trigger
                 # in the conditional right after the guess is taken
 
@@ -905,15 +811,11 @@ class Games:
                 return
 
             # print underscores/letters, our main interface
-            underscore_seq_msg = await self.client.say(
-                "** **\n**" + "".join(underscore_sequence) + "**"
-            )
+            underscore_seq_msg = await self.client.say("** **\n**" + "".join(underscore_sequence) + "**")
             # add last guessed letter to our guessed-so-far list
             guessed_letters, all_guessed = add_guess_to_list(guess_msg, guessed_letters)
             # print all letters guessed so far
-            guessed_list_msg = await self.client.say(
-                "** ```fix\nGuessed so far: " + all_guessed + "``` **"
-            )
+            guessed_list_msg = await self.client.say("** ```fix\nGuessed so far: " + all_guessed + "``` **")
             # add 1 to the main game loop's counter
             counter += 1
 
@@ -1112,23 +1014,118 @@ class Games:
                **1** of __any__ High tier = **$50**\
                "
 
-        em = discord.Embed(
-            title="**High-tier emotes**", description=msg, colour=0xFFD700
-        )
+        em = discord.Embed(title="**High-tier emotes**", description=msg, colour=0xFFD700)
         await self.client.send_message(context.message.author, embed=em)
-        em = discord.Embed(
-            title="**Mid-tier emotes**", description=msg2, colour=0xFFD700
-        )
+        em = discord.Embed(title="**Mid-tier emotes**", description=msg2, colour=0xFFD700)
         await self.client.send_message(context.message.author, embed=em)
-        em = discord.Embed(
-            title="**Low-tier emotes**", description=msg3, colour=0xFFD700
-        )
+        em = discord.Embed(title="**Low-tier emotes**", description=msg3, colour=0xFFD700)
         await self.client.send_message(context.message.author, embed=em)
-        em = discord.Embed(
-            title="**Rewards Information**", description=msg4, colour=0xFFD700
-        )
+        em = discord.Embed(title="**Rewards Information**", description=msg4, colour=0xFFD700)
         em.set_thumbnail(url="https://i.imgur.com/a9pARrC.gif")
         await self.client.send_message(context.message.author, embed=em)
+
+    """ High and Low game """
+
+    @has_account()
+    @commands.cooldown(15, 86400, commands.BucketType.user)
+    @commands.command(
+        name="high_low",
+        description="High and low game. Guess the sum of cards.",
+        aliases=["hl", "guess", "cards", "card"],
+        pass_context=True,
+    )
+    async def high_and_low(self, context, *args):
+        ok, argc, arg = handle_args(args)
+        if not ok:
+            await self.client.say(f"Sorry, an error occurred. argument count is {argc}.")
+        else:
+            user = Users(context.message.author.id)
+            bet = int(arg)
+            if user.get_user_money(0) < bet:
+                msg = f", you don't have enough money to bet...\n"
+                await asyncio.sleep(2)
+                await self.client.say(context.message.author.mention + msg)
+                return
+            instruction = (
+                ". Three cards for you, three cards for me. You flip one of yours over, and I flip two of mine."
+            )
+            await self.client.say(context.message.author.mention + instruction)
+            cpu_cards, user_cards = get_cards()
+
+            assert len(cpu_cards) == 3
+            assert len(user_cards) == 3
+            cpu_hand = f"{cpu_cards[0]} | {cpu_cards[1]} | *"
+            user_hand = f"{user_cards[0]} | * | *"
+            await self.client.say(f"My hand is {cpu_hand}\nAnd your hand is {user_hand}")
+            await self.client.say(
+                "Now what's your call? Will your total be higher or lower than mine?\nEnter low or high."
+            )
+
+            confirm = await self.client.wait_for_message(author=context.message.author, timeout=10)
+            if confirm:
+                cpu_hand = f"{cpu_cards[0]} | {cpu_cards[1]} | {user_cards[2]}"
+                user_hand = f"{user_cards[0]} | {user_cards[1]} | {user_cards[2]}"
+
+                await self.client.say(
+                    f"You're going with '{confirm.clean_content}', then? Right, let's see what we've got..."
+                )
+                await self.client.say(f"My hand is {cpu_hand}\nAnd your hand is {user_hand}")
+
+                won, sum_cpu, sum_user = win(cpu_cards, user_cards, confirm.clean_content.upper())
+                await self.client.say(f"My cards add up to {sum_cpu}. and you have...\n... a total of {sum_user}.")
+
+                if won:
+                    reward = get_reward(sum_cpu, sum_user, bet)
+                    await self.client.say(
+                        f"Congratulations, your guess was right!\nYou won {reward}"
+                    )
+                    user.update_user_money(reward)
+                else:
+                    await self.client.say("Aw... Sorry, but this match goes to me.")
+                    wut = (abs(bet - abs(sum_cpu - sum_user))) * -1
+                    print(f"U lost {wut}")
+                    user.update_user_money(wut)
+            else:
+                await self.client.say("You didn't answer... Lake!")
+                return
+
+
+def handle_args(args):
+    if args:
+        # One arg: bet amount
+        if len(args) == 1:
+            return True, len(args), args[0]
+        # We don't expect more than 2 args
+        elif len(args) > 1:
+            return False, len(args), None
+    else:
+        return False, len(args), None
+
+
+def get_cards():
+    cards = [1, 2, 3, 4, 5, 6, 7, 8, 9]
+    random.shuffle(cards)
+    cpu_cards = cards[0:3]
+    user_cards = cards[6:]
+    return cpu_cards, user_cards
+
+
+def win(cpu_hand, user_hand, user_guess):
+    sum_cpu_hand = sum(cpu_hand)
+    sum_user_hand = sum(user_hand)
+    print(sum_cpu_hand)
+    print(sum_user_hand)
+    win = False
+    if sum_user_hand > sum_cpu_hand and user_guess == "HIGH":
+        win = True
+    elif sum_user_hand < sum_cpu_hand and user_guess == "LOW":
+        win = True
+    return win, sum_cpu_hand, sum_user_hand
+
+
+def get_reward(sum_cpu, sum_user, bet):
+    diff = abs(sum_cpu - sum_user)
+    return bet + diff
 
 
 def setup(client):
