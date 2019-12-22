@@ -1061,8 +1061,12 @@ class Games:
                 "Now what's your call? Will your total be higher or lower than mine?\nEnter low or high."
             )
 
-            confirm = await self.client.wait_for_message(author=context.message.author, timeout=10)
+            confirm = await self.client.wait_for_message(author=context.message.author, timeout=20)
             if confirm:
+                if confirm.clean_content.upper() != "HIGH" and confirm.clean_content.upper() != "LOW":
+                    await self.client.say("Wrong answer!")
+                    return
+
                 cpu_hand = f"{cpu_cards[0]} | {cpu_cards[1]} | {user_cards[2]}"
                 user_hand = f"{user_cards[0]} | {user_cards[1]} | {user_cards[2]}"
 
