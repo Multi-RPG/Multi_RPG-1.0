@@ -2,6 +2,7 @@
 import sqlite3
 from sqlite3 import Error
 
+
 class Database:
     def __init__(self, id):
         self.id = id
@@ -120,7 +121,6 @@ class Database:
         except:
             return 0
 
-
     def find_server(self, server_id):
         cur = self.connection.cursor()
 
@@ -195,8 +195,10 @@ class Database:
     def get_battle_stats(self):
         cur = self.connection.cursor()
 
-        sql = "SELECT weapon_level, helmet_level, chest_level, boots_level, " \
-              "battles_lost, battles_won, total_winnings FROM Battles WHERE fighter_id = ?"
+        sql = (
+            "SELECT weapon_level, helmet_level, chest_level, boots_level, "
+            "battles_lost, battles_won, total_winnings FROM Battles WHERE fighter_id = ?"
+        )
         cur.execute(sql, (self.id,))
         row = cur.fetchone()
         # fetchone() returns only 1 row, and not in tuple format like fetchall()
@@ -236,7 +238,7 @@ class Database:
 
     def get_ticket_status(self):
         cur = self.connection.cursor()
-        
+
         sql = "SELECT ticket_active FROM Lottery WHERE ticket_id = ?"
         cur.execute(sql, (self.id,))
         row = cur.fetchone()
@@ -246,15 +248,19 @@ class Database:
     def get_lottery_winners(self, winning_number):
         cur = self.connection.cursor()
         # find ticket id's with the winning number as their ticket guess, and their active_ticket is 1, which defines a basic ticket
-        sql = "SELECT ticket_id FROM Lottery WHERE ticket_guess = ? AND ticket_active = ?"
+        sql = (
+            "SELECT ticket_id FROM Lottery WHERE ticket_guess = ? AND ticket_active = ?"
+        )
         cur.execute(sql, (winning_number, 1))
         rows = cur.fetchall()
         std_winners = []
         for row in rows:
             std_winners.append(row[0])
-         
-        # find ticket id's with the winning number as their ticket guess, and their active_ticket is 2, which defined a premium ticket 
-        sql = "SELECT ticket_id FROM Lottery WHERE ticket_guess = ? AND ticket_active = ?"
+
+        # find ticket id's with the winning number as their ticket guess, and their active_ticket is 2, which defined a premium ticket
+        sql = (
+            "SELECT ticket_id FROM Lottery WHERE ticket_guess = ? AND ticket_active = ?"
+        )
         cur.execute(sql, (winning_number, 2))
         rows = cur.fetchall()
         prem_winners = []
@@ -289,13 +295,13 @@ class Database:
         cur.execute(sql, (server_id,))
         row = cur.fetchone()
         return int(row[0])
-    
+
     def daily_all(self):
         cur = self.connection.cursor()
         cur2 = self.connection.cursor()
-        
+
         # for every user, reward X * level
-        for row in cur.execute('SELECT * FROM Users'):
+        for row in cur.execute("SELECT * FROM Users"):
             sql = "UPDATE Users SET money = money + (60*level) WHERE user_id = ?"
             id = row[0]
             cur2.execute(sql, (id,))
@@ -362,7 +368,6 @@ class Database:
 
         self.connection.commit()
         return self.get_pet_level()
-
 
     # enables the peace status to "1", so users cannot =rob @target a user
     def toggle_peace_status(self):
@@ -465,8 +470,10 @@ class Database:
     def update_battle_records(self, battles_lost, battles_won, total_winnings):
         cur = self.connection.cursor()
 
-        sql = "UPDATE Battles SET battles_lost = battles_lost + ?, battles_won = battles_won + ?," \
-              " total_winnings = total_winnings + ? WHERE fighter_id = ?"
+        sql = (
+            "UPDATE Battles SET battles_lost = battles_lost + ?, battles_won = battles_won + ?,"
+            " total_winnings = total_winnings + ? WHERE fighter_id = ?"
+        )
         cur.execute(sql, (battles_lost, battles_won, total_winnings, self.id))
         cur.execute("select * from Battles")
         rows = cur.fetchall()
@@ -482,7 +489,9 @@ class Database:
 
         # update specific user's ticket guess
         # change their ticket to active in order to be considered during next drawing
-        sql = "UPDATE Lottery SET ticket_guess = ?, ticket_active = ? WHERE ticket_id = ?"
+        sql = (
+            "UPDATE Lottery SET ticket_guess = ?, ticket_active = ? WHERE ticket_id = ?"
+        )
         cur.execute(sql, (ticket_guess, ticket_active, self.id))
         cur.execute("SELECT * from Lottery")
 
@@ -518,14 +527,12 @@ class Database:
         cur.execute(sql)
         self.connection.commit()
 
-
     def reset_lottery(self):
         cur = self.connection.cursor()
         # set all to inactive, and change all ticket guesses to outside of our defined bounds
         sql = "UPDATE Lottery SET ticket_guess = 0, ticket_active = 0"
         cur.execute(sql)
         self.connection.commit()
-
 
     def reset_shop(self):
         cur = self.connection.cursor()
