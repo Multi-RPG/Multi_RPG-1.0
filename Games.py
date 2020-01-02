@@ -7,6 +7,18 @@ from discord.ext import commands
 from Users import Users
 from random import choices
 
+CARDS = {
+             1: "<:card_onetest:662074259157549056>",
+             2: "<:card_twotest:662075865965920300>",
+             3: "<:card_threetest:662084754086166528>",
+             4: "<:card_fourtest:662085726493605918>",
+             5: "<:card_fivetest2:662086717750247444>",
+             6: "<:card_sixtest:662088270993162253>",
+             7: "<:card_seventest:662091815087898649>",
+             8: "<:worry_eight:662091909749014528>",
+             9: "<:card_ninetest:662092003676389380>"
+         }
+
 
 def get_hangman_art():
     # prepare array of hangman art
@@ -1054,8 +1066,8 @@ class Games:
 
             assert len(cpu_cards) == 3
             assert len(user_cards) == 3
-            cpu_hand = f"{cpu_cards[0]} | {cpu_cards[1]} | *"
-            user_hand = f"{user_cards[0]} | * | *"
+            cpu_hand = f"{CARDS[cpu_cards[0]]} | {CARDS[cpu_cards[1]]} | *"
+            user_hand = f"{CARDS[user_cards[0]]} | * | *"
             await self.client.say(f"My hand is {cpu_hand}\nAnd your hand is {user_hand}")
             await self.client.say(
                 "Now what's your call? Will your total be higher or lower than mine?\nEnter low or high."
@@ -1067,8 +1079,8 @@ class Games:
                     await self.client.say("Wrong answer!")
                     return
 
-                cpu_hand = f"{cpu_cards[0]} | {cpu_cards[1]} | {user_cards[2]}"
-                user_hand = f"{user_cards[0]} | {user_cards[1]} | {user_cards[2]}"
+                cpu_hand = f"{CARDS[cpu_cards[0]]} | {CARDS[cpu_cards[1]]} | {CARDS[user_cards[2]]}"
+                user_hand = f"{CARDS[user_cards[0]]} | {CARDS[user_cards[1]]} | {CARDS[user_cards[2]]}"
 
                 await self.client.say(
                     f"You're going with '{confirm.clean_content}', then? Right, let's see what we've got..."
@@ -1087,7 +1099,7 @@ class Games:
                 else:
                     await self.client.say("Aw... Sorry, but this match goes to me.")
                     wut = (abs(bet - abs(sum_cpu - sum_user))) * -1
-                    print(f"U lost {wut}")
+                    print(f"U lost {wut}")  # remove this shit before PR
                     user.update_user_money(wut)
             else:
                 await self.client.say("You didn't answer... Lake!")
@@ -1117,8 +1129,8 @@ def get_cards():
 def win(cpu_hand, user_hand, user_guess):
     sum_cpu_hand = sum(cpu_hand)
     sum_user_hand = sum(user_hand)
-    print(sum_cpu_hand)
-    print(sum_user_hand)
+    print(sum_cpu_hand)  # REMOVE THIS SHIT
+    print(sum_user_hand)  # REMOVE THIS SHIT
     win = False
     if sum_user_hand > sum_cpu_hand and user_guess == "HIGH":
         win = True
