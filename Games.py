@@ -7,17 +7,6 @@ from discord.ext import commands
 from Users import Users
 from random import choices
 
-CARDS = {
-             1: "<:card_onetest:662074259157549056>",
-             2: "<:card_twotest:662075865965920300>",
-             3: "<:card_threetest:662084754086166528>",
-             4: "<:card_fourtest:662085726493605918>",
-             5: "<:card_fivetest2:662086717750247444>",
-             6: "<:card_sixtest:662088270993162253>",
-             7: "<:card_seventest:662091815087898649>",
-             8: "<:worry_eight:662091909749014528>",
-             9: "<:card_ninetest:662092003676389380>"
-         }
 
 
 def get_hangman_art():
@@ -1052,25 +1041,44 @@ class Games:
             await self.client.say("No bet specified!")
         else:
             user = Users(context.message.author.id)
+            if user.find_user() == 0:
+                await self.client.say("You do not have an account.")
+                return
+
             bet = int(arg)
             if user.get_user_money(0) < bet:
                 msg = f", you don't have enough money to bet...\n"
                 await asyncio.sleep(2)
                 await self.client.say(context.message.author.mention + msg)
                 return
+
+            CARDS = {
+                         0: "<:card_nonetest2:662372124748546058>",
+                         1: "<:card_onetest:662074259157549056>",
+                         2: "<:card_twotest2:662373668214669313>",
+                         3: "<:card_threetest:662084754086166528>",
+                         4: "<:card_fourtest:662085726493605918>",
+                         5: "<:card_fivetest2:662086717750247444>",
+                         6: "<:card_sixtest:662088270993162253>",
+                         7: "<:card_seventest:662091815087898649>",
+                         8: "<:worry_eight:662091909749014528>",
+                         9: "<:card_ninetest:662092003676389380>"
+                     }
+
             instruction = (
-                ". Three cards for you, three cards for me. You flip one of yours over, and I flip two of mine."
+                ", Three cards for you, three cards for me. You flip one of yours over, and I flip two of mine."
             )
-            await self.client.say(context.message.author.mention + instruction)
+            initial_hand = f"\n{CARDS[0]}  {CARDS[0]}  {CARDS[0]}\n{CARDS[0]}  {CARDS[0]}  {CARDS[0]}"
+            await self.client.say(context.message.author.mention + instruction + initial_hand)
             cpu_cards, user_cards = get_cards()
 
             assert len(cpu_cards) == 3
             assert len(user_cards) == 3
-            cpu_hand = f"{CARDS[cpu_cards[0]]} | {CARDS[cpu_cards[1]]} | *"
-            user_hand = f"{CARDS[user_cards[0]]} | * | *"
+            cpu_hand = f"{CARDS[cpu_cards[0]]}  {CARDS[cpu_cards[1]]}  {CARDS[0]}"
+            user_hand = f"{CARDS[user_cards[0]]}  {CARDS[0]}  {CARDS[0]}"
             await self.client.say(f"My hand is {cpu_hand}\nAnd your hand is {user_hand}")
             await self.client.say(
-                "Now what's your call? Will your total be higher or lower than mine?\nEnter low or high."
+               "Now what's your call? Will your total be higher or lower than mine?\nEnter low or high."
             )
 
             confirm = await self.client.wait_for_message(author=context.message.author, timeout=20)
@@ -1079,8 +1087,8 @@ class Games:
                     await self.client.say("Wrong answer!")
                     return
 
-                cpu_hand = f"{CARDS[cpu_cards[0]]} | {CARDS[cpu_cards[1]]} | {CARDS[user_cards[2]]}"
-                user_hand = f"{CARDS[user_cards[0]]} | {CARDS[user_cards[1]]} | {CARDS[user_cards[2]]}"
+                cpu_hand = f"{CARDS[cpu_cards[0]]}  {CARDS[cpu_cards[1]]}  {CARDS[cpu_cards[2]]}"
+                user_hand = f"{CARDS[user_cards[0]]}  {CARDS[user_cards[1]]}  {CARDS[user_cards[2]]}"
 
                 await self.client.say(
                     f"You're going with '{confirm.clean_content}', then? Right, let's see what we've got..."
@@ -1093,16 +1101,15 @@ class Games:
                 if won:
                     reward = get_reward(sum_cpu, sum_user, bet)
                     await self.client.say(
-                        f"Congratulations, your guess was right!\nYou won {reward}"
+                        f"Congratulations, your guess was right!\nYou won ${reward}."
                     )
                     user.update_user_money(reward)
                 else:
                     await self.client.say("Aw... Sorry, but this match goes to me.")
                     wut = (abs(bet - abs(sum_cpu - sum_user))) * -1
-                    print(f"U lost {wut}")  # remove this shit before PR
                     user.update_user_money(wut)
             else:
-                await self.client.say("You didn't answer... Lake!")
+                await self.client.say("You didn't answer...")
                 return
 
 
@@ -1129,8 +1136,6 @@ def get_cards():
 def win(cpu_hand, user_hand, user_guess):
     sum_cpu_hand = sum(cpu_hand)
     sum_user_hand = sum(user_hand)
-    print(sum_cpu_hand)  # REMOVE THIS SHIT
-    print(sum_user_hand)  # REMOVE THIS SHIT
     win = False
     if sum_user_hand > sum_cpu_hand and user_guess == "HIGH":
         win = True
