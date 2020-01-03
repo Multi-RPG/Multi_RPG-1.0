@@ -1142,21 +1142,28 @@ class Games:
             await asyncio.sleep(2)
 
             won, sum_cpu, sum_user = win(cpu_cards, user_cards, confirm.clean_content.upper())
-            results1 = f"My cards add up to **{sum_cpu}**.\nAnd you have a total of **{sum_user}**.\n"
+            results1 = f"My cards add up to **{sum_cpu}**.\nAnd you have a total of **{sum_user}**.\n\n"
 
+            # take bet money away
+            user.update_user_money(bet * -1)
             if won:
                 winnings = get_reward(sum_cpu, sum_user, bet)
-                results2 = f"Congratulations, your guess was right!\nYou won **${winnings}**."
+                results2 = (
+                    f"Congratulations, your guess was right!\nYou won **${winnings}**. " 
+                    f"**{user.update_user_money(winnings)}."
+                )
                 em = discord.Embed(description=results1 + results2, colour=0x607D4A)
                 em.set_thumbnail(url="https://cdn.discordapp.com/emojis/525200274340577290.gif?size=64")
                 user.update_user_money(winnings)
             else:
-                results2 = "Aw... Sorry, but this match goes to me."
                 losings = (abs(bet - abs(sum_cpu - sum_user))) * -1
+                results2 = (
+                    f"Aw... Sorry, but this match goes to me.\nYou lost **${losings}**. " 
+                    f"{user.update_user_money(losings)}"
+                )
 
                 em = discord.Embed(description=results1 + results2, colour=0x607D4A)
                 em.set_thumbnail(url="https://cdn.discordapp.com/emojis/525209793405648896.gif?size=64")
-                user.update_user_money(losings)
 
             await self.client.say(embed=em)
         else:
@@ -1197,7 +1204,7 @@ def win(cpu_hand, user_hand, user_guess):
 
 def get_reward(sum_cpu, sum_user, bet):
     diff = abs(sum_cpu - sum_user)
-    return bet + diff
+    return int(bet * 1.5) + diff
 
 
 def setup(client):
