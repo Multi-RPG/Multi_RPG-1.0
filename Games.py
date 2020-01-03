@@ -1150,7 +1150,7 @@ class Games:
                 winnings = get_reward(sum_cpu, sum_user, bet)
                 results2 = (
                     f"Congratulations, your guess was right!\nYou won **${winnings}**. " 
-                    f"**{user.update_user_money(winnings)}."
+                    f"{user.update_user_money(winnings)}."
                 )
                 em = discord.Embed(description=results1 + results2, colour=0x607D4A)
                 em.set_thumbnail(url="https://cdn.discordapp.com/emojis/525200274340577290.gif?size=64")
