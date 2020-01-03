@@ -1104,16 +1104,18 @@ class Games:
         assert len(user_cards) == 3
         cpu_hand = f"{CARDS[cpu_cards[0]]}  {CARDS[cpu_cards[1]]}  {CARDS[0]}"
         user_hand = f"{CARDS[user_cards[0]]}  {CARDS[0]}  {CARDS[0]}"
-        instruction2 = (
+        hand1 = (
             f"Dealer's hand is: \u200B \u200B {cpu_hand}\nAnd your hand is: {user_hand}"
         )
-        em = discord.Embed(description=instruction2, colour=0x607D4A)
 
+        em = discord.Embed(description=hand1, colour=0x607D4A)
         await self.client.say(embed=em)
+
         await self.client.say(
            "Now, what's your call? Will your total be higher or lower than mine?\nEnter **low** or **high**..."
         )
 
+        # confirm the user's guess
         confirm = await self.client.wait_for_message(author=context.message.author, timeout=20)
         if confirm:
             if confirm.clean_content.upper() != "HIGH" and confirm.clean_content.upper() != "LOW":
@@ -1124,23 +1126,39 @@ class Games:
             user_hand = f"{CARDS[user_cards[0]]}  {CARDS[user_cards[1]]}  {CARDS[user_cards[2]]}"
 
             await self.client.say(
-                f"You're going with '{confirm.clean_content}', then? Right, let's see what we've got..."
+                f"You're going with **'{confirm.clean_content}'**, then, {confirm.author.mention}."
+                f" Right, let's see what we've got..."
             )
-            await self.client.say(f"Dealer's hand is: \u200B \u200B {cpu_hand}\nAnd your hand is: {user_hand}")
+
+            hand2 = (
+                f"Dealer's hand is: \u200B \u200B {cpu_hand}\nAnd your hand is: {user_hand}"
+            )
+
+            # build embed of the hand results and send it
+            em = discord.Embed(description=hand2, colour=0x607D4A)
+            await self.client.say(embed=em)
+
+            # wait 2 seconds to build suspense
+            await asyncio.sleep(2)
 
             won, sum_cpu, sum_user = win(cpu_cards, user_cards, confirm.clean_content.upper())
-            await self.client.say(f"My cards add up to {sum_cpu}. and you have...\n... a total of {sum_user}.")
+            results1 = f"My cards add up to **{sum_cpu}**.\nAnd you have a total of **{sum_user}**.\n"
 
             if won:
-                reward = get_reward(sum_cpu, sum_user, bet)
-                await self.client.say(
-                    f"Congratulations, your guess was right!\nYou won ${reward}."
-                )
-                user.update_user_money(reward)
+                winnings = get_reward(sum_cpu, sum_user, bet)
+                results2 = f"Congratulations, your guess was right!\nYou won **${winnings}**."
+                em = discord.Embed(description=results1 + results2, colour=0x607D4A)
+                em.set_thumbnail(url="https://cdn.discordapp.com/emojis/525200274340577290.gif?size=64")
+                user.update_user_money(winnings)
             else:
-                await self.client.say("Aw... Sorry, but this match goes to me.")
-                wut = (abs(bet - abs(sum_cpu - sum_user))) * -1
-                user.update_user_money(wut)
+                results2 = "Aw... Sorry, but this match goes to me."
+                losings = (abs(bet - abs(sum_cpu - sum_user))) * -1
+
+                em = discord.Embed(description=results1 + results2, colour=0x607D4A)
+                em.set_thumbnail(url="https://cdn.discordapp.com/emojis/525209793405648896.gif?size=64")
+                user.update_user_money(losings)
+
+            await self.client.say(embed=em)
         else:
             await self.client.say("You didn't answer...")
             return
