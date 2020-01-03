@@ -391,132 +391,142 @@ class Games:
         pass_context=True,
     )
     async def battle_user(self, context, *args):
-        # retrieve how much the fighter is betting on the battle
-        if len(args) == 2:
-            bet = int(args[1])
-            if bet < 1:
-                await self.client.say("Bet cant be negative...")
-                return
-        else:
-            await self.client.say("No bet specified, defaulting to **$10**\n ** **")
-            bet = 10
-
+        # try/except block to check argument syntax
         try:
-            # make instance of user for user initiating fight
-            fighter1 = Users(context.message.author.id)
-
-            # retrieve battle target
-            target = args[0]
-            # use regex to extract only the user-id from the user targeted
-            fighter2_id = int(re.findall("\d+", target)[0])
-            fighter2 = Users(fighter2_id)
-
-            # check if targeted user has account
-            if fighter2.find_user() == 0:
-                await self.client.say(
-                    context.message.author.mention + " Your fighting target doesn't have an account."
-                    "\nTell them to use **=create** to make one."
-                )
-                return
-
-            # check if both users have enough money
-            if fighter1.get_user_money(0) < bet or fighter2.get_user_money(0) < bet:
-                await self.client.say(
-                    context.message.author.mention + " Either you or the target doesn't have enough money..."
-                )
-                return
-
-            # give target the prompt to ask if they will accept the challenge
-            alert_msg = await self.client.say(
-                target
-                + ", you were challenged for **$"
-                + str(bet)
-                + "**\n:crossed_swords: Type **yes** to accept this battle. :crossed_swords: "
+            if not args:
+                msg = await self.client.say(
+                context.message.author.mention
+                + '```ml\nuse =fight like so: "=fight @user X"  -- X being integer amount to bet```'
             )
-
-            # made this check function with the help of discord API documentation
-            # it will be called below to check if the confirmation response to fight is from fighter2
-            def fighter2check(msg):
-                return int(msg.author.id) == fighter2_id
-
-            # (try to) wait for a battle acceptance from other user
-            try:
-                confirm = await self.client.wait_for_message(timeout=60, check=fighter2check)
-                await self.client.delete_message(alert_msg)
-                if confirm.clean_content.upper() == "YES":
-                    await self.client.delete_message(confirm)
-                    # have to use 2 messages to enlarge the emojis
-                    msg = (
-                        context.message.author.mention
-                        + " vs "
-                        + args[0]
-                        + " for **$"
-                        + str(bet)
-                        + "**\nFight will conclude in 10 seconds..."
-                    )
-                    # embed the duel alert message, set thumbnail to a "nunchuck frog" gif of size 64x64
-                    em = discord.Embed(title="", colour=0x607D4A)
-                    em.add_field(name="DUEL ALERT", value=msg, inline=True)
-                    em.set_thumbnail(url="https://cdn.discordapp.com/emojis/493220414206509056.gif?size=64")
-
-                    await self.client.say(embed=em)
-                    await asyncio.sleep(10)
-
-                    # get the stats of each fighter
-                    # algorithm for calculating a fighter's stats in duels: (item score + user level*2 + 20)
-                    f1_stats = fighter1.get_user_item_score() + (fighter1.get_user_level(0) * 2) + 20
-                    f2_stats = fighter2.get_user_item_score() + (fighter2.get_user_level(0) * 2) + 20
-                    total = f1_stats + f2_stats
-                    f1_weight = f1_stats / total
-                    f2_weight = f2_stats / total
-
-                    # decide winner with custom function
-                    # if it returns 1, fighter 1 won
-                    # if it returns 2, fighter 2 won
-                    winner = battle_decider(1, 2, f1_weight, f2_weight)
-
-                    # check if they tried to exploit the code by spending all their money during the battle
-                    if fighter1.get_user_money(0) < bet or fighter2.get_user_money(0) < bet:
-                        await self.client.say(
-                            context.message.author.mention + " One of you spent money while battling..."
-                        )
-                        return
-
-                    # check who the winner was returned as
-                    # update account balances respectively
-                    if winner == 1:
-                        msg = context.message.author.mention + " won **$" + str(bet) + "** by defeating " + target
-                        # embed the duel results message
-                        em = discord.Embed(description=msg, colour=0x607D4A)
-                        await self.client.say(embed=em)
-
-                        # distribute money properly
-                        fighter1.update_user_money(bet)
-                        fighter2.update_user_money(bet * -1)
-
-                    elif winner == 2:
-                        msg = target + " won **$" + str(bet) + "** by defeating " + context.message.author.mention
-                        # embed the duel results message
-                        em = discord.Embed(description=msg, colour=0x607D4A)
-                        await self.client.say(embed=em)
-
-                        # distribute money properly
-                        fighter1.update_user_money(bet * -1)
-                        fighter2.update_user_money(bet)
-
-                else:
-                    await self.client.say("You rejected the battle! " + target)
-
-            # if the target never responded
-            except:
-                await self.client.say("**Battle request ignored...** <a:pepehands:485869482602922021>")
-
-        # if they used syntax incorrectly
+                await asyncio.sleep(5)
+                await self.client.delete_message(msg)
+                return
+            # retrieve how much the fighter is betting on the battle
+            if len(args) == 2:
+                # bet will always be second argument
+                bet = int(args[1])
+                if bet < 1:
+                    await self.client.say("Bet can't be negative...")
+                    return
+            else:
+                await self.client.say("No bet specified, defaulting to **$10**\n ** **")
+                bet = 10
+        # if the user still used syntax incorrectly
         except:
             await self.client.say(
                 context.message.author.mention
-                + '```ml\nuse =fight like so: "=fight @user X"  -- X being amount to bet```'
+                + '```ml\nuse =fight like so: "=fight @user X"  -- X being integer amount to bet```'
             )
+
+
+        # make instance of user for user initiating fight
+        fighter1 = Users(context.message.author.id)
+
+        # retrieve battle target
+        target = args[0]
+        # use regex to extract only the user-id from the user targeted
+        fighter2_id = int(re.findall("\d+", target)[0])
+        fighter2 = Users(fighter2_id)
+
+        # check if targeted user has account
+        if fighter2.find_user() == 0:
+            await self.client.say(
+                context.message.author.mention + " Your fighting target doesn't have an account."
+                "\nTell them to use **=create** to make one."
+            )
+            return
+
+        # check if both users have enough money
+        if fighter1.get_user_money(0) < bet or fighter2.get_user_money(0) < bet:
+            await self.client.say(
+                context.message.author.mention + " Either you or the target doesn't have enough money..."
+            )
+            return
+
+        # give target the prompt to ask if they will accept the challenge
+        alert_msg = await self.client.say(
+            target
+            + ", you were challenged for **$"
+            + str(bet)
+            + "**\n:crossed_swords: Type **yes** to accept this battle. :crossed_swords: "
+        )
+
+        # made this check function with the help of discord API documentation
+        # it will be called below to check if the confirmation response to fight is from fighter2
+        def fighter2check(msg):
+            return int(msg.author.id) == fighter2_id
+
+        # (try to) wait for a battle acceptance from other user
+        try:
+            confirm = await self.client.wait_for_message(timeout=60, check=fighter2check)
+            await self.client.delete_message(alert_msg)
+            if confirm.clean_content.upper() == "YES":
+                await self.client.delete_message(confirm)
+                # have to use 2 messages to enlarge the emojis
+                msg = (
+                    context.message.author.mention
+                    + " vs "
+                    + args[0]
+                    + " for **$"
+                    + str(bet)
+                    + "**\nFight will conclude in 10 seconds..."
+                )
+                # embed the duel alert message, set thumbnail to a "nunchuck frog" gif of size 64x64
+                em = discord.Embed(title="", colour=0x607D4A)
+                em.add_field(name="DUEL ALERT", value=msg, inline=True)
+                em.set_thumbnail(url="https://cdn.discordapp.com/emojis/493220414206509056.gif?size=64")
+
+                await self.client.say(embed=em)
+                await asyncio.sleep(10)
+
+                # get the stats of each fighter
+                # algorithm for calculating a fighter's stats in duels: (item score + user level*2 + 20)
+                f1_stats = fighter1.get_user_item_score() + (fighter1.get_user_level(0) * 2) + 20
+                f2_stats = fighter2.get_user_item_score() + (fighter2.get_user_level(0) * 2) + 20
+                total = f1_stats + f2_stats
+                f1_weight = f1_stats / total
+                f2_weight = f2_stats / total
+
+                # decide winner with custom function
+                # if it returns 1, fighter 1 won
+                # if it returns 2, fighter 2 won
+                winner = battle_decider(1, 2, f1_weight, f2_weight)
+
+                # check if they tried to exploit the code by spending all their money during the battle
+                if fighter1.get_user_money(0) < bet or fighter2.get_user_money(0) < bet:
+                    await self.client.say(
+                        context.message.author.mention + " One of you spent money while battling..."
+                    )
+                    return
+
+                # check who the winner was returned as
+                # update account balances respectively
+                if winner == 1:
+                    msg = context.message.author.mention + " won **$" + str(bet) + "** by defeating " + target
+                    # embed the duel results message
+                    em = discord.Embed(description=msg, colour=0x607D4A)
+                    await self.client.say(embed=em)
+
+                    # distribute money properly
+                    fighter1.update_user_money(bet)
+                    fighter2.update_user_money(bet * -1)
+
+                elif winner == 2:
+                    msg = target + " won **$" + str(bet) + "** by defeating " + context.message.author.mention
+                    # embed the duel results message
+                    em = discord.Embed(description=msg, colour=0x607D4A)
+                    await self.client.say(embed=em)
+
+                    # distribute money properly
+                    fighter1.update_user_money(bet * -1)
+                    fighter2.update_user_money(bet)
+
+            else:
+                await self.client.say("You rejected the battle! " + target)
+
+        # if the target never responded
+        except:
+            await self.client.say("**Battle request ignored...** <a:pepehands:485869482602922021>")
 
     """FLIP COIN FUNCTION"""
 
@@ -1032,85 +1042,101 @@ class Games:
     @commands.command(
         name="high_low",
         description="High and low game. Guess the sum of cards.",
-        aliases=["hl", "guess", "cards", "card"],
+        aliases=["hl", "guess", "cards", "card", "CARDS"],
         pass_context=True,
     )
     async def high_and_low(self, context, *args):
-        ok, arg = handle_args(args)
-        if not ok:
-            await self.client.say("No bet specified!")
-        else:
-            user = Users(context.message.author.id)
-            if user.find_user() == 0:
-                await self.client.say("You do not have an account.")
-                return
-
-            bet = int(arg)
-            if user.get_user_money(0) < bet:
-                msg = f", you don't have enough money to bet...\n"
-                await asyncio.sleep(2)
-                await self.client.say(context.message.author.mention + msg)
-                return
-
-            CARDS = {
-                        0: "<:card_none:662372124748546058>",
-                        1: "<:card_one:662081420474449930>",
-                        2: "<:card_two:662373668214669313>",
-                        3: "<:card_three:662084754086166528>",
-                        4: "<:card_four:662085726493605918>",
-                        5: "<:card_five:662086717750247444>",
-                        6: "<:card_six:662088270993162253>",
-                        7: "<:card_seven:662091815087898649>",
-                        8: "<:card_eight:662091909749014528>",
-                        9: "<:card_nine:662092003676389380>"
-                     }
-
-            instruction = (
-                ", Three cards for you, three cards for me. You flip one of yours over, and I flip two of mine."
-            )
-            initial_hand = f"\n{CARDS[0]}  {CARDS[0]}  {CARDS[0]}\n{CARDS[0]}  {CARDS[0]}  {CARDS[0]}"
-            await self.client.say(context.message.author.mention + instruction + initial_hand)
-            cpu_cards, user_cards = get_cards()
-
-            assert len(cpu_cards) == 3
-            assert len(user_cards) == 3
-            cpu_hand = f"{CARDS[cpu_cards[0]]}  {CARDS[cpu_cards[1]]}  {CARDS[0]}"
-            user_hand = f"{CARDS[user_cards[0]]}  {CARDS[0]}  {CARDS[0]}"
-            await self.client.say(f"My hand is {cpu_hand}\nAnd your hand is {user_hand}")
-            await self.client.say(
-               "Now what's your call? Will your total be higher or lower than mine?\nEnter low or high."
-            )
-
-            confirm = await self.client.wait_for_message(author=context.message.author, timeout=20)
-            if confirm:
-                if confirm.clean_content.upper() != "HIGH" and confirm.clean_content.upper() != "LOW":
-                    await self.client.say("Wrong answer!")
+        # try/except block to check argument syntax
+        try:
+            # there should be an argument
+            if args:
+                # retrieve bet as first argument
+                bet = int(args[0])
+                # if bet is negative, return
+                if bet < 1:
+                    await self.client.say("Bet can't be negative...")
                     return
-
-                cpu_hand = f"{CARDS[cpu_cards[0]]}  {CARDS[cpu_cards[1]]}  {CARDS[cpu_cards[2]]}"
-                user_hand = f"{CARDS[user_cards[0]]}  {CARDS[user_cards[1]]}  {CARDS[user_cards[2]]}"
-
-                await self.client.say(
-                    f"You're going with '{confirm.clean_content}', then? Right, let's see what we've got..."
-                )
-                await self.client.say(f"My hand is {cpu_hand}\nAnd your hand is {user_hand}")
-
-                won, sum_cpu, sum_user = win(cpu_cards, user_cards, confirm.clean_content.upper())
-                await self.client.say(f"My cards add up to {sum_cpu}. and you have...\n... a total of {sum_user}.")
-
-                if won:
-                    reward = get_reward(sum_cpu, sum_user, bet)
-                    await self.client.say(
-                        f"Congratulations, your guess was right!\nYou won ${reward}."
-                    )
-                    user.update_user_money(reward)
-                else:
-                    await self.client.say("Aw... Sorry, but this match goes to me.")
-                    wut = (abs(bet - abs(sum_cpu - sum_user))) * -1
-                    user.update_user_money(wut)
+            # if no argument provided
             else:
-                await self.client.say("You didn't answer...")
+                await self.client.say("No bet specified, defaulting to **$10**\n ** **")
+                bet = 10
+        except:
+            await self.client.say(
+                context.message.author.mention
+                + '```ml\nuse =cards like so: "=cards X"  -- X being integer amount to bet```'
+            )
+            return
+
+        # Create a user instance
+        user = Users(context.message.author.id)
+
+        # confirm the user has enough money for the bet
+        if user.get_user_money(0) < bet:
+            msg = f", you don't have enough money for that bet...\n"
+            msg = await self.client.say(context.message.author.mention + msg)
+            await asyncio.sleep(7)
+            await self.client.delete_message(msg)
+            return
+
+        CARDS = {
+                    0: "<:card_none:662372124748546058>",
+                    1: "<:card_one:662081420474449930>",
+                    2: "<:card_two:662373668214669313>",
+                    3: "<:card_three:662084754086166528>",
+                    4: "<:card_four:662085726493605918>",
+                    5: "<:card_five:662086717750247444>",
+                    6: "<:card_six:662088270993162253>",
+                    7: "<:card_seven:662091815087898649>",
+                    8: "<:card_eight:662455814543507456>",
+                    9: "<:card_nine:662092003676389380>"
+                 }
+
+        instruction = (
+            ", Three cards for you, three cards for me. You flip one of yours over, and I flip two of mine."
+        )
+        initial_hand = f"\n{CARDS[0]}  {CARDS[0]}  {CARDS[0]}\n{CARDS[0]}  {CARDS[0]}  {CARDS[0]}"
+        await self.client.say(context.message.author.mention + instruction + initial_hand)
+        cpu_cards, user_cards = get_cards()
+
+        assert len(cpu_cards) == 3
+        assert len(user_cards) == 3
+        cpu_hand = f"{CARDS[cpu_cards[0]]}  {CARDS[cpu_cards[1]]}  {CARDS[0]}"
+        user_hand = f"{CARDS[user_cards[0]]}  {CARDS[0]}  {CARDS[0]}"
+        await self.client.say(f"My hand is {cpu_hand}\nAnd your hand is {user_hand}")
+        await self.client.say(
+           "Now what's your call? Will your total be higher or lower than mine?\nEnter low or high."
+        )
+
+        confirm = await self.client.wait_for_message(author=context.message.author, timeout=20)
+        if confirm:
+            if confirm.clean_content.upper() != "HIGH" and confirm.clean_content.upper() != "LOW":
+                await self.client.say("Wrong answer!")
                 return
+
+            cpu_hand = f"{CARDS[cpu_cards[0]]}  {CARDS[cpu_cards[1]]}  {CARDS[cpu_cards[2]]}"
+            user_hand = f"{CARDS[user_cards[0]]}  {CARDS[user_cards[1]]}  {CARDS[user_cards[2]]}"
+
+            await self.client.say(
+                f"You're going with '{confirm.clean_content}', then? Right, let's see what we've got..."
+            )
+            await self.client.say(f"My hand is {cpu_hand}\nAnd your hand is {user_hand}")
+
+            won, sum_cpu, sum_user = win(cpu_cards, user_cards, confirm.clean_content.upper())
+            await self.client.say(f"My cards add up to {sum_cpu}. and you have...\n... a total of {sum_user}.")
+
+            if won:
+                reward = get_reward(sum_cpu, sum_user, bet)
+                await self.client.say(
+                    f"Congratulations, your guess was right!\nYou won ${reward}."
+                )
+                user.update_user_money(reward)
+            else:
+                await self.client.say("Aw... Sorry, but this match goes to me.")
+                wut = (abs(bet - abs(sum_cpu - sum_user))) * -1
+                user.update_user_money(wut)
+        else:
+            await self.client.say("You didn't answer...")
+            return
 
 
 def handle_args(args):
