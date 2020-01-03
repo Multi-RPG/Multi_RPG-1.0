@@ -1058,7 +1058,7 @@ class Games:
                     return
             # if no argument provided
             else:
-                await self.client.say("No bet specified, defaulting to **$10**\n ** **")
+                await self.client.say(context.message.author.mention + ", no bet specified, defaulting to **$10** ** **")
                 bet = 10
         except:
             await self.client.say(
@@ -1092,19 +1092,26 @@ class Games:
                  }
 
         instruction = (
-            ", Three cards for you, three cards for me. You flip one of yours over, and I flip two of mine."
+            "Three cards for you, three cards for me. You flip one of yours over, and I flip two of mine."
         )
         initial_hand = f"\n{CARDS[0]}  {CARDS[0]}  {CARDS[0]}\n{CARDS[0]}  {CARDS[0]}  {CARDS[0]}"
-        await self.client.say(context.message.author.mention + instruction + initial_hand)
+        em = discord.Embed(description=instruction + initial_hand, colour=0x607D4A)
+        em.set_thumbnail(url="https://cdn.discordapp.com/emojis/618921143163682816.png?v=1")
+        await self.client.say(embed=em)
         cpu_cards, user_cards = get_cards()
 
         assert len(cpu_cards) == 3
         assert len(user_cards) == 3
         cpu_hand = f"{CARDS[cpu_cards[0]]}  {CARDS[cpu_cards[1]]}  {CARDS[0]}"
         user_hand = f"{CARDS[user_cards[0]]}  {CARDS[0]}  {CARDS[0]}"
-        await self.client.say(f"My hand is {cpu_hand}\nAnd your hand is {user_hand}")
+        instruction2 = (
+            f"Dealer's hand is: \u200B \u200B {cpu_hand}\nAnd your hand is: {user_hand}"
+        )
+        em = discord.Embed(description=instruction2, colour=0x607D4A)
+
+        await self.client.say(embed=em)
         await self.client.say(
-           "Now what's your call? Will your total be higher or lower than mine?\nEnter low or high."
+           "Now, what's your call? Will your total be higher or lower than mine?\nEnter **low** or **high**..."
         )
 
         confirm = await self.client.wait_for_message(author=context.message.author, timeout=20)
@@ -1119,7 +1126,7 @@ class Games:
             await self.client.say(
                 f"You're going with '{confirm.clean_content}', then? Right, let's see what we've got..."
             )
-            await self.client.say(f"My hand is {cpu_hand}\nAnd your hand is {user_hand}")
+            await self.client.say(f"Dealer's hand is: \u200B \u200B {cpu_hand}\nAnd your hand is: {user_hand}")
 
             won, sum_cpu, sum_user = win(cpu_cards, user_cards, confirm.clean_content.upper())
             await self.client.say(f"My cards add up to {sum_cpu}. and you have...\n... a total of {sum_user}.")

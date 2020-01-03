@@ -138,10 +138,16 @@ async def helper(context):
         "                          NOTE: this toggle disables =rob @user for yourself and people targetting you\n"
         "                          NOTE: peace mode has a cooldown that only resets once every week on Monday```"
     )
+    msg4 = (
+        "```ml\n"
+        "https://discord.gg/BGAwXft"
+        "```"
+    )
 
     await client.send_message(context.message.author, msg)
     await client.send_message(context.message.author, msg2)
     await client.send_message(context.message.author, msg3)
+    await client.send_message(context.message.author, msg4)
 
 
 @client.command(
