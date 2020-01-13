@@ -308,12 +308,12 @@ class Account:
 
         if user_level == 1:
             level_up_cost = 399
-        elif user_level > 7:
+        elif user_level in range(2,8):
             level_up_cost = int(300 * ((user_level + 1) ** 1.8) - (300 * user_level))
-        elif user_level > 9:
-            level_up_cost = int(300 * ((user_level + 1) ** 1.91) - (300 * user_level))
-        elif user_level == 15:
-            await self.client.say("You are already level 15, the max level!")
+        elif user_level in range(9,34):
+            level_up_cost = int(300 * ((user_level + 1) ** 1.9) - (300 * user_level))
+        elif user_level == 35:
+            await self.client.say("You are already level 35, the max level!")
             return
 
         # check if they have enough money for a level-up
