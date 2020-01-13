@@ -18,22 +18,29 @@ class Utilities:
         pass_context=True,
     )
     async def clear(self, context, *args):
-        # try-catch block, because of *args array.
-        # if no argument given in discord after "=clear", it will go to the exception
-        try:
-            if int(args[0]) > 100:
-                await self.client.say("100 messages maximum!")
-                return
-            deleted = await self.client.purge_from(
-                context.message.channel, limit=int(args[0])
-            )
-            await self.client.say("Deleted %s message(s)" % str(len(deleted)))
+        # if the user has admin privileges, permit them to toggle the daily server announcements
+        if context.message.author.server_permissions.administrator:
+            # try-catch block, because of *args array.
+            # if no argument given in discord after "=clear", it will go to the exception
+            try:
+                if int(args[0]) > 100:
+                    await self.client.say("100 messages maximum!")
+                    return
+                deleted = await self.client.purge_from(
+                    context.message.channel, limit=int(args[0])
+                )
+                await self.client.say("Deleted %s message(s)" % str(len(deleted)))
 
-        except:
-            await self.client.purge_from(context.message.channel, limit=1)
-            await self.client.say(
-                "Cleared 1 message... "
-                "Use **=clear X** to clear a higher, specified amount."
+            except:
+                await self.client.purge_from(context.message.channel, limit=1)
+                await self.client.say(
+                    "Cleared 1 message... "
+                    "Use **=clear X** to clear a higher, specified amount."
+                )
+        # else inform the user they lack sufficient privileges
+        else:
+            await self.client.send_message(
+                context.message.channel, "You need to be a local server administrator to do that!"
             )
 
     @commands.cooldown(1, 6, commands.BucketType.user)
