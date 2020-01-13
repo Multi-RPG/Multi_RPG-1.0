@@ -18,7 +18,7 @@ class Utilities:
         pass_context=True,
     )
     async def clear(self, context, *args):
-        # if the user has admin privileges, permit them to toggle the daily server announcements
+        # if the user has admin privileges, permit them to use this command
         if context.message.author.server_permissions.administrator:
             # try-catch block, because of *args array.
             # if no argument given in discord after "=clear", it will go to the exception
