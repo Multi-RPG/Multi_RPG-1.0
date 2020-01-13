@@ -1058,7 +1058,8 @@ class Games:
                     return
             # if no argument provided
             else:
-                await self.client.say(context.message.author.mention + ", no bet specified, defaulting to **$10** ** **")
+                await self.client.say(
+                    context.message.author.mention + ", no bet specified, defaulting to **$10** ** **")
                 bet = 10
         except:
             await self.client.say(
@@ -1078,27 +1079,32 @@ class Games:
             await self.client.delete_message(msg)
             return
 
+        # take bet money away
+        user.update_user_money(bet * -1)
+
         CARDS = {
-                    0: "<:card_none:662372124748546058>",
-                    1: "<:card_one:662081420474449930>",
-                    2: "<:card_two:662373668214669313>",
-                    3: "<:card_three:662084754086166528>",
-                    4: "<:card_four:662085726493605918>",
-                    5: "<:card_five:662086717750247444>",
-                    6: "<:card_six:662088270993162253>",
-                    7: "<:card_seven:662091815087898649>",
-                    8: "<:card_eight:662455814543507456>",
-                    9: "<:card_nine:662092003676389380>"
-                 }
+            0: "<:card_none:662372124748546058>",
+            1: "<:card_one:662081420474449930>",
+            2: "<:card_two:662373668214669313>",
+            3: "<:card_three:662084754086166528>",
+            4: "<:card_four:662085726493605918>",
+            5: "<:card_five:662086717750247444>",
+            6: "<:card_six:662088270993162253>",
+            7: "<:card_seven:662091815087898649>",
+            8: "<:card_eight:662455814543507456>",
+            9: "<:card_nine:662092003676389380>"
+        }
 
         instruction = (
-            "Three cards for you, three cards for me. You flip one of yours over, and I flip two of mine."
+            "Three cards for you, three cards for me.\nYou flip one of yours over, and I flip two of mine."
         )
         initial_hand = f"\n{CARDS[0]}  {CARDS[0]}  {CARDS[0]}\n{CARDS[0]}  {CARDS[0]}  {CARDS[0]}"
-        em = discord.Embed(description=instruction + initial_hand, colour=0x607D4A)
-        em.set_thumbnail(url="https://cdn.discordapp.com/emojis/618921143163682816.png?v=1")
-        await self.client.say(embed=em)
+        em1 = discord.Embed(description=instruction + initial_hand, colour=0x607D4A)
+        em1.set_thumbnail(url="https://cdn.discordapp.com/emojis/618921143163682816.png?v=1")
+        msg1 = await self.client.say(embed=em1)
         cpu_cards, user_cards = get_cards()
+
+        await asyncio.sleep(3)
 
         assert len(cpu_cards) == 3
         assert len(user_cards) == 3
@@ -1107,36 +1113,46 @@ class Games:
         hand1 = (
             f"Dealer's hand is: \u200B \u200B {cpu_hand}\nAnd your hand is: {user_hand}"
         )
-
-        em = discord.Embed(description=hand1, colour=0x607D4A)
-        await self.client.say(embed=em)
-
-        await self.client.say(
-           "Now, what's your call? Will your total be higher or lower than mine?\nEnter **low** or **high**..."
-        )
+        instruction = f"So, **{context.message.author.display_name}**, will your total be higher or lower than mine?" \
+                      f"\n(*60 seconds to answer, else your money's gone*)\n\n{hand1}\n\nEnter **low** or **high**..."
+        em2 = discord.Embed(description=instruction, colour=0x607D4A)
+        em2.set_thumbnail(url="https://cdn.discordapp.com/emojis/618921143163682816.png?v=1")
+        msg2 = await self.client.say(embed=em2)
 
         # confirm the user's guess
-        confirm = await self.client.wait_for_message(author=context.message.author, timeout=20)
+        confirm = await self.client.wait_for_message(author=context.message.author, timeout=60)
+        counter = 3
         if confirm:
-            if confirm.clean_content.upper() != "HIGH" and confirm.clean_content.upper() != "LOW":
-                await self.client.say("Wrong answer!")
-                return
+            # while not a valid answer, keep prompting up to 3 times
+            while confirm.clean_content.upper() != "HIGH" and confirm.clean_content.upper() != "LOW":
+                if counter == 0:
+                    await self.client.say("Sorry, you've reached your attempt limit. Exiting game.")
+                    return
+                if counter < 3:
+                    await self.client.delete_message(msg3)
+                    await self.client.delete_message(msg4)
+                msg3 = await self.client.say("Wrong answer!")
+                msg4 = await self.client.say(
+                    f"\nEnter **low** or **high**..."
+                    f" You have **{counter}** more attempts before your bet money is lost forever.")
+                confirm = await self.client.wait_for_message(author=context.message.author, timeout=60)
+                counter -= 1
 
             cpu_hand = f"{CARDS[cpu_cards[0]]}  {CARDS[cpu_cards[1]]}  {CARDS[cpu_cards[2]]}"
             user_hand = f"{CARDS[user_cards[0]]}  {CARDS[user_cards[1]]}  {CARDS[user_cards[2]]}"
 
-            await self.client.say(
-                f"You're going with **'{confirm.clean_content}'**, then, {confirm.author.mention}."
-                f" Right, let's see what we've got..."
-            )
-
             hand2 = (
                 f"Dealer's hand is: \u200B \u200B {cpu_hand}\nAnd your hand is: {user_hand}"
             )
+            instruction2 = (
+                f"You're going with **'{confirm.clean_content}'**, then, {confirm.author.display_name}.\n"
+                f" Right, let's see what we've got...\n\n{hand2}"
+            )
 
             # build embed of the hand results and send it
-            em = discord.Embed(description=hand2, colour=0x607D4A)
-            await self.client.say(embed=em)
+            em3 = discord.Embed(description=instruction2, colour=0x607D4A)
+            em3.set_thumbnail(url="https://cdn.discordapp.com/emojis/618921143163682816.png?v=1")
+            await self.client.say(embed=em3)
 
             # wait 2 seconds to build suspense
             await asyncio.sleep(2)
@@ -1144,29 +1160,31 @@ class Games:
             won, sum_cpu, sum_user = win(cpu_cards, user_cards, confirm.clean_content.upper())
             results1 = f"My cards add up to **{sum_cpu}**.\nAnd you have a total of **{sum_user}**.\n\n"
 
-            # take bet money away
-            user.update_user_money(bet * -1)
             if won:
                 winnings = get_reward(sum_cpu, sum_user, bet)
                 results2 = (
-                    f"Congratulations, your guess was right!\nYou won **${winnings}**. " 
+                    f"Congratulations, your guess was right!\nYou won **${winnings - bet}**. "
                     f"{user.update_user_money(winnings)}."
                 )
-                em = discord.Embed(description=results1 + results2, colour=0x607D4A)
-                em.set_thumbnail(url="https://cdn.discordapp.com/emojis/525200274340577290.gif?size=64")
-                user.update_user_money(winnings)
+                em4 = discord.Embed(description=results1 + results2, colour=0x607D4A)
+                em4.set_thumbnail(url="https://cdn.discordapp.com/emojis/525200274340577290.gif?size=64")
             else:
-                losings = (abs(bet - abs(sum_cpu - sum_user))) * -1
                 results2 = (
-                    f"Aw... Sorry, but this match goes to me.\nYou lost **${losings}**. " 
-                    f"{user.update_user_money(losings)}"
+                    f"Aw... Sorry, but this match goes to me.\nYou lost **${bet}**. "
+                    f"{user.update_user_money(0)}"  # bet was already taken at beginning of function
                 )
 
-                em = discord.Embed(description=results1 + results2, colour=0x607D4A)
-                em.set_thumbnail(url="https://cdn.discordapp.com/emojis/525209793405648896.gif?size=64")
+                em4 = discord.Embed(description=results1 + results2, colour=0x607D4A)
+                em4.set_thumbnail(url="https://cdn.discordapp.com/emojis/525209793405648896.gif?size=64")
 
-            await self.client.say(embed=em)
+            await self.client.say(embed=em4)
+            await self.client.delete_message(msg1)
+            await self.client.delete_message(msg2)
+
+        # if we timed out waiting for user to answer
         else:
+            await self.client.delete_message(msg1)
+            await self.client.delete_message(msg2)
             await self.client.say("You didn't answer...")
             return
 
