@@ -30,4 +30,4 @@ C:\Users\jsmith> python Main.py
 Note: In this repository, paths are currently setup to run in a windows environment. Adjustment will need to be made for running on Unix.
 
 ## License
-MIT [license](https://github.com/w-gomes/Discord-Bot/blob/master/LICENSE).
+MIT [license](https://github.com/jdkennedy45/Discord-Bot/blob/master/LICENSE).
