@@ -144,10 +144,15 @@ async def helper(context):
         "```"
     )
 
-    await client.send_message(context.message.author, msg)
-    await client.send_message(context.message.author, msg2)
-    await client.send_message(context.message.author, msg3)
-    await client.send_message(context.message.author, msg4)
+    try:
+        await client.send_message(context.message.author, msg)
+        await client.send_message(context.message.author, msg2)
+        await client.send_message(context.message.author, msg3)
+        await client.send_message(context.message.author, msg4)
+    except Exception as e:
+        print(f'Error trying to DM user: "{e.text}"')
+        error_msg = "I was unable to DM you the help message. It is possible that you do not allow DM from server members. Please check your privacy settings."
+        await client.send_message(context.message.channel, error_msg)
 
 
 @client.command(
