@@ -149,8 +149,8 @@ async def helper(context):
         await client.send_message(context.message.author, msg2)
         await client.send_message(context.message.author, msg3)
         await client.send_message(context.message.author, msg4)
-    except Exception as e:
-        print(f'Error trying to DM user: "{e.text}"')
+    except discord.Forbidden as error:
+        print(f'{type(error).__name__} {error.text}')
         error_msg = "I was unable to DM you the help message. It is possible that you do not allow DM from server members. Please check your privacy settings."
         await client.send_message(context.message.channel, error_msg)
 
