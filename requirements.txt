@@ -1,6 +1,6 @@
 google-cloud-core==0.29.1
 google-cloud-storage==1.15.0
-aiohttp==3.5.4
+aiohttp==3.7.4
 async-timeout==3.0.1
 asyncio==3.4.3
 attrs==19.1.0
